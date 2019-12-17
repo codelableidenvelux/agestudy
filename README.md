@@ -4,6 +4,7 @@ Agestudy contains 3 cognitive tasks and 2 surveys implemented in Psytoolkit.
 This README contains information on the structure of this repository.
 
 ## Repository overview
+<pre>
 ├──Nested =  This indicates there is a file inside a folder  
 ├── requirements.txt   <- The requirements file for reproducing the analysis
 ├── app                <- Source code for the web application     
@@ -34,3 +35,4 @@ This README contains information on the structure of this repository.
 ├── data_processing   <- Contains basic data_cleaning and processing scripts
 ├────────────────────────────────────────────────────────────────────────────────────
 ├── reports   <- Contains files such as feedback or powerpoints
+<pre>
