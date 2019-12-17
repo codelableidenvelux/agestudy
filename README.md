@@ -36,3 +36,7 @@ This README contains information on the structure of this repository.
 ├────────────────────────────────────────────────────────────────────────────────────
 ├── reports   <- Contains files such as feedback or powerpoints
 <pre>
+## Sources
+
+## Author(s)
+Ruchella Kock :cat: 
