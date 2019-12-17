@@ -17,7 +17,7 @@ Create a blank [experiment](https://www.psytoolkit.org/lessons/project.html) on 
 Paste the script from the *name_experiment.txt* file into the the blank experiment
 ![Create survey](instruction_images/create_experiment.jpg)
 
-# Bitmaps
+## Bitmaps
 Each folder contains a set of bitmaps that need to be added to the experiment.
 Go to the experiment, click on choose files and upload all the files.
 

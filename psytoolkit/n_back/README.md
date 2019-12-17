@@ -29,4 +29,4 @@ All other settings are default.
 10.	date time
 
 
-![Corsi data](./instruction_images/n_back_data.jpg)
+![N back data](../instruction_images/n_back_data.jpg)

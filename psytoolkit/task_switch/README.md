@@ -27,4 +27,4 @@ All other settings are default.
 10.	Date/ time
 
 
-![Corsi data](./instruction_images/task_switch_data.jpg)
+![Task sitching data](../instruction_images/task_switch_data.jpg)

@@ -27,4 +27,4 @@ There are 9 grey stimuli, a white circle is shown to indicate the pattern that t
 7.	The highest Corsi span so far
 8.	Date/time
 
-![Corsi data](./instruction_images/corsi_data.jpg)
+![Corsi data](../instruction_images/corsi_data.jpg)
