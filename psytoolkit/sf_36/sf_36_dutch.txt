@@ -1,0 +1,141 @@
+# check the large survey-library for ready-to-run examples you can
+# cut and paste here
+
+l: participantID
+t: textline
+q: Vul in uw deelnemer ID
+- {require}
+
+l: q1
+t: radio
+q: Hoe zou u over het algemeen uw gezondheid noemen?
+- 1 Uitstekend
+- 2 Zeer goed
+- 3 Goed
+- 4 Matig
+- 5 Slecht
+
+l: q2
+t: radio
+q: Hoe beoordeelt u nu uw gezondheid over het algemeen, vergeleken met een jaar geleden?
+- 1 Veel beter nu dan een jaar geleden
+- 2 Wat beter nu dan een jaar geleden
+- 3 Ongeveer hetzelfde nu als een jaar geleden
+- 4 Wat slechter nu dan een jaar geleden
+- 5 Veel slechter nu dan een jaar geleden
+
+scale: agree
+- Ja, ernstig beperkt
+- Ja, een beetje beperkt
+- Nee, helemaal niet beperkt
+
+l: q3q12
+t: scale agree
+q: De volgende vragen gaan over bezigheden die u misschien doet op een doorsnee dag. Wordt u door uw gezondheid op dit moment beperkt bij deze bezigheden? Zo ja, in welke mate?
+- <b>Forse inspanning</b>, zoals hardlopen, tillen van zware voorwerpen, een veeleisende sport beoefenen
+- <b>Matige inspanning</b>, zoals een tafel verplaatsen, stofzuigen, zwemmen of fietsen
+- Boodschappen tillen of dragen
+- <b> Een paar </b> trappen oplopen
+- <b> Eén </b> trap oplopen
+- Bukken, knielen of hurken
+- <b> Meer dan een kilometer </b> lopen
+- <b> Een paar honderd meter </b>lopen
+- Ongeveer <b> honderd meter </b> lopen
+- Uzelf wassen of aankleden
+
+scale: agree2
+- Ja
+- Nee
+
+l: q13q16
+t: scale agree2
+q: Heeft u in de <b> afgelopen 4 weken </b>, een van de volgende problemen bij uw werk of andere dagelijkse bezigheden gehad, <b>ten gevolge van uw lichamelijke gezondheid</b>?
+- U besteedde <b> minder tijd </b> aan werk of andere bezigheden
+- U heeft <b> minder bereikt </b> dan u zou willen
+- U was beperkt in het <b> soort </b> werk of andere bezigheden
+- U had <b> moeite </b> om uw werk of andere bezigheden uit te voeren (het kostte u bv. extra inspanning)
+
+scale: agree3
+- Ja
+- Nee
+
+l: q17
+t: scale agree3
+q: Heeft u in de <b> afgelopen 4 weken </b>, een van de volgende problemen ondervonden bij uw werk of andere dagelijkse bezigheden <b> ten gevolge van emotionele problemen </b>(zoals depressieve of angstige gevoelens)?
+- U besteedde <b> minder tijd </b> aan werk of andere bezigheden
+- U heeft <b> minder bereikt </b> dan u zou willen
+- U deed uw werk of andere bezigheden niet zo <b> zorgvuldig </b> als gewoonlijk
+
+l: q20
+t: radio
+q: In hoeverre hebben uw lichamelijke gezondheid of emotionele problemen u gedurende de <b> afgelopen 4 weken </b> gehinderd in uw normale omgang met familie, vrienden of buren, of bij activiteiten in groepsverband?
+- 1 Helemaal niet
+- 2 Enigszins
+- 3 Nogal
+- 4 Veel
+- 5 Heel erg veel
+
+l: q21
+t: radio
+q: Hoeveel <b> lichamelijke </b> pijn heeft u de <b> afgelopen 4 weken </b> gehad?
+- 1 Geen
+- 2 Heel licht
+- 3 Licht
+- 4 Nogal
+- 5 Ernstig
+- 6 Heel ernstig
+
+l: q22
+t: radio
+q: In welke mate bent u de <b> afgelopen 4 weken</b> door pijn gehinderd in uw normale werk (zowel werk buitenshuis als huishoudelijk werk)?
+- 1 Helemaal niet
+- 2 Een klein beetje
+- 3 Nogal
+- 4 Veel
+- 5 Heel erg veel
+
+scale: agree4
+- 1 Altijd
+- 2 Meestal
+- 3 Vaak
+- 4 Soms
+- 5 Zelden
+- 6 Nooit
+
+l: q23q31
+t: scale agree4
+q: Deze vragen gaan over hoe u zich voelt en hoe het met u ging in de <b> afgelopen 4 weken</b>. Wilt u a.u.b. bij elke vraag het antwoord geven dat het best benadert hoe u zich voelde. Hoe vaak gedurende de <b> afgelopen 4 weken </b>
+- Voelde u zich levenslustig?
+- Was u erg zenuwachtig?
+- Zat u zo in de put dat niets u kon opvrolijken?
+- Voelde u zich rustig en tevreden?
+- Had u veel energie?
+- Voelde u zich somber en neerslachtig?
+- Voelde u zich uitgeput?
+- Was u een gelukkig mens?
+- Voelde u zich moe?
+
+
+l: q32
+t: radio
+q: Hoe vaak hebben uw <b> lichamelijke gezondheid </b> of emotionele problemen u gedurende de <b> afgelopen 4 weken </b> gehinderd bij uw sociale activiteiten (zoals vrienden of familie bezoeken, etc)?
+- 1 Altijd
+- 2 Meestal
+- 3 Soms
+- 4 Zelden
+- 5 Nooit
+
+scale: agree5
+- 1 Volkomen juist
+- 2 Grotendeels juist
+- 3 Weet ik niet
+- 4 Grotendeels onjuist
+- 5 Volkomen onjuist
+
+l: q33q36
+t: scale agree5
+q: Hoe JUIST of ONJUIST is elk van de volgende uitspraken voor u?
+- Ik lijk wat gemakkelijker ziek te worden
+- Ik ben even gezond als andere mensen
+- Ik verwacht dat mijn gezondheid achteruit zal gaan
+- Mijn gezondheid is uitstekend

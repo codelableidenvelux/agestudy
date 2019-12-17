@@ -1,0 +1,12 @@
+# check the large survey-library for ready-to-run examples you can
+# cut and paste here
+
+l: participantID
+t: textline
+q: Fill in your participant ID
+- {require}
+
+
+l: examplequestion1
+t: experiment
+- n-back

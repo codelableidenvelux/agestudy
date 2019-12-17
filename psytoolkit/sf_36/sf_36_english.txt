@@ -1,0 +1,143 @@
+# check the large survey-library for ready-to-run examples you can
+# cut and paste here
+
+l: participantID
+t: textline
+q: Fill in your participant ID
+- {require}
+
+l: q1
+t: radio
+q: In general, would you say your health is:
+- 1 Excellent
+- 2 Very good
+- 3 Good
+- 4 Fair
+- 5 Poor
+
+l: q2
+t: radio
+q:  Compared to one year ago, how would you rate your health in general now?
+- 1 Much better now than one year ago
+- 2 Somewhat better now than one year ago
+- 3 About the same
+- 4 Somewhat worse now than one year ago
+- 5 Much worse now than one year ago
+
+scale: agree
+- Yes, limited a lot
+- Yes, limited a little
+- No, not limited at all
+
+l: q3q12
+t: scale agree
+q: The following items are about activities you might do during a typical day. Does your health now limit you in these activities? If so, how much?
+- <b>Vigorous activities</b>, such as running, lifting heavy objects, participating in strenuous sports
+- <b>Moderate activities</b>, such as moving a table, pushing a vacuum cleaner, bowling, or playing golfs
+- Lifting or carrying groceries
+- Climbing <b>several</b> flights of stairs
+- Climbing <b>one</b> flight of stairs
+- Bending, kneeling, or stooping
+- Walking <b>more than a mile</b>
+- Walking <b>several blocks</b>
+- Walking <b>one block</b>
+- Bathing or dressing yourself
+
+scale: agree2
+- Yes
+- No
+
+l: q13q16
+t: scale agree2
+q: During the <b>past 4 weeks</b>, have you had any of the following problems with your work or other regular daily activities <b>as a result of your physical health</b>?
+- Cut down the <b>amount of time</b> you spent on work or other activities
+- <b>Accomplished less</b> than you would like
+- Were limited in the <b>kind</b> of work or other activities
+- Had difficulty performing the work or other activities (for example, it took extra effort)
+
+scale: agree3
+- Yes
+- No
+
+l: q17
+t: scale agree3
+q: During the <b>past 4 weeks</b>, have you had any of the following problems with your work or other regular daily activities <b>as a result of any emotional problems</b> (such as feeling depressed or anxious)?
+- Cut down the <b>amount of time</b> you spent on work or other activities
+- <b>Accomplished less<b> than you would like
+- Didn't do work or other activities as <b>carefully</b> as usual
+
+
+l: q20
+t: radio
+q: During the <b>past 4 weeks</b>, to what extent has your physical health or emotional problems interfered with your normal social activities with family, friends, neighbors, or groups?
+- 1 Not at all
+- 2 Slightly
+- 3 Moderately
+- 4 Quite a bit
+- 5 Extremely
+
+l: q21
+t: radio
+q: How much <b>bodily</b> pain have you had during the past 4 weeks?
+- 1 None
+- 2 Very mild
+- 3 Mild
+- 4 Moderate
+- 5 Severe
+- 6 Very severe
+
+l: q22
+t: radio
+q: During the <b>past 4 weeks</b>, how much did pain interfere with your normal work (including both work outside the home and housework)?
+- 1 Not at all
+- 2 A little bit
+- 3 Moderately
+- 4 Quite a bit
+- 5 Extremely
+
+scale: agree4
+- 1 All of the time
+- 2 Most of the time
+- 3 A good bit of the time
+- 4 Some of the time
+- 5 A little of the time
+- 6 None of the time
+
+l: q23q31
+t: scale agree4
+q: These questions are about how you feel and how things have been with you during the past 4 weeks. For each question, please give the one answer that comes closest to the way you have been feeling. <br>
+How much of the time during the <b>past 4 weeks</b>...
+- Did you feel full of pep?
+- Have you been a very nervous person?
+- Have you felt so down in the dumps that nothing could cheer you up?
+- Have you felt calm and peaceful?
+- Did you have a lot of energy?
+- Have you felt downhearted and blue?
+- Did you feel worn out?
+- Have you been a happy person?
+- Did you feel tired?
+
+
+l: q32
+t: radio
+q: During the <b>past 4 weeks</b>, how much of the time has <b>your physical health or emotional problems </b> interfered with your social activities (like visiting with friends, relatives, etc.)?
+- 1 All of the time
+- 2 Most of the time
+- 3 Some of the time
+- 4 A little of the time
+- 5 None of the time
+
+scale: agree5
+- 1 Definitely true
+- 2 Mostly true
+- 3 Don't know
+- 4 Mostly false
+- 5 Definitely false
+
+l: q33q36
+t: scale agree5
+q: How TRUE or FALSE is <b>each</b> of the following statements for you.
+- I seem to get sick a little easier than other people
+- I am as healthy as anybody I know
+- I expect my health to get worse
+- My health is excellent

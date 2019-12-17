@@ -1,0 +1,270 @@
+# check the large survey-library for ready-to-run examples you can
+# cut and paste here
+
+l: participantid
+t: textline
+q: Wat is uw deelnemer ID?
+- {require}
+
+l: some_message0
+t: info
+q: Beste participant, <br>
+Bedankt voor uw bijdrage. Uw data wordt vertrouwelijk en alleen voor wetenschappelijke doeleinden gebruikt. Het invullen van deze vragenlijst duurt niet langer dan vijf minuten.
+
+
+l: q2
+t: check
+q: Gender
+- Man
+- Vrouw
+- Anders
+
+l: age
+t: range
+q: Geboortemaand en -jaar:
+- {min=1,max=12,by=1} Month
+- {min=1919,max=2019,by=1} Year
+
+
+l: occupation
+t: textline
+q: Wat is uw beroep?
+- {require}
+
+l: occupation2
+t: textline
+q: Sinds wanneer?
+- {require}
+
+l: q3
+t: radio
+q: U bent:
+- Linkshandig
+- Rechtshandig
+- Tweehandig
+
+l: q4
+t: radio
+q: Beoefent u een bepaalde hobby waarbij u bijzonder of intensief uw vingers gebruikt (bijv. piano spelen)?
+- Ja
+- Nee
+
+l: jump1
+t: jump
+- if $q4 == 2 then goto q7
+
+l: q5
+t: textline
+q: Wat voor hobby?
+- {require}
+
+l: q5b
+t: textline
+q: Sinds wanneer?
+- {require}
+
+l: q6
+t: range
+q: Hoe vaak (aantal uren per week)?
+- {min=1, max=168} Hours
+
+
+l: q7
+t: radio
+q: Heeft u ooit uw vingers en/of handen ernstig verwond?
+- Ja
+- Nee
+
+l: jump2
+t: jump
+- if $q7 == 2 then goto q9
+
+l: q8
+t: textline
+q: Wanneer en zijn uw vingers/handen nog steeds verzwakt?
+- {require}
+
+l: some_message
+t: info
+q: Informatie over uw mobiele telefoon
+
+l: q9
+t: range
+q: Hoe lang (in jaren) bezit of bezat u een <b> gewone mobiele telefoon </b>?
+- {min=0, max=100, by=1} jaren
+
+l: q10
+t: range
+q: Hoe lang (in jaren) bezit of bezat u een <b> smartphone </b>?
+- {min=0, max=100, by=1} jaren
+
+l: q11
+t: radio
+q: Gebruikt u de browser op uw smartphone (bijvoorbeeld Chrome) voor sociale media zoals Facebook?
+- Nooit
+- Minder dan 30% van de tijd
+- Tussen de 30% en 80% van de tijd
+- Meer dan 80% van de tijd
+- Altijd
+
+l: jump3
+t: jump
+- if $q11 == 1 then goto q13
+
+l: q12
+t: textline
+q: Naam/namen van de browsers die u bedoelt bij antwoord
+- {require}
+
+l: q13
+t: range
+q: Hoeveel minuten per dag gebruikt u gemiddeld uw telefoon?
+- {min=0,max=24,by=1} Uren
+- {min=0,max=60,by=1} Minuten
+
+l: q14
+t: range
+q: Hoeveel minuten per dag gebruikte u gemiddeld uw telefoon vorige week?
+- {min=0,max=24,by=1} Uren
+- {min=0,max=60,by=1} Minuten
+
+l: q15
+t: range
+q: Hoeveel minuten per dag gebruikte u uw telefoon gisteren ongeveer?
+- {min=0,max=24,by=1} Uren
+- {min=0,max=60,by=1} Minuten
+
+
+scale: agree
+- Nee
+- Ja, met de linkerhand
+- Ja, met de rechterhand
+
+l: q16
+q: Gebruikt u een van de volgende apparaten? Zo ja, met welke hand meestal?
+t: scale agree
+- Track pad op uw notebook/PC
+- Muis
+- Wii
+- Gamepad/joystick
+- Tablet
+
+l: q17
+t: radio
+q: Gebruikt u een stylus op uw telefoon?
+- Nooit
+- Soms
+- Vaak
+- Altijd
+
+l: some_text
+t: info
+q: Als u een smartphone gebruikt, hoe vaak gebruikt u uw telefoon op de volgende manieren? Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
+
+l: picture1
+i: picture_1.png
+t: range
+q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
+- {min=1,max=18,by=1} Nummer tussen 1 and 18
+
+l: picture2
+i: picture_2.png
+t: range
+q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
+- {min=1,max=18,by=1} Nummer tussen 1 and 18
+
+l: picture3
+i: picture_3.png
+t: range
+q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
+- {min=1,max=18,by=1} Nummer tussen 1 and 18
+
+l: picture4
+i: picture_4.png
+t: range
+q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
+- {min=1,max=18,by=1} Nummer tussen 1 and 18
+
+l: picture5
+i: picture_5.png
+t: range
+q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
+- {min=1,max=18,by=1} Nummer tussen 1 and 18
+
+l: picture6
+i: picture_6.png
+t: range
+q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
+- {min=1,max=18,by=1} Nummer tussen 1 and 18
+
+l: picture7
+i: picture_7.png
+t: range
+q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
+- {min=1,max=18,by=1} Nummer tussen 1 and 18
+
+l: picture8
+i: picture_8.png
+t: range
+q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
+- {min=1,max=18,by=1} Nummer tussen 1 and 18
+
+l: picture9
+i: picture_9.png
+t: range
+q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
+- {min=1,max=18,by=1} Nummer tussen 1 and 18
+
+l: picture10
+i: picture_10.png
+t: range
+q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
+- {min=1,max=18,by=1} Nummer tussen 1 and 18
+
+l: picture11
+i: picture_11.png
+t: range
+q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
+- {min=1,max=18,by=1} Nummer tussen 1 and 18
+
+l: picture12
+i: picture_12.png
+t: range
+q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
+- {min=1,max=18,by=1} Nummer tussen 1 and 18
+
+l: picture13
+i: picture_13.png
+t: range
+q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
+- {min=1,max=18,by=1} Number between 1 and 18
+
+l: picture14
+i: picture_14.png
+t: range
+q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
+- {min=1,max=18,by=1} Number between 1 and 18
+
+l: picture15
+i: picture_15.png
+t: range
+q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
+- {min=1,max=18,by=1} Number between 1 and 18
+
+l: picture16
+i: picture_16.png
+t: range
+q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
+- {min=1,max=18,by=1} Number between 1 and 18
+
+l: picture17
+i: picture_17.png
+t: range
+q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
+- {min=1,max=18,by=1} Number between 1 and 18
+
+l: picture18
+i: picture_18.png
+t: range
+q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
+- {min=1,max=18,by=1} Nummer tussen 1 and 18

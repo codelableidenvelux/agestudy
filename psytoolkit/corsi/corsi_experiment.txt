@@ -1,0 +1,209 @@
+options
+  mouse on
+  origin topleft
+  set &Count 2 # starts with showing two blocks
+
+bitmaps
+  yellow
+  purple
+  done
+  ticked
+  correct
+  wrong
+  instructions
+  ready1
+  ready2
+  ready3
+  corsi_instruction_1
+  corsi_instruction_2
+
+
+fonts
+  arial 30
+
+sounds
+  gosignal go.mp3
+
+part delay
+  delay 300
+  clear -1
+  delay 300
+
+table corsidata
+  include corsitable.txt
+
+task corsi
+  table corsidata
+  set $counter 0
+  set $b1 0
+  set $b2 0
+  set $b3 0
+  set $b4 0
+  set $b5 0
+  set $b6 0
+  set $b7 0
+  set $b8 0
+  set $b9 0
+  # mouse off so that people cannot mouse during sequence presentation
+  mouse off
+  # show nine blocks
+  draw off
+    show bitmap purple @1 @2
+    show bitmap purple @3 @4
+    show bitmap purple @5 @6
+    show bitmap purple @7 @8
+    show bitmap purple @9 @10
+    show bitmap purple @11 @12
+    show bitmap purple @13 @14
+    show bitmap purple @15 @16
+    show bitmap purple @17 @18
+    show bitmap done 750 550
+  draw on
+  # show sequence 1
+  show bitmap yellow @19 @20
+  part delay
+  show bitmap yellow @21 @22
+  part delay
+  if &Count > 2
+    show bitmap yellow @23 @24
+    part delay
+  fi
+  if &Count > 3
+    show bitmap yellow @25 @26
+    part delay
+  fi
+  if &Count > 4
+    show bitmap yellow @27 @28
+    part delay
+  fi
+  if &Count > 5
+    show bitmap yellow @29 @30
+    part delay
+  fi
+  if &Count > 6
+    show bitmap yellow @31 @32
+    part delay
+  fi
+  if &Count > 7
+    show bitmap yellow @33 @34
+    part delay
+  fi
+  if &Count > 8
+    show bitmap yellow @35 @36
+    part delay
+  fi
+  # go!
+  sound gosignal
+  mouse show  # now show cursor again
+  delay 100   # not really necessary, but gives a bit of time between sound and people's response
+  # read in sequence
+  while $x != 10
+    readmouse l 1 10000 range 1 10
+    set $myMouseX MOUSE_X
+    set $myMouseY MOUSE_Y
+    set $x bitmap-under-mouse $myMouseX $myMouseY up range 1 10
+    if $x != 10
+      set $counter increase
+    fi
+    if $counter == 1 && $x != 10
+      set $b1 $x
+    fi
+    if $counter == 2 && $x != 10
+      set $b2 $x
+    fi
+    if $counter == 3 && $x != 10
+      set $b3 $x
+    fi
+    if $counter == 4 && $x != 10
+      set $b4 $x
+    fi
+    if $counter == 5 && $x != 10
+      set $b5 $x
+    fi
+    if $counter == 6 && $x != 10
+      set $b6 $x
+    fi
+    if $counter == 7 && $x != 10
+      set $b7 $x
+    fi
+    if $counter == 8 && $x != 10
+      set $b8 $x
+    fi
+    if $counter == 9 && $x != 10
+      set $b9 $x
+    fi
+    show bitmap ticked $myMouseX $myMouseY ## it has to be here, check while-end javascript coding
+  while-end
+  set $x 0
+  # now check if sequence is correct
+  set $SeqCorrect 0 # this means wrong
+  if $counter == &Count
+    if &Count == 2 && $b1 == @37 && $b2 == @38
+      set $SeqCorrect 1
+    fi
+    if &Count == 3 && $b1 == @37 && $b2 == @38 && $b3 == @39
+      set $SeqCorrect 1
+    fi
+    if &Count == 4 && $b1 == @37 && $b2 == @38 && $b3 == @39 && $b4 == @40
+      set $SeqCorrect 1
+    fi
+    if &Count == 5 && $b1 == @37 && $b2 == @38 && $b3 == @39 && $b4 == @40 && $b5 == @41
+      set $SeqCorrect 1
+    fi
+    if &Count == 6 && $b1 == @37 && $b2 == @38 && $b3 == @39 && $b4 == @40 && $b5 == @41 && $b6 == @42
+      set $SeqCorrect 1
+    fi
+    if &Count == 7 && $b1 == @37 && $b2 == @38 && $b3 == @39 && $b4 == @40 && $b5 == @41 && $b6 == @42 && $b7 == @43
+      set $SeqCorrect 1
+    fi
+    if &Count == 8 && $b1 == @37 && $b2 == @38 && $b3 == @39 && $b4 == @40 && $b5 == @41 && $b6 == @42 && $b7 == @43 && $b8 == @44
+      set $SeqCorrect 1
+    fi
+    if &Count == 9 && $b1 == @37 && $b2 == @38 && $b3 == @39 && $b4 == @40 && $b5 == @41 && $b6 == @42 && $b7 == @43 && $b8 == @44 && $b9 == @45
+      set $SeqCorrect 1
+    fi
+  fi
+  ## feedback
+  if $SeqCorrect == 1
+    show bitmap correct 750 550
+  fi
+  if $SeqCorrect == 0
+    show bitmap wrong 750 550
+  fi
+  delay 1000
+  clear -1
+  delay 1000
+  ## now goto next seq if correct twice
+  set $currentcount &Count
+  if $SeqCorrect == 1
+    set &corsispan &Count ## the best score so far
+    set &Count increase
+    set &ErrorCount 0
+  fi
+  ## count errors in a row
+  if $SeqCorrect == 0
+    set &ErrorCount increase
+  fi
+  ## save data
+  save &corsispan $currentcount $SeqCorrect TABLEROW
+  ## if two errors in a row or if all are correctly clicked, end of task
+  if &ErrorCount == 10 || &Count == 10
+    end tasklist
+  fi
+
+block test
+  message corsi_instruction_1
+  message corsi_instruction_2
+  bitmap ready3
+  delay 1000
+  bitmap ready2
+  delay 1000
+  bitmap ready1
+  delay 1000
+  tasklist
+    corsi 100 all_before_repeat
+  end
+  feedback
+    text 0 400 &corsispan ; prefix "Your Corsi span is " ; postfix " items."
+    text 0 500 "Press space bar to continue"
+  end

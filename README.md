@@ -4,8 +4,6 @@ Agestudy contains 3 cognitive tasks and 2 surveys implemented in Psytoolkit.
 This README contains information on the structure of this repository.
 
 ## Repository overview
-<pre>
-Agestudy <br>
 ├──Nested =  This indicates there is a file inside a folder  
 ├── requirements.txt   <- The requirements file for reproducing the analysis
 ├── app                <- Source code for the web application     
@@ -36,7 +34,3 @@ Agestudy <br>
 ├── data_processing   <- Contains basic data_cleaning and processing scripts
 ├────────────────────────────────────────────────────────────────────────────────────
 ├── reports   <- Contains files such as feedback or powerpoints
-
- </pre>  
-
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
