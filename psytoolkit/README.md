@@ -8,22 +8,27 @@ Create an account on [Psytoolkit](https://www.psytoolkit.org/#_web_based_login)
 Login and click on *create survey*, choose a survey name.
 Create a blank [survey](https://www.psytoolkit.org/doc2.6.1/online-survey-intro.html#_how_to_create_a_survey) on Psytoolkit
 Paste the script from the *name_survey.txt* file into the the blank survey
-![Create survey]("instruction_images/create_survey.jpg")
+![Create survey](instruction_images/create_survey.jpg)
+<br><br>
+
 
 Click on *create experiment*, choose method 1 (completely new experiment) and choose an experiment name.
 Create a blank [experiment](https://www.psytoolkit.org/lessons/project.html) on Psytoolkit
 Paste the script from the *name_experiment.txt* file into the the blank experiment
-![Create survey]("instruction_images/create_experiment.jpg")
+![Create survey](instruction_images/create_experiment.jpg)
 
 # Bitmaps
 Each folder contains a set of bitmaps that need to be added to the experiment.
 Go to the experiment, click on choose files and upload all the files.
+
 Note: DO NOT change the names of the images!
+
 [Read more on bitmaps](https://www.psytoolkit.org/lessons/show_bitmaps.html)
 
 ## Settings
 In every folder for each task there is a README file with information about the settings for the experiments.
 All the experiments have started out as sample experiments from the psytoolkit experiment library. In each README.md file for each task there is a link to the experiment in the library.
+
 These individual README files also contain the structure of the data that is being collected.
 For a broad overview of the data collected see : https://github.com/codelableidenvelux/agestudy/tree/master/reports/data_structure.docx
 
