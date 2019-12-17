@@ -39,4 +39,4 @@ This README contains information on the structure of this repository.
 ## Sources
 
 ## Author(s)
-Ruchella Kock :cat: 
+Ruchella Kock :octocat: 
