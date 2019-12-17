@@ -35,7 +35,7 @@ This README contains information on the structure of this repository.
 ├── data_processing   <- Contains basic data_cleaning and processing scripts
 ├────────────────────────────────────────────────────────────────────────────────────
 ├── reports   <- Contains files such as feedback or powerpoints
-<pre>
+</pre>
 ## Sources
 
 ## Author(s)
