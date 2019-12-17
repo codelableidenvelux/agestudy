@@ -6,14 +6,14 @@ This README contains a detailed overview of the files in this folder.
 ## Get started
 Create an account on [Psytoolkit](https://www.psytoolkit.org/#_web_based_login)
 Login and click on *create survey*, choose a survey name.
-Create a blank (survey)[https://www.psytoolkit.org/doc2.6.1/online-survey-intro.html#_how_to_create_a_survey] on Psytoolkit
+Create a blank [survey](https://www.psytoolkit.org/doc2.6.1/online-survey-intro.html#_how_to_create_a_survey) on Psytoolkit
 Paste the script from the *name_survey.txt* file into the the blank survey
-![Create survey]("instruction_images/create_survey.png")
+![Create survey]("instruction_images/create_survey.jpg")
 
 Click on *create experiment*, choose method 1 (completely new experiment) and choose an experiment name.
-Create a blank (experiment)[https://www.psytoolkit.org/lessons/project.html] on Psytoolkit
+Create a blank [experiment](https://www.psytoolkit.org/lessons/project.html) on Psytoolkit
 Paste the script from the *name_experiment.txt* file into the the blank experiment
-![Create survey]("instruction_images/create_experiment.png")
+![Create survey]("instruction_images/create_experiment.jpg")
 
 # Bitmaps
 Each folder contains a set of bitmaps that need to be added to the experiment.
