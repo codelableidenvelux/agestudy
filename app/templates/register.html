@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block main %}
+    <form action="/register" method="post" class = "needs-validation" novalidate>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text" required/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="password" name="password" placeholder="Password" type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="confirmation" placeholder="Password" type="password" required/>
+        </div>
+
+        <div id="message_letter" class="invalid">
+  		    A <b>lowercase</b> letter
+        </div>
+        <div id = "message_capital" class="invalid">
+      		 A <b>capital</b> letter
+        </div>
+        <div id = "message_number" class="invalid">
+      		 A <b>number</b>
+        </div>
+        <div id = "message_length" class="invalid" >
+      		 Minimum <b>5 characters</b>
+        </div>
+        <button id = "submit" class="btn btn-primary" type="submit">Register</button>
+    </form>
+
+<!--This script was written with help from https://www.w3schools.com/howto/howto_js_password_validation.asp :D -->
+<script>
+    var password = document.getElementById("password");
+    var letter = document.getElementById("message_letter");
+    var capital = document.getElementById("message_capital");
+    var number = document.getElementById("message_number");
+    var length = document.getElementById("message_length");
+
+    // this starts as soon as user types something in
+    password.onkeyup = function()
+    {
+        // Validate lowercase letters
+        var lower_letters = /[a-z]/g;
+        if(password.value.match(lower_letters))
+        {
+            document.getElementById("message_letter").style.display = "none";
+        }
+        else
+        {
+            document.getElementById("message_letter").style.display = "block";
+        }
+
+        // Validate capital letters
+        var upper_letters = /[A-Z]/g;
+        if(password.value.match(upper_letters))
+        {
+            document.getElementById("message_capital").style.display = "none";
+        }
+        else
+        {
+            document.getElementById("message_capital").style.display = "block";
+        }
+
+        // Validate numbers
+        var numbers = /[0-9]/g;
+        if(password.value.match(numbers))
+        {
+        	document.getElementById("message_number").style.display = "none";
+        }
+        else
+        {
+        	document.getElementById("message_number").style.display = "block";
+        }
+
+        // Validate length
+        if(password.value.length >= 5)
+        {
+    	    document.getElementById("message_length").style.display = "none";
+        }
+        else
+        {
+    	    document.getElementById("message_length").style.display = "block";
+        }
+    }
+</script>
+{% endblock %}

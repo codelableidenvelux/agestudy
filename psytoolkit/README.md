@@ -95,4 +95,5 @@ For a broad overview of the data collected see : https://github.com/codelableide
 │   │     │          
 │   │     └── task_switch_bitmaps    <- contains all the bitmaps used for task_switch
 │   │
+│   ├── Instruction_images    <- Contains images used in the README files for this folder
 </pre>
