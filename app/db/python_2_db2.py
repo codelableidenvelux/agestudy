@@ -51,14 +51,15 @@ class Db():
         """
         stmt = prepare(self.connection, sql)
         if fetch:
-            return self.results(execute(stmt, param))
+            execute(stmt, param)
+            return self.results(stmt)
         else:
             return execute(stmt, param)
 
     def execute_from_file(self, filename, fetch):
         """
         Takes a .sql file with sql commands and executes them
-        It takes fetch to pass to self.execute 
+        It takes fetch to pass to self.execute
         """
         file_object  = open(filename, "r")
         sql = file_object.read()

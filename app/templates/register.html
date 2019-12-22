@@ -1,35 +1,76 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Register
-{% endblock %}
+Register
+{% endblock %} {% block main %}
 
-{% block main %}
-    <form action="/register" method="post" class = "needs-validation" novalidate>
-        <div class="form-group">
-            <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text" required/>
-        </div>
-        <div class="form-group">
-            <input class="form-control" id="password" name="password" placeholder="Password" type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required/>
-        </div>
-        <div class="form-group">
-            <input class="form-control" name="confirmation" placeholder="Password" type="password" required/>
-        </div>
+<!-- Include jQuery -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 
-        <div id="message_letter" class="invalid">
-  		    A <b>lowercase</b> letter
-        </div>
-        <div id = "message_capital" class="invalid">
-      		 A <b>capital</b> letter
-        </div>
-        <div id = "message_number" class="invalid">
-      		 A <b>number</b>
-        </div>
-        <div id = "message_length" class="invalid" >
-      		 Minimum <b>5 characters</b>
-        </div>
-        <button id = "submit" class="btn btn-primary" type="submit">Register</button>
-    </form>
+<!-- Include Date Range Picker -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
+
+<!-- source: https://getbootstrap.com/docs/4.0/components/forms/ -->
+<form action="/register" method="post" class="needs-validation" novalidate>
+  <div class="form-group">
+      <!-- Userame -->
+      <label class="control-label" for="username">Username</label>
+      <input class="form-control" id="username" name="username" placeholder="Username" type="text" required />
+  </div>
+  <div class="form-group">
+      <!-- Userame -->
+      <label class="control-label" for="email">Email</label>
+      <input class="form-control" id="email" name="email" placeholder="janedoe@mail.com" type="text" required />
+  </div>
+    <!-- Gender -->
+    <div class="form-drop">
+      <label class="control-label" for="gender">Gender</label>
+        <select class="form-control custom-select custom-select-lg mb-3" id="gender" name="gender" required>
+          <option selected disabled>Gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <!-- Date input -->
+        <label class="control-label" for="date">Birth date</label>
+        <input class="form-control" id="date" name="date" placeholder="YYYY-MM-DD" type="text" required/>
+    </div>
+    <!-- Password -->
+    <div class="form-group">
+        <label class="control-label" for="password">Password</label>
+        <input class="form-control" id="password" name="password" placeholder="Password" type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required/>
+    </div>
+    <div class="form-group">
+        <input class="form-control" name="confirmation" placeholder="Repeat Password" type="password" required/>
+    </div>
+
+    <div id="message_letter" class="invalid">
+        Password must contain a <b>lowercase</b> letter
+    </div>
+    <div id="message_capital" class="invalid">
+        Password must contain a <b>capital</b> letter
+    </div>
+    <div id="message_number" class="invalid">
+        Password must contain a <b>number</b>
+    </div>
+    <div id="message_length" class="invalid">
+        Password must contain minimum <b>5 characters</b>
+    </div>
+    <!-- Live in the Netherlands checkbox -->
+     <div class="form-check">
+         <input type="checkbox" class="form-check-input" id="money" name="money" required>
+         <label class="form-check-label" for="exampleCheck1">I want to participate for monetary compensation</label>
+     </div>
+     <!-- City -->
+     <div class="form-group" id="collect_possible_id">
+         <input type="checkbox" class="form-check-input" id="collect_possible" name="collect_possible">
+         <label class="form-check-label" for="money">It is possible for me to come to Leiden university to collect payemnt</label>
+     </div>
+    <button id="submit" class="btn btn-primary" type="submit">Register</button>
+</form>
 
 <!--This script was written with help from https://www.w3schools.com/howto/howto_js_password_validation.asp :D -->
 <script>
@@ -40,50 +81,72 @@
     var length = document.getElementById("message_length");
 
     // this starts as soon as user types something in
-    password.onkeyup = function()
-    {
+    password.onkeyup = function() {
         // Validate lowercase letters
         var lower_letters = /[a-z]/g;
-        if(password.value.match(lower_letters))
-        {
+        if (password.value.match(lower_letters)) {
             document.getElementById("message_letter").style.display = "none";
-        }
-        else
-        {
+        } else {
             document.getElementById("message_letter").style.display = "block";
         }
 
         // Validate capital letters
         var upper_letters = /[A-Z]/g;
-        if(password.value.match(upper_letters))
-        {
+        if (password.value.match(upper_letters)) {
             document.getElementById("message_capital").style.display = "none";
-        }
-        else
-        {
+        } else {
             document.getElementById("message_capital").style.display = "block";
         }
 
         // Validate numbers
         var numbers = /[0-9]/g;
-        if(password.value.match(numbers))
-        {
-        	document.getElementById("message_number").style.display = "none";
-        }
-        else
-        {
-        	document.getElementById("message_number").style.display = "block";
+        if (password.value.match(numbers)) {
+            document.getElementById("message_number").style.display = "none";
+        } else {
+            document.getElementById("message_number").style.display = "block";
         }
 
         // Validate length
-        if(password.value.length >= 5)
-        {
-    	    document.getElementById("message_length").style.display = "none";
-        }
-        else
-        {
-    	    document.getElementById("message_length").style.display = "block";
+        if (password.value.length >= 5) {
+            document.getElementById("message_length").style.display = "none";
+        } else {
+            document.getElementById("message_length").style.display = "block";
         }
     }
+
+    var collect_possible_id = document.getElementById("collect_possible_id");
+    var money = document.querySelector("input[name=money]");
+    var collect_possible = document.querySelector("input[name=collect_possible]");
+
+    money.addEventListener( 'change', function() {
+    if(this.checked) {
+        collect_possible_id.style.display = "block";
+      } else {
+        collect_possible_id.style.display = "none";
+      }
+    });
+
+    // Get todays date
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+
+    today = yyyy + '-' + mm + '-' + dd;
+
+    // Source: https://formden.com/blog/date-picker
+    // Date picker with jquery
+    $(document).ready(function() {
+        var date_input = $('input[name="date"]'); //our date input has the name "date"
+        var container = $('.bootstrap-iso form').length > 0 ? $('.bootstrap-iso form').parent() : "body";
+        date_input.datepicker({
+            format: 'yyyy-mm-dd',
+            container: container,
+            todayHighlight: true,
+            autoclose: true,
+            startDate: "1900-01-01",
+            endDate: today
+        })
+    })
 </script>
 {% endblock %}

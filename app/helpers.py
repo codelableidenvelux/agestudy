@@ -4,7 +4,48 @@ import urllib.request
 
 from flask import redirect, render_template, request, session
 from functools import wraps
+from dateutil.parser import parse
 
+
+def preprocess_birthdate(date):
+    """
+    Function preprocesses the input birthday from the register page,
+    it uses dateutil library to parse the date and make sure its in the right
+    format. It also strips the white spaces if there were any.
+    Return format str yyyy-mm-dd
+    """
+    dt = parse(date)
+    return (dt.strftime('%Y-%m-%d'))
+
+def preprocess_checkbox(input):
+    """
+    Function preprocesses the input user type from the register page,
+    it return 1 if the box was checked meaning the user does want to participate
+    for monetary compensation.
+    It returns 2 if the user does not want to participate for monetary compensation
+
+    It also is used to check if the user lives in the Netherlands
+    returns 1 if they do and 2 if they dont
+    """
+    if input == "on":
+        return 1
+    else:
+        return 0
+
+def preprocess_gender(gender):
+    """
+    Function preprocesses the input gender from the register page,
+    Returns 1 for male, 2 for female and 3 for other
+    """
+    if gender == "Male":
+        return 1
+    elif gender == "Female":
+        return 2
+    else:
+        return 3
+
+def remove_whitespace(input):
+    return input.replace(' ', '')
 
 def apology(message, code=400):
     """Render message as an apology to user."""
@@ -29,7 +70,8 @@ def login_required(f):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if session.get("user_id") is None:
+        print(session.get('user_id'))
+        if session.get('user_id') is None:
             return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
