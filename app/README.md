@@ -4,6 +4,7 @@ It connects to a DB2 instance.
 
 # Run app locally
 Set a key to your database in a file called key.txt
+
 Set a secret_key for flask
 
 ```
@@ -26,14 +27,15 @@ user cannot register. Those fields are required.
 
 After registration redirect to home page.
 ![register](images/register.jpg)
-# TODO : Javascript
-# TODO : send email
-# TODO : remove date from birthdate
+
+- TODO : Javascript
+- TODO : send email
+- TODO : remove date from birthdate
 
 # Login
 Check if the username and password are correct.
 Get the user information from database and set session.
 
 If incorrect redirect user to same page and show error message
-# TODO : This with Javascript
+- TODO : This with Javascript
 ![login](images/login.jpg)
