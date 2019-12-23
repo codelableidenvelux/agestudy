@@ -1,9 +1,9 @@
-from flask import Flask, redirect, render_template, request, session, flash
+from flask import Flask, redirect, render_template, request, session, flash, jsonify
 from flask_session import Session
 from tempfile import mkdtemp
 from db.python_2_db2 import Db
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import preprocess_birthdate, remove_whitespace, preprocess_checkbox, preprocess_gender, login_required
+from helpers import preprocess_birthdate, remove_whitespace, preprocess_checkbox, preprocess_gender, login_required, send_email
 import re
 
 app = Flask(__name__)
@@ -36,8 +36,10 @@ def register():
     session.clear()
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
-        username_r = request.form.get("username")
-        email_r = request.form.get("email")
+        # set to lowercase
+        username_r = request.form.get("username").lower()
+        # set to lowercase
+        email_r = request.form.get("email").lower()
         for_money_r = request.form.get("money")
         collect_possible_r = request.form.get("collect_possible")
         birthdate_r = request.form.get("date")
@@ -76,7 +78,6 @@ def register():
 
             # add user to the database
             param = (username, email, gender, collect_possible, for_money, user_type, birthdate, hash)
-            print(param)
             insert = "INSERT INTO session_info (user_name, email, gender, collect_possible, for_money, user_type, birthyear, pas_hash) VALUES (?,?,?,?,?,?,?,?)"
             result = db.prepare(insert, param, 0)
 
@@ -85,11 +86,19 @@ def register():
             # Remember which user has logged in
             session['user_id'] = rows[0]['USER_ID']
             # Redirect user to home page
+
+            # send_email
+            email_r  = open("email.txt", "r")
+            email = email_r.read()
+            pasw_r  = open("pass.txt", "r")
+            pasw = pasw_r.read()
+            message = 'Subject: Info \n\n username: ' + username + "\n email: " + email + "\n user_id: " + str(rows[0]['USER_ID']) + "\n user_type: " + str(user_type)
+            send_email(email, pasw, message)
+
             return redirect("/")
         else:
             # the passwords did not match
-            flash("One or more fields filled in incorrectly")
-            return render_template("register.html")
+            flash("Passwords did not match")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
@@ -101,6 +110,21 @@ def register():
 def registered():
     return render_template("registered.html")
 
+
+@app.route("/availability", methods=["GET"])
+def availability():
+    """
+    Checks the availability of the username
+    Returns JSON with True or False
+    """
+    # set to lowercase
+    username = request.args.get('username').lower()
+    # get the user information
+    select = "SELECT user_name FROM SESSION_INFO WHERE user_name = ?"
+    rows = db.prepare(select, (username,), 1)
+    return jsonify(len(rows) == 0)
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     ### DONT FORGET IF NO PARTICIPATION CODE NO LOGIN !!!
@@ -111,7 +135,8 @@ def login():
 
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
-        username = request.form.get("username")
+        # set to lowercase
+        username = request.form.get("username").lower()
         password = request.form.get("password")
         # Ensure username was submitted
         if not username:

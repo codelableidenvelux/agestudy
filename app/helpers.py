@@ -1,5 +1,7 @@
 import csv
 import os
+import smtplib, ssl
+
 import urllib.request
 
 from flask import redirect, render_template, request, session
@@ -12,10 +14,10 @@ def preprocess_birthdate(date):
     Function preprocesses the input birthday from the register page,
     it uses dateutil library to parse the date and make sure its in the right
     format. It also strips the white spaces if there were any.
-    Return format str yyyy-mm-dd
+    Return format str yyyy-mm-01
     """
     dt = parse(date)
-    return (dt.strftime('%Y-%m-%d'))
+    return (dt.strftime('%Y-%m-01'))
 
 def preprocess_checkbox(input):
     """
@@ -76,75 +78,18 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def send_email(sender_email, password, message):
+    """
+    This function takes an input email and password from sender and an input
+    email from receiver. It sends an email with input text.
+    """
+    port = 465  # For SSL
+    smtp_server = "smtp.gmail.com"
+    sender_email = 'ruchellakock@gmail.com' # Enter your address
+    receiver_email = 'ruchellakock@gmail.com'  # Enter receiver address
+    password = 'catcatcat'
 
-def lookup(symbol):
-    """Look up quote for symbol."""
-
-    # Reject symbol if it starts with caret
-    if symbol.startswith("^"):
-        return None
-
-    # Reject symbol if it contains comma
-    if "," in symbol:
-        return None
-
-    # Query Alpha Vantage for quote
-    # https://www.alphavantage.co/documentation/
-    try:
-
-        # GET CSV
-        url = f"https://www.alphavantage.co/query?apikey={os.getenv('API_KEY')}&datatype=csv&function=TIME_SERIES_INTRADAY&interval=1min&symbol={symbol}"
-        webpage = urllib.request.urlopen(url)
-
-        # Parse CSV
-        datareader = csv.reader(webpage.read().decode("utf-8").splitlines())
-        # Ignore first row
-        next(datareader)
-
-        # Parse second row
-        row = next(datareader)
-
-        # Ensure stock exists
-        try:
-            price = float(row[4])
-        except:
-            return None
-
-        name = lookup_name(symbol)
-
-        if not name:
-            return None
-
-        # Return stock's name (as a str), price (as a float), and (uppercased) symbol (as a str)
-        return {
-            "price": price,
-            "symbol": symbol.upper(),
-            "name": name
-        }
-
-    except:
-        return None
-
-
-def lookup_name(symbol):
-    """Look up name for symbol."""
-    try:
-        url = f"https://www.alphavantage.co/query?apikey={os.getenv('API_KEY')}&datatype=csv&function=SYMBOL_SEARCH&keywords={symbol}"
-        webpage = urllib.request.urlopen(url)
-
-        # Parse CSV
-        datareader = csv.reader(webpage.read().decode("utf-8").splitlines())
-        # Ignore first row
-        next(datareader)
-
-        # Parse second row
-        row = next(datareader)
-
-        return row[1]
-    except:
-        return None
-
-
-def usd(value):
-    """Format value as USD."""
-    return f"${value:,.2f}"
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+        server.login(sender_email, password)
+        server.sendmail(sender_email, sender_email, message)

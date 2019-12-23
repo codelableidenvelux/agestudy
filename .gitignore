@@ -1,2 +1,4 @@
 app/db/key.txt
 app/secret_key.txt
+app/email.txt
+app/pass.txt
