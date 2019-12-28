@@ -1,6 +1,6 @@
 # Agestudy
 This repository contains the code for the Agestudy website.
-Agestudy contains 3 cognitive tasks [Corsi Block, Task Switching, N-Back] and 2 surveys implemented in Psytoolkit.
+Agestudy contains 3 cognitive tasks and 2 surveys implemented in Psytoolkit.
 This README contains information on the structure of this repository.
 
 ## Repository overview
@@ -35,8 +35,9 @@ This README contains information on the structure of this repository.
 ├── data_processing   <- Contains basic data_cleaning and processing scripts
 ├────────────────────────────────────────────────────────────────────────────────────
 ├── reports   <- Contains files such as feedback or powerpoints
-</pre>
+<pre>
 ## Sources
 
 ## Author(s)
-Ruchella Kock :octocat: 
+Ruchella Kock :cat:
+Codelableiden - Leiden University 

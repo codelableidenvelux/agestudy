@@ -1,0 +1,114 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Account
+{% endblock %}
+
+{% block main %}
+    <h1> Hi, {{ username }}</h1>
+
+
+    <form action="/account" method="post" class = "needs-validation" novalidate>
+        <h5 id = "demo"> Click here to change password </h5>
+
+        <div id = "change">
+            <div class="form-group">
+                <input class="form-control" id="old_password" name="old_password" placeholder="Type in previous password"
+                type="password" required/>
+                <input class="form-control" id="password" name="password" placeholder="Password" type="password"
+                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required/>
+                <input class="form-control" name="confirmation" placeholder="Retype password" type="password" required/>
+            </div>
+
+            <div id="message_letter" class="invalid">
+      		    A <b>lowercase</b> letter
+            </div>
+            <div id = "message_capital" class="invalid">
+          		 A <b>capital</b> letter
+            </div>
+            <div id = "message_number" class="invalid">
+          		 A <b>number</b>
+            </div>
+            <div id = "message_length" class="invalid" >
+          		 Minimum <b>5 characters</b>
+            </div>
+            <button id = "submit" class="btn btn-primary" type="submit">Change</button>
+        </div>
+    </form>
+<!--This script was written with help from https://www.w3schools.com/howto/howto_js_password_validation.asp -->
+<script>
+    var password = document.getElementById("password");
+    var letter = document.getElementById("message_letter");
+    var capital = document.getElementById("message_capital");
+    var number = document.getElementById("message_number");
+    var length = document.getElementById("message_length");
+    document.getElementById("demo").onclick = function()
+    {
+        change_password();
+    };
+    function change_password()
+    {
+    	var change = document.getElementById("change");
+    	change.style.visibility = "visible";
+	}
+    // this starts as soon as user types something in
+    password.onkeyup = function()
+    {
+        // Validate lowercase letters
+        var lower_letters = /[a-z]/g;
+        if(password.value.match(lower_letters))
+        {
+            letter.classList.remove("invalid");
+            letter.classList.add("valid");
+            document.getElementById("message_letter").style.display = "none";
+        }
+        else
+        {
+            letter.classList.remove("valid");
+            letter.classList.add("invalid");
+            document.getElementById("message_letter").style.display = "block";
+        }
+        // Validate capital letters
+        var upper_letters = /[A-Z]/g;
+        if(password.value.match(upper_letters))
+        {
+            capital.classList.remove("invalid");
+            capital.classList.add("valid");
+            document.getElementById("message_capital").style.display = "none";
+        }
+        else
+        {
+            capital.classList.remove("valid");
+            capital.classList.add("invalid");
+            document.getElementById("message_capital").style.display = "block";
+        }
+        // Validate numbers
+        var numbers = /[0-9]/g;
+        if(password.value.match(numbers))
+        {
+            number.classList.remove("invalid");
+            number.classList.add("valid");
+        	document.getElementById("message_number").style.display = "none";
+        }
+        else
+        {
+            number.classList.remove("valid");
+            number.classList.add("invalid");
+        	document.getElementById("message_number").style.display = "block";
+        }
+        // Validate length
+        if(password.value.length >= 5)
+        {
+            length.classList.remove("invalid");
+            length.classList.add("valid");
+    	    document.getElementById("message_length").style.display = "none";
+        }
+        else
+        {
+            length.classList.remove("valid");
+            length.classList.add("invalid");
+    	    document.getElementById("message_length").style.display = "block";
+        }
+    }
+</script>
+{% endblock %}

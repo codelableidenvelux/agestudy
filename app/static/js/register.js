@@ -129,6 +129,7 @@ valid_invalid("#email", [have_at, length_email])
 var choose_gender = () => !document.getElementById("gender").value;
 valid_invalid("#gender", [choose_gender])
 
+// TODO: BUG HERE
 // return true if there is an incorrect/invalid input
 // check if the input is not a real date
 var valid_date = () => !Date.parse(document.getElementById("date").value);

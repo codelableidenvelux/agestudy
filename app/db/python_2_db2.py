@@ -1,5 +1,6 @@
 ## SOURCE: https://stackoverflow.com/questions/6044326/how-to-connect-python-to-db2
 ## Documentation:https://www.ibm.com/support/knowledgecenter/SSCJDQ/com.ibm.swg.im.dashdb.python.doc/doc/c0054699.html
+## Documentation:https://github.com/IBM/db2-python
 from ibm_db import connect
 from ibm_db import tables
 from ibm_db import exec_immediate, execute

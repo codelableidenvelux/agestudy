@@ -1,214 +1,215 @@
-<!DOCTYPE html>
+{% extends "layout.html" %}
 
-<html lang="en">
+{% block title %}
+Register
+{% endblock %} {% block main %}
 
-    <head>
-
-        <!-- Required meta tags -->
-        <meta charset="utf-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-
-
-        <link href="styles.css" rel="stylesheet"/>
-
-        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
-        <title>Age Study: practice</title>
-        <style>
-
-        </style>
-    </head>
-<body>
-  <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
-  <a class="navbar-brand" href="#">AgeStudy</a>
-  <ul class="navbar-nav">
-    <li class="active">
-      <a class="nav-link" href="#">English</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="dutch_index.html">Nederlands</a>
-    </li>
-  </ul>
-</nav>
+<link href="/static/index.css" rel="stylesheet"/>
 
 <section id="team" class="pb-5">
-    <div class="container">
-        <h5 class="section-title h1">Dear participant,</h5>
-        <p>
-        If you are here, you probably are willing to test our studies and give us feedback on how to improve them. <br>
-        Hereunder you will find a few buttons which will lead you to the cognitive task you are willing to give feedback on. <br>
-        After the task, you will be asked to answer a few questions where you can give us feedback and help us improve the tasks. <br>
+  <div class="container">
+    <h5 class="section-title h1">Dear participant,</h5>
+    <p>
+      If you are here, you probably are willing to test our studies and give us feedback on how to improve them. <br>
+      Hereunder you will find a few buttons which will lead you to the cognitive task you are willing to give feedback on. <br>
+      After the task, you will be asked to answer a few questions where you can give us feedback and help us improve the tasks. <br>
 
-        Enjoy the testing!!
-        </p>
-        <div class="row">
-            <!-- Task one -->
-            <div class="col-xs-12 col-sm-6 col-md-4">
-                <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
-                    <div class="mainflip">
-                        <div class="frontside">
-                            <div class="card">
-                                <div class="card-body text-center">
-                                    <p><img class=" img-fluid" src="/images/corsi.png" alt="card image"></p>
-                                    <h4 class="card-title">Corsi Block</h4>
-                                    <p class="card-text">This is basic card with image on top, title, description and button.</p>
-                                    <a href="#" class="btn btn-primary btn-sm">See more<i class="fa fa-plus"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="backside">
-                            <div class="card">
-                                <div class="card-body text-center mt-4">
-                                    <h4 class="card-title">Corsi Block</h4>
-                                    <p class="card-text">The Corsi block-tapping test assesses memory.
-                                      It involves remembering and mimicking a sequence of up to nine spatially separated blocks.
-                                      The sequence starts out simple, usually using two blocks, but becomes more complex and challenging.</p>
-                                    <ul class="list-inline">
-                                        <li class="list-inline-item">
-                                          <a href="https://www.psytoolkit.org/cgi-bin/psy2.6.0/survey?s=VG5Kv" target="_blank" class="btn btn-primary btn-sm stretched-link" >Try Corsi Block</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+      Enjoy the testing!!
+    </p>
+    <div class="row">
+      <!-- Task one -->
+      <div class="col-xs-12 col-sm-6 col-md-4" id="corsi" name="corsi">
+        <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
+          <div class="mainflip">
+            <div class="frontside">
+              <div class="card">
+                <div class="card-body text-center">
+                  <p><img class=" img-fluid" src="/static/images/corsi.png" alt="card image"></p>
+                  <h4 class="card-title">Corsi Block</h4>
+                  <p class="card-text">This is basic card with image on top, title, description and button.</p>
+                  <a href="#" class="btn btn-primary btn-sm">See more<i class="fa fa-plus"></i></a>
                 </div>
+              </div>
             </div>
-            <!-- ./Task one -->
-            <!-- Task two -->
-            <div class="col-xs-12 col-sm-6 col-md-4">
-                <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
-                    <div class="mainflip">
-                        <div class="frontside">
-                            <div class="card">
-                                <div class="card-body text-center">
-                                    <p><img class=" img-fluid" src="/images/N_back.png" alt="card image"></p>
-                                    <h4 class="card-title">N-back</h4>
-                                    <p class="card-text">In the N-back task you try to remember a letter that was shown N times back in a sequence.</p>
-                                    <a href="#" class="btn btn-primary btn-sm">See more<i class="fa fa-plus"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="backside">
-                            <div class="card">
-                                <div class="card-body text-center mt-4">
-                                    <h4 class="card-title">N-back task</h4>
-                                    <p class="card-text">Longer description of the task</p>
-                                    <ul class="list-inline">
-                                        <li class="list-inline-item">
-                                            <a href="https://www.psytoolkit.org/cgi-bin/psy2.6.0/survey?s=YGgzj" target="_blank" class="btn btn-primary stretched-link">Try N-back task</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
+            <div class="backside">
+              <div class="card">
+                <div class="card-body text-center mt-4">
+                  <h4 class="card-title">Corsi Block</h4>
+                  <p class="card-text">The Corsi block-tapping test assesses memory.
+                    It involves remembering and mimicking a sequence of up to nine spatially separated blocks.
+                    The sequence starts out simple, usually using two blocks, but becomes more complex and challenging.</p>
+                    {% if show_corsi %}
+                    <div id="corsi_button" name="corsi_button">
+                      <ul class="list-inline">
+                        <li class="list-inline-item">
+                          <a href="/corsi" target="_blank" name="corsi" id="corsi" class="btn btn-primary btn-sm stretched-link" >Try Corsi Block</a>
+                        </li>
+                      </ul>
                     </div>
+                    {% endif %}
+                  </div>
                 </div>
+              </div>
             </div>
-            <!-- ./Team member -->
-            <!-- Team member -->
-            <div class="col-xs-12 col-sm-6 col-md-4">
-                <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
-                    <div class="mainflip">
-                        <div class="frontside">
-                            <div class="card">
-                                <div class="card-body text-center">
-                                    <p><img class=" img-fluid" src="/images/task_switching.png" alt="card image"></p>
-                                    <h4 class="card-title">Task Switching</h4>
-                                    <p class="card-text">Short descirption</p>
-                                    <a href="#" class="btn btn-primary btn-sm">See more<i class="fa fa-plus"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="backside">
-                            <div class="card">
-                                <div class="card-body text-center mt-4">
-                                    <h4 class="card-title">Task- Switching</h4>
-                                    <p class="card-text">In this task, you are required to switch your attention between two tasks.
-                                      First, identifying if a cue is a consonant of vowel then switching between this to identify if the cue is an odd or even number.
-                                      This may sound at first... but give try it out for yourself.</p>
-                                    <ul class="list-inline">
-                                        <li class="list-inline-item">
-                                          <a href="https://www.psytoolkit.org/cgi-bin/psy2.6.0/survey?s=tYMyx" target="_blank" class="btn btn-primary stretched-link">Try Task Switching</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- ./Team member -->
-
-            <!-- Team member -->
-            <div class="col-xs-12 col-sm-6 col-md-4">
-                <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
-                    <div class="mainflip">
-                        <div class="frontside">
-                            <div class="card">
-                                <div class="card-body text-center">
-                                    <p><img class=" img-fluid" src="/images/SF-36.png" alt="card image"></p>
-                                    <h4 class="card-title">SF-36</h4>
-                                    <p class="card-text">The SF-36 is a survey that consists of 36 questions to access general wellbeing. </p>
-                                    <a href="#" class="btn btn-primary btn-sm">See more<i class="fa fa-plus"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="backside">
-                            <div class="card">
-                                <div class="card-body text-center mt-4">
-                                    <h4 class="card-title">SF-36</h4>
-                                    <p class="card-text">The SF-36 is a survey that consists of 36 questions to access general wellbeing. </p>
-                                    <ul class="list-inline">
-                                        <li class="list-inline-item">
-                                            <a href="https://www.psytoolkit.org/cgi-bin/psy2.6.0/survey?s=am8BU" target="_blank" class="btn btn-primary stretched-link">Try MCI</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- ./Team member -->
-            <!-- Team member -->
-            <div class="col-xs-12 col-sm-6 col-md-4">
-                <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
-                    <div class="mainflip">
-                        <div class="frontside">
-                            <div class="card">
-                                <div class="card-body text-center">
-                                    <p><img class=" img-fluid" src="/images/MCI.png" alt="card image"></p>
-                                    <h4 class="card-title">Phone survey</h4>
-                                    <p class="card-text">This is some random text that explains the phone survey but I am too tired to look up what it even stands for</p>
-                                    <a href="#" class="btn btn-primary btn-sm">See more<i class="fa fa-plus"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="backside">
-                            <div class="card">
-                                <div class="card-body text-center mt-4">
-                                    <h4 class="card-title">Phone survey</h4>
-                                    <p class="card-text">Longer description This is some random text that explains the MCI but I am too tired to look up what it even stands for</p>
-                                    <ul class="list-inline">
-                                        <li class="list-inline-item">
-                                            <a href="https://www.psytoolkit.org/cgi-bin/psy2.6.0/survey?s=am8BU" target="_blank" class="btn btn-primary stretched-link">Try phone survey</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- ./Team member -->
-
+          </div>
         </div>
-    </div>
-</body>
-</html>
+        <!-- ./Task one -->
+        <!-- Task two -->
+        <div class="col-xs-12 col-sm-6 col-md-4" id="n_back" name="n_back">
+          <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
+            <div class="mainflip">
+              <div class="frontside">
+                <div class="card">
+                  <div class="card-body text-center">
+                    <p><img class=" img-fluid" src="/static/images/N_back.png" alt="card image"></p>
+                    <h4 class="card-title">N-back</h4>
+                    <p class="card-text">In the N-back task you try to remember a letter that was shown N times back in a sequence.</p>
+                    <a href="#" class="btn btn-primary btn-sm">See more<i class="fa fa-plus"></i></a>
+                  </div>
+                </div>
+              </div>
+              <div class="backside">
+                <div class="card">
+                  <div class="card-body text-center mt-4">
+                    <h4 class="card-title">N-back task</h4>
+                    <p class="card-text">Longer description of the task</p>
+                    {% if show_n_back %}
+                    <div id="n_back_button" name="n_back_button">
+                      <ul class="list-inline">
+                        <li class="list-inline-item">
+                          <a href="/n_back" target="_blank" class="btn btn-primary stretched-link">Try N-back task</a>
+                        </li>
+                      </ul>
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- ./Team member -->
+        <!-- Team member -->
+        <div class="col-xs-12 col-sm-6 col-md-4" id="task_switching" name="task_switching">
+          <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
+            <div class="mainflip">
+              <div class="frontside">
+                <div class="card">
+                  <div class="card-body text-center">
+                    <p><img class=" img-fluid" src="/static/images/task_switching.png" alt="card image"></p>
+                    <h4 class="card-title">Task Switching</h4>
+                    <p class="card-text">Short descirption</p>
+                    <a href="#" class="btn btn-primary btn-sm">See more<i class="fa fa-plus"></i></a>
+                  </div>
+                </div>
+              </div>
+              <div class="backside">
+                <div class="card">
+                  <div class="card-body text-center mt-4">
+                    <h4 class="card-title">Task- Switching</h4>
+                    <p class="card-text">In this task, you are required to switch your attention between two tasks.
+                      First, identifying if a cue is a consonant of vowel then switching between this to identify if the cue is an odd or even number.
+                      This may sound at first... but give try it out for yourself.</p>
+                      {% if show_task_switching %}
+                      <div id="task_switching_button" name="task_switching_button">
+                        <ul class="list-inline">
+                          <li class="list-inline-item">
+                            <a href="/task_switching" target="_blank" class="btn btn-primary stretched-link">Try Task Switching</a>
+                          </li>
+                        </ul>
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- ./Team member -->
+
+          <!-- Team member -->
+          <div id="sf_36" name="sf_36" class="col-xs-12 col-sm-6 col-md-4">
+            <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
+              <div class="mainflip">
+                <div class="frontside">
+                  <div class="card">
+                    <div class="card-body text-center">
+                      <p><img class=" img-fluid" src="/static/images/SF-36.png" alt="card image"></p>
+                      <h4 class="card-title">SF-36</h4>
+                      <p class="card-text">The SF-36 is a survey that consists of 36 questions to access general wellbeing. </p>
+                      <a href="#" class="btn btn-primary btn-sm">See more<i class="fa fa-plus"></i></a>
+                    </div>
+                  </div>
+                </div>
+                <div class="backside">
+                  <div class="card">
+                    <div class="card-body text-center mt-4">
+                      <h4 class="card-title">SF-36</h4>
+                      <p class="card-text">The SF-36 is a survey that consists of 36 questions to access general wellbeing. </p>
+                      {% if show_sf_36 %}
+                      <div id="sf_36_button" name="sf_36_button">
+                        <ul class="list-inline">
+                          <li class="list-inline-item">
+                            <a href="/sf_36" target="_blank" class="btn btn-primary stretched-link">Try SF-36</a>
+                          </li>
+                        </ul>
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- ./Team member -->
+          <!-- Team member -->
+          <div id="phone_survey" name="phone_survey" class="col-xs-12 col-sm-6 col-md-4">
+            <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
+              <div class="mainflip">
+                <div class="frontside">
+                  <div class="card">
+                    <div class="card-body text-center">
+                      <p><img class=" img-fluid" src="/static/images/MCI.png" alt="card image"></p>
+                      <h4 class="card-title">Phone survey</h4>
+                      <p class="card-text">This is some random text that explains the phone survey but I am too tired to look up what it even stands for</p>
+                      <a href="#" class="btn btn-primary btn-sm">See more<i class="fa fa-plus"></i></a>
+                    </div>
+                  </div>
+                </div>
+                <div class="backside">
+                  <div class="card">
+                    <div class="card-body text-center mt-4">
+                      <h4 class="card-title">Phone survey</h4>
+                      <p class="card-text">Longer description This is some random text that explains the phone survey but I am too tired to look up what it even stands for</p>
+                      {% if show_phone_survey %}
+                      <div id="phone_survey_button" name="phone_survey_button">
+                        <ul class="list-inline">
+                          <li class="list-inline-item">
+                            <a href="/phone_survey" target="_blank" class="btn btn-primary stretched-link">Try phone survey</a>
+                          </li>
+                        </ul>
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- ./Team member -->
+        </div>
+      </div>
+
+      <script>
+      var corsi = document.getElementById("corsi_button");
+      console.log(corsi)
+      var n_back = document.getElementById("n_back_button");
+      console.log(n_back)
+      var task_switching = document.getElementById("task_switching_button");
+      console.log(task_switching)
+      var sf_36 = document.getElementById("sf_36_button");
+      console.log(sf_36)
+      var phone_survey = document.getElementById("phone_survey_button");
+      console.log(corsi)
+    </script>
+    {% endblock %}

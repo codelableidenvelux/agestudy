@@ -7,9 +7,6 @@ Register
 <!-- Include jQuery -->
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 
-<!-- load in javascript rules for register.html -->
-<script src="/static/js/register.js"></script>
-
 <!-- Include Date Range Picker -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
@@ -119,5 +116,10 @@ Register
 
   <button id="submit" class="btn btn-primary" type="submit">Register</button>
 </form>
+
+<!-- load in javascript rules for register.html -->
+<!-- NOTE it must be under the form otherwise it doesnt recognize what the elements are -->
+<script src="/static/js/register.js"></script>
+
 
 {% endblock %}

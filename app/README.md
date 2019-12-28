@@ -19,14 +19,17 @@ python3 localserver_run.py
 
 # Register
 The register page asks the user for the following items:
-- username (textbox)
-- email (textbox)
-- participating for money (checkbox)
-- if they are able to collect money (checkbox)
-- birthdate (date)
-- gender
-- password
-- re-enter password
+
+| <b>Field</b>            | <b>html type</b> | <b>DB</b>                    | <b>constraints</b>                                          |
+|-------------------------|------------------|------------------------------|-------------------------------------------------------------|
+| username                | textbox          | VARCHAR(255) NOT NULL UNIQUE | >5chars, unique, no whitespace                              |
+| email                   | textbox          | VARCHAR(255) NOT NULL        | not null, containts @                                       |
+| participating for money | checkbox         | INT NOT NULL                 | not null                                                    |
+| collection possible     | checkbox         | INT NOT NULL                 | not null                                                    |
+| birthdate               | textbox          | DATE NOT NULL                | is date, not null                                           |
+| gender                  | dropdown         | INT NOT NULL                 | not null                                                    |
+| password                | textbox          | VARCHAR(255) NOT NULL        | >5chars, atleast 1 capital and 1 lowercase letter, 1 number |
+| re-enter password       | textbox          | not stored                   | matches password                                            |
 
 if the username, birthdate, gender, email or password and re-entered password is missing,
 user cannot register. Those fields are required.
