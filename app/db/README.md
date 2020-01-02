@@ -55,7 +55,7 @@ Contains information about the tasks, id, name, psytoolkit link etc.
 | frequency | DECIMAL(3,2) NOT NULL     | How often the task can be completed   |
 | price     | DECIMAL(5,3) NOT NULL     | the amount user can earn for the task |
 
-## Task_complated
+## Task_completed
 Keeps track of the completed tasks.
 
 | Task_completed | Type                                | Explanation                                                            |
