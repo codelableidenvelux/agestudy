@@ -72,7 +72,7 @@ If not locked tasks are recommended in the above order.
 The home page also contains a money tab which shows the user the amount of money they have earned so far.
 ![home](static/images/home.jpg)
 
-TODO: Collection of the money_earned!!
+TODO: Collection of the money_earned on admin page 
 
 # Tests
 The task tab contains 5 tasks [corsi, N-back, task switching, sf-36 and phone survey]. The cards contain a link to psytoolkit for each task.

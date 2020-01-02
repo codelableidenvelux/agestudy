@@ -40,5 +40,9 @@ if its false the div is not show there are no recomendations-->
 {% if user_type %}
 <div class="price" id="price" value="{{price}}" name="price"></div>
 <div id=barChart></div>
+
+<form action="/collection" method="post">
+<button id="collection" class="btn btn-primary" type="submit">Collect payment</button>
+</form>
 {% endif %}
 {% endblock %}

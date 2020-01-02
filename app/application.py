@@ -64,7 +64,7 @@ def task_completed(task_id):
     opened_task = newest_task[0]["TASK_ID"]
     if opened_task == task_id:
         update = f"UPDATE TRACKED_TASK SET status = 1 WHERE time_exec= (SELECT MAX(time_exec) FROM TRACKED_TASK WHERE USER_ID = {id});"
-        insert = f"INSERT INTO TASK_COMPLETED (user_id, task_id) VALUES ({id}, {task_id});"
+        insert = f"INSERT INTO TASK_COMPLETED (user_id, task_id, collect) VALUES ({id}, {task_id}, 1);"
         db.execute(update, 0)
         db.execute(insert, 0)
 
@@ -185,7 +185,7 @@ def calculate_money():
     Calculate the amount of money the user has
     """
     id = session['user_id']
-    select = f"SELECT * FROM TASK_COMPLETED WHERE USER_ID = {id}"
+    select = f"SELECT * FROM TASK_COMPLETED WHERE USER_ID = {id} AND COLLECT NOT IN ( 0 )"
     completed_tasks = db.execute(select, 1)
     money_earned = 0
     for i in completed_tasks:
@@ -518,3 +518,33 @@ def home():
         recomendation = False
         task = {"img":"", "alt":"", "title":"",  "text" : "", "link" : "", "button_text": ""}
     return render_template("home.html", price=price, user_type=user_type, recomendation=recomendation, img=task["img"], alt=task["alt"], title=task["title"], text=task["text"], link=task["link"], button_text=task["button_text"])
+
+@app.route("/collection", methods=["POST"])
+@login_required
+def collection():
+    """
+    Button to collect payment
+    """
+    collection = request.form.get("collection")
+    id = session["user_id"]
+    # update the collection to 0 which means that the user has/will collect the money_earned
+    # otherwise collect is 1
+    update = f"UPDATE TASK_COMPLETED SET COLLECT=0 WHERE USER_ID = {id}"
+    db.prepare(update, (id,), 0)
+
+    # select the user info
+    select = f"SELECT * FROM SESSION_INFO WHERE USER_ID = {id}"
+    rows = db.prepare(select, (id,), 1)
+    money_earned = calculate_money()
+
+    # send_email with the users info to our email to contact them about participating
+    # email contains username, email, usertype, user_id and the ammount to be collect
+    email_r  = open("email.txt", "r")
+    email = email_r.read()
+    pasw_r  = open("pass.txt", "r")
+    pasw = pasw_r.read()
+    message = 'Subject: Payment collection \n\n The following participant wants to collect their payment for the study' + '\n username: ' + str(rows[0]['USER_NAME']) + "\n email: " + str(rows[0]['EMAIL']) + "\n user_id: " + str(rows[0]['USER_ID']) + "\n user_type: " + str(rows[0]['USER_TYPE']) + "\n ammount to collect: " + str(money_earned)
+    send_email(email, pasw, message)
+
+    # render a thank you page
+    return render_template("collected.html", money_earned=money_earned)
