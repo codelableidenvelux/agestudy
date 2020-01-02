@@ -46,6 +46,7 @@ The table session_info contains the user information. They provide it at registe
 
 ## Tasks
 Contains information about the tasks, id, name, psytoolkit link etc.
+
 | Tasks     | Type                      | Explanation                           |
 |-----------|---------------------------|---------------------------------------|
 | task_id   | INT NOT NULL PRIMARY KEY  | A number to describe each task        |
@@ -56,6 +57,7 @@ Contains information about the tasks, id, name, psytoolkit link etc.
 
 ## Task_complated
 Keeps track of the completed tasks.
+
 | Task_completed | Type                                | Explanation                                                            |
 |----------------|-------------------------------------|------------------------------------------------------------------------|
 | time_exec      | TIMESTAMP DEFAULT CURRENT_TIMESTAMP | Time task was completed                                                 |
@@ -65,6 +67,7 @@ Keeps track of the completed tasks.
 
 ## Tracked_task
 Keeps track of the opening and closing of the tasks.
+
 | Tracked_task | Type                                | Explanation                            |
 |--------------|-------------------------------------|----------------------------------------|
 | time_exec    | TIMESTAMP DEFAULT CURRENT_TIMESTAMP | Time task was executed                 |
