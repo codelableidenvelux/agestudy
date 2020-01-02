@@ -4,5 +4,9 @@
 EGG
 {% endblock %} {% block main %}
 
-<h1> Insert EGG info </h1>
+<h1> This page contains information about the EEG task </h1>
+<p>If you are willing to participate click the button hereunder and we will contact you to set up a date. </p>
+<form action="/eeg" method="post">
+<button id="eeg" class="btn btn-primary" type="submit">Participate with EEG</button>
+</form>
 {% endblock %}

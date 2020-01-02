@@ -22,8 +22,6 @@ nav .navbar-brand .green
     color: #2e944b;
 }
 
-
-
 main
 {
     /* scroll horizontally as needed */
@@ -55,14 +53,6 @@ tr:nth-child(even)
     background-color: #f2f2f2;
 }
 
-.total
-{
-    color: #800000;
-}
-.value
-{
-    text-align: left;
-}
 
 #change
 {

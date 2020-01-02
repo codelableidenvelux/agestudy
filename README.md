@@ -4,15 +4,30 @@ Agestudy contains 3 cognitive tasks and 2 surveys implemented in Psytoolkit.
 This README contains information on the structure of this repository.
 
 ## Repository overview
-<pre>
 ├──Nested =  This indicates there is a file inside a folder  
+<pre>
 ├── requirements.txt   <- The requirements file for reproducing the analysis
 ├── app                <- Source code for the web application     
-│   ├── html           <- Contains all the html scripts
-│   ├── css            <- Contains all the css scripts
-│   ├── js             <- Contains all the javascript (D3) code
-│   ├── db             <- Contains all the information for the database
-│   └── manifest.yml  <- IBM specifications
+│   ├── templates           <- Contains all the html scripts
+│   ├── static           <- Contains css, js and images
+│   │     ├── css  <- contains all the css scripts
+│   │     │                
+│   │     ├── images  <- contains images used on the website including favicon
+│   │     │     
+│   │     └── js  <- contains javascript code
+│   │     
+│   ├── db        <- Contains all the information for the database
+│   │     ├── python_2_db2.py  <- talk to db2 with python
+│   │     │                
+│   │     ├── tables.sql  <- SQL script to make all the tables
+│   │     │     
+│   │     ├── delete.sql  <- SQL drop tables
+│   │     │     
+│   │     └── test.sql  <- insert some data in the tables to test them
+│   │
+│   ├── application.py      <-- application to run the website
+│   ├── helpers.py          <-- functions to use in application.py
+│   └── localserver_run     <-- run the application locally
 ├────────────────────────────────────────────────────────────────────────────────────
 │              
 ├── psychtoolkit        <- Contains psychtoolkit scripts
@@ -35,9 +50,10 @@ This README contains information on the structure of this repository.
 ├── data_processing   <- Contains basic data_cleaning and processing scripts
 ├────────────────────────────────────────────────────────────────────────────────────
 ├── reports   <- Contains files such as feedback or powerpoints
-<pre>
+</pre>
 ## Sources
 
 ## Author(s)
 Ruchella Kock :cat:
-Codelableiden - Leiden University 
+
+Codelableiden - Leiden University

@@ -100,7 +100,8 @@ $(document).ready(function() {
 valid_invalid = function(input, functions){
   var input_var = $(input);
   input_var.keyup(function(){
-  if (functions.some(function(f){return f()})){
+  if (functions.some(function(f){ console.log(f())
+    return f()})){
     input_var.addClass("is-invalid");
     input_var.removeClass("is-valid");
   } else {
@@ -132,7 +133,13 @@ valid_invalid("#gender", [choose_gender])
 // TODO: BUG HERE
 // return true if there is an incorrect/invalid input
 // check if the input is not a real date
+
 var valid_date = () => !Date.parse(document.getElementById("date").value);
+function valid_date(){
+  date = document.getElementById("date").value
+  console.log(Date.parse(date))
+  return !Date.parse(date)
+}
 valid_invalid("#date", [valid_date])
 
 // since the date function autofills if the date was filled incorrectly

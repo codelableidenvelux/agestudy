@@ -3,6 +3,42 @@
 {% block title %}
 Home
 {% endblock %} {% block main %}
+<!-- javascript links -->
+<script src="/static/js/bar_chart.js"></script>
+<!-- D3 links -->
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="/static/js/topojson.js"></script>
+<!-- css script -->
+<link href="/static/css/home.css" rel="stylesheet"/>
 
-<h1>Home stuff</h1>
+
+<!-- Define a macro that will contain the card, the inputs are
+the image of the task and its alt, the title and description of the task,
+the route to the task and the text in the button. -->
+{% macro card(img, alt, title, text, link, button_text) -%}
+<div class="card " style="width: 18rem;">
+  <img src="{{ img }}" class="card-img-top" alt="{{ alt }}">
+  <div class="card-body">
+    <h5 class="card-title">{{ title }}</h5>
+    <p class="card-text">{{ text }}</p>
+    <a href="{{link}}" class="btn btn-primary">{{ button_text }}</a>
+  </div>
+</div>
+{%- endmacro %}
+
+<h1>Welcome</h1>
+
+<!-- if they have unlocked or uncompleted tasks then show them this div
+if its false the div is not show there are no recomendations-->
+{% if recomendation %}
+<p> If you are looking for the next task to perform we chose this one especially for you </p>
+{{ card(img, alt, title, text, link, button_text) }}
+{% endif %}
+
+<br><br><br><br>
+<!-- Show the barchart which keeps track of the money the user earned so far-->
+{% if user_type %}
+<div class="price" id="price" value="{{price}}" name="price"></div>
+<div id=barChart></div>
+{% endif %}
 {% endblock %}
