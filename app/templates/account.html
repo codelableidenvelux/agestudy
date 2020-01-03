@@ -5,48 +5,35 @@ Account
 {% endblock %}
 
 {% block main %}
-<h1> Hi, {{ username }}</h1>
 <!-- Show the user their account information-->
 <div class="form-group row">
-  <label for="static_username" class="col-sm-2 col-form-label">Username:</label>
+  <label for="static_username" class="col-sm-2 col-form-label">{{account_csv["label1"]}}</label>
   <div class="col-6">
     <input type="text" size="100" readonly class="form-control-plaintext" id="static_username" value="{{username}}">
   </div>
-  </div>
-  <div class="form-group row">
-    <label for="static_email" class="col-sm-2 col-form-label">Email:</label>
-    <div class="col-6">
-      <input type="text" size="100" readonly class="form-control-plaintext" id="static_email" value="{{email}}">
-    </div>
   </div>
   <br><br>
 
   <!-- Form, allow user to change password -->
   <form action="/account" method="post" class = "needs-validation" novalidate>
-    <button id = "demo" type="button" class="btn btn-primary">Change password</button>
+    <button id = "demo" type="button" class="btn btn-primary">{{account_csv["button1"]}}</button>
 
     <div id = "change">
       <div class="form-group">
-        <input class="form-control" id="old_password" name="old_password" placeholder="Type in previous password"
+        <input class="form-control" id="old_password" name="old_password" placeholder="{{account_csv["placeholder1"]}}"
         type="password" required/>
-        <input class="form-control" id="password" name="password" placeholder="Password" type="password"
+        <input class="form-control" id="password" name="password" placeholder="{{account_csv["placeholder2"]}}" type="password"
         pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required/>
-        <input class="form-control" name="confirmation" placeholder="Retype password" type="password" required/>
+        <input class="form-control" name="confirmation" placeholder="{{account_csv["placeholder3"]}}" type="password" required/>
       </div>
 
-      <div id="message_letter" class="invalid">
-        A <b>lowercase</b> letter
-      </div>
-      <div id = "message_capital" class="invalid">
-        A <b>capital</b> letter
-      </div>
       <div id = "message_number" class="invalid">
-        A <b>number</b>
+        {{account_csv["message_number"]}}
       </div>
       <div id = "message_length" class="invalid" >
-        Minimum <b>5 characters</b>
+        {{account_csv["message_length"]}}
       </div>
-      <button id = "submit" class="btn btn-primary" type="submit">Change</button>
+      <button id = "submit" class="btn btn-primary" type="submit">{{account_csv["button2"]}}</button>
     </div>
   </form>
   <!--This script was written with help from https://www.w3schools.com/howto/howto_js_password_validation.asp -->
@@ -68,36 +55,7 @@ Account
     // this starts as soon as user types something in
     password.onkeyup = function()
     {
-      // Validate lowercase letters
-      var lower_letters = /[a-z]/g;
-      if(password.value.match(lower_letters))
-      {
-        letter.classList.remove("invalid");
-        letter.classList.add("valid");
-        document.getElementById("message_letter").style.display = "none";
-      }
-      else
-      {
-        letter.classList.remove("valid");
-        letter.classList.add("invalid");
-        document.getElementById("message_letter").style.display = "block";
-      }
-      // Validate capital letters
-      var upper_letters = /[A-Z]/g;
-      if(password.value.match(upper_letters))
-      {
-        capital.classList.remove("invalid");
-        capital.classList.add("valid");
-        document.getElementById("message_capital").style.display = "none";
-      }
-      else
-      {
-        capital.classList.remove("valid");
-        capital.classList.add("invalid");
-        document.getElementById("message_capital").style.display = "block";
-      }
-      // Validate numbers
-      var numbers = /[0-9]/g;
+        var numbers = /[0-9]/g;
       if(password.value.match(numbers))
       {
         number.classList.remove("invalid");

@@ -3,11 +3,16 @@ import os
 import smtplib, ssl
 
 import urllib.request
+import pandas as pd
 
 from flask import redirect, render_template, request, session
 from functools import wraps
 from dateutil.parser import parse
 
+def read_csv(filename):
+    df = pd.read_csv(filename, sep=",", index_col=0, encoding = "utf-8")
+    df = df.to_dict()
+    return df["text"]
 
 def preprocess_birthdate(date):
     """
@@ -17,7 +22,7 @@ def preprocess_birthdate(date):
     Return format str yyyy-mm-01
     """
     dt = parse(date)
-    return (dt.strftime('%Y-%m-01'))
+    return (dt.strftime('%Y-%m-%d'))
 
 def preprocess_checkbox(input):
     """

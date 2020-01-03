@@ -3,7 +3,7 @@ from flask_session import Session
 from tempfile import mkdtemp
 from db.python_2_db2 import Db
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import preprocess_birthdate, remove_whitespace, preprocess_checkbox, preprocess_gender, login_required, send_email
+from helpers import preprocess_birthdate, remove_whitespace, preprocess_checkbox, preprocess_gender, login_required, send_email, read_csv
 import re
 from datetime import datetime, timedelta
 
@@ -24,7 +24,8 @@ Session(app)
 
 # make an instance of the database class
 db = Db("db/key.txt")
-
+layout = read_csv("static/csv/layout.csv")
+print(layout["list1"])
 ################################################################################
 ########################### TASK MANAGEMENT ####################################
 ###############################################################################
@@ -218,6 +219,7 @@ def index():
 def register():
     """Register user"""
     session.clear()
+    register = read_csv("static/csv/register.csv")
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
         # set to lowercase
@@ -226,7 +228,9 @@ def register():
         email_r = request.form.get("email").lower()
         for_money_r = request.form.get("money")
         collect_possible_r = request.form.get("collect_possible")
-        birthdate_r = request.form.get("date")
+        year = request.form.get("year")
+        month = request.form.get("month")
+        birthdate_r = str(year) + str(month) + "01"
         gender_r = request.form.get("gender")
         password = request.form.get("password")
         new_password = request.form.get("confirmation")
@@ -234,7 +238,7 @@ def register():
         # ensure that all fiels that are required were filled in correctly
         if not username_r or not birthdate_r or not gender_r or not email_r:
             flash("Fill in all fields")
-            return render_template("register.html")
+            return render_template("register.html",  register=register)
 
         # preprocesses inputs to get in right format for database
         username = remove_whitespace(username_r)
@@ -258,7 +262,7 @@ def register():
             # check true it means it is in use
             if rows:
                 flash("Username already in use")
-                return render_template("register.html")
+                return render_template("register.html",  register=register)
 
             # add user to the database
             param = (username, email, gender, collect_possible, for_money, user_type, birthdate, hash)
@@ -286,14 +290,7 @@ def register():
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
-        return render_template("register.html")
-
-# TODO: REMOVE
-# If the user has registered succesfully they receive a confirmation page
-# This tells them they will receive an email with the id
-@app.route("/registered", methods=["GET", "POST"])
-def registered():
-    return render_template("registered.html")
+        return render_template("register.html",  register=register)
 
 
 @app.route("/availability", methods=["GET"])
@@ -309,6 +306,18 @@ def availability():
     rows = db.prepare(select, (username,), 1)
     return jsonify(len(rows) == 0)
 
+@app.route("/email", methods=["GET"])
+def email():
+    """
+    Checks the availability of the username
+    Returns JSON with True or False
+    """
+    # set to lowercase
+    username = request.args.get('username').lower()
+    email = request.args.get('email').lower()
+    # get the user information
+    return jsonify(username == email)
+
 ################################################################################
 ################################ LOGIN  #######################################
 ###############################################################################
@@ -319,7 +328,7 @@ def login():
 
     # Forget any user_id
     session.clear()
-
+    login_csv = read_csv("static/csv/login.csv")
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
         # set to lowercase
@@ -341,16 +350,16 @@ def login():
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]['PAS_HASH'], request.form.get("password")):
             flash("invalid username and/or password")
-            return render_template("login.html")
+            return render_template("login.html", login_csv=login_csv)
 
         # Remember which user has logged in
         session['user_id'] = rows[0]['USER_ID']
         # Redirect user to home page
-        return redirect("/")
+        return redirect("/home")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
-        return render_template("login.html")
+        return render_template("login.html", login_csv=login_csv)
 
 def check_password(password, new_password):
     """Make sure password is correctly chosen"""
@@ -389,6 +398,7 @@ def account():
     User can view their account information
     User can update their password
     """
+    account_csv = read_csv("static/csv/account.csv")
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
         # change password, get old password and two new entries
@@ -407,7 +417,7 @@ def account():
         # Check if the old password matches
         if not check_password_hash(rows[0]['PAS_HASH'], old_password):
             flash("Password incorrect")
-            return render_template("account.html", username=username.capitalize(), email=email)
+            return render_template("account.html", account_csv=account_csv, username=username.capitalize(), email=email)
         # check if the new password is properly implemented
         if check_password(password, confirmation):
             # encrypt the users' password
@@ -420,7 +430,7 @@ def account():
             return redirect("/")
         else:
             flash("One or more fields filled incorrectly")
-            return render_template("account.html", username=username.capitalize(), email=email)
+            return render_template("account.html", account_csv=account_csv, username=username.capitalize(), email=email)
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         # Show them their account information
@@ -429,7 +439,7 @@ def account():
         rows = db.prepare(select, (id,), 1)
         username = rows[0]["USER_NAME"]
         email = rows[0]["EMAIL"]
-        return render_template("account.html", username=username.capitalize(), email=email)
+        return render_template("account.html", account_csv=account_csv, username=username.capitalize(), email=email)
 
 ################################################################################
 ################################ STATIC #####################################
@@ -440,7 +450,8 @@ def consent():
     """
     Consent form
     """
-    return render_template("consent.html")
+    consent_csv = read_csv("static/csv/consent.csv")
+    return render_template("consent.html", consent_csv=consent_csv)
 
 @app.route("/eeg", methods=["GET", "POST"])
 @login_required
@@ -448,6 +459,8 @@ def eeg():
     """
     EEG information
     """
+    eeg_csv = read_csv("static/csv/eeg.csv")
+    sent_email_csv = read_csv("static/csv/sent_email.csv")
     # If they clicked on the submit button
     if request.method == "POST":
         id = session["user_id"]
@@ -464,9 +477,9 @@ def eeg():
         send_email(email, pasw, message)
 
         # render a thank you page
-        return render_template("sent_email.html")
+        return render_template("sent_email.html", sent_email_csv=sent_email_csv)
     else:
-        return render_template("eeg.html")
+        return render_template("eeg.html", eeg_csv=eeg_csv)
 
 @app.route("/home", methods=["GET", "POST"])
 @login_required
@@ -474,6 +487,7 @@ def home():
     """
     Home page, contains a money tab and a recommended task
     """
+    home_csv = read_csv("static/csv/home.csv")
     # calculate the money earned to draw the barchart
     price = calculate_money()
 
@@ -517,7 +531,7 @@ def home():
     else:
         recomendation = False
         task = {"img":"", "alt":"", "title":"",  "text" : "", "link" : "", "button_text": ""}
-    return render_template("home.html", price=price, user_type=user_type, recomendation=recomendation, img=task["img"], alt=task["alt"], title=task["title"], text=task["text"], link=task["link"], button_text=task["button_text"])
+    return render_template("home.html", price=price, user_type=user_type, recomendation=recomendation, home_csv=home_csv, img=task["img"], alt=task["alt"], title=task["title"], text=task["text"], link=task["link"], button_text=task["button_text"])
 
 @app.route("/collection", methods=["POST"])
 @login_required
@@ -525,6 +539,7 @@ def collection():
     """
     Button to collect payment
     """
+    collected_csv = read_csv("static/csv/collected.csv")
     collection = request.form.get("collection")
     id = session["user_id"]
     # update the collection to 0 which means that the user has/will collect the money_earned
@@ -547,4 +562,24 @@ def collection():
     send_email(email, pasw, message)
 
     # render a thank you page
-    return render_template("collected.html", money_earned=money_earned)
+    return render_template("collected.html", money_earned=money_earned, collected_csv=collected_csv)
+
+@app.route("/about_study", methods=["GET"])
+def about_study():
+    about_study_csv = read_csv("static/csv/about_study.csv")
+    return render_template("about_study.html", about_study_csv=about_study_csv)
+
+@app.route("/for_participant", methods=["GET"])
+def for_participant():
+    for_participant_csv = read_csv("static/csv/for_participant.csv")
+    return render_template("for_participant.html", for_participant_csv=for_participant_csv)
+
+@app.route("/about_app", methods=["GET"])
+def about_app():
+    about_app_csv = read_csv("static/csv/about_app.csv")
+    return render_template("about_app.html", about_app_csv=about_app_csv)
+
+@app.route("/contact", methods=["GET"])
+def contact():
+    contact_csv = read_csv("static/csv/about_study.csv", contact_csv=contact_csv)
+    return render_template("contact.html")

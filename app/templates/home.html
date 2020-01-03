@@ -21,28 +21,31 @@ the route to the task and the text in the button. -->
   <div class="card-body">
     <h5 class="card-title">{{ title }}</h5>
     <p class="card-text">{{ text }}</p>
-    <a href="{{link}}" class="btn btn-primary">{{ button_text }}</a>
+    <a href="{{link}}" target="_blank" class="btn btn-primary">{{ button_text }}</a>
   </div>
 </div>
 {%- endmacro %}
 
-<h1>Welcome</h1>
+<h1>{{ home_csv["h11"] }}</h1>
 
 <!-- if they have unlocked or uncompleted tasks then show them this div
 if its false the div is not show there are no recomendations-->
 {% if recomendation %}
-<p> If you are looking for the next task to perform we chose this one especially for you </p>
+<p> {{ home_csv["p1"] }} </p>
 {{ card(img, alt, title, text, link, button_text) }}
+<br><br><br><br>
+<p> {{ home_csv["p2"] }}</p>
+<a href="/" class="btn btn-primary">{{ home_csv["button1"] }}</a>
+<br><br><br><br>
 {% endif %}
 
-<br><br><br><br>
+
 <!-- Show the barchart which keeps track of the money the user earned so far-->
 {% if user_type %}
 <div class="price" id="price" value="{{price}}" name="price"></div>
 <div id=barChart></div>
-
 <form action="/collection" method="post">
-<button id="collection" class="btn btn-primary" type="submit">Collect payment</button>
+<button id="collection" class="btn btn-primary" type="submit">{{ home_csv["button2"] }}</button>
 </form>
 {% endif %}
 {% endblock %}

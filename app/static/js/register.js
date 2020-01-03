@@ -1,31 +1,38 @@
 //This script was written with help from https://www.w3schools.com/howto/howto_js_password_validation.asp :D -->
+///////////////////////////////////////////////////////////////////////////
+//////////////////////// Minimum requirements /////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+// check if the user is 16 years and older
+var age_appropriate = document.getElementById("age_appropriate").addEventListener("click", onClick);
+// check if the user has a smartphone
+var have_smartphone = document.getElementById("have_smartphone").addEventListener("click", onClick);
+// check if the user has the app installed
+var app_installed = document.getElementById("app_installed").addEventListener("click", onClick);
+// these are the divs where the minimum requirements are and the rest of the register form
+var register_form = document.getElementById("register_form");
+var minimum_requirements = document.getElementById("minimum_requirements")
+
+// Onclick of the checkboxes check if all the minimum requirements are met (if all boxes checked), if they are then dissplay the register form
+function onClick(){
+  if (document.getElementById("age_appropriate").checked && document.getElementById("have_smartphone").checked && document.getElementById("app_installed").checked){
+    console.log("show")
+    register_form.style.display = "block";
+  } else {
+    console.log('dont_show')
+    register_form.style.display = "none";
+  }
+};
+
 
 ///////////////////////////////////////////////////////////////////////////
 //////////////////////// Check the password  ///////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 var password = document.getElementById("password");
-var letter = document.getElementById("message_letter");
-var capital = document.getElementById("message_capital");
 var number = document.getElementById("message_number");
 var length = document.getElementById("message_length");
 
 // this starts as soon as user types something in
 password.onkeyup = function() {
-    // Validate lowercase letters
-    var lower_letters = /[a-z]/g;
-    if (password.value.match(lower_letters)) {
-        document.getElementById("message_letter").style.display = "none";
-    } else {
-        document.getElementById("message_letter").style.display = "block";
-    }
-
-    // Validate capital letters
-    var upper_letters = /[A-Z]/g;
-    if (password.value.match(upper_letters)) {
-        document.getElementById("message_capital").style.display = "none";
-    } else {
-        document.getElementById("message_capital").style.display = "block";
-    }
 
     // Validate numbers
     var numbers = /[0-9]/g;
@@ -100,8 +107,7 @@ $(document).ready(function() {
 valid_invalid = function(input, functions){
   var input_var = $(input);
   input_var.keyup(function(){
-  if (functions.some(function(f){ console.log(f())
-    return f()})){
+  if (functions.some(function(f){ return f()})){
     input_var.addClass("is-invalid");
     input_var.removeClass("is-valid");
   } else {
@@ -113,10 +119,14 @@ valid_invalid = function(input, functions){
 
 // they return true if there is an incorrect/invalid input
 // checks if there are any whitespace characters in username
+// they return true if there is an incorrect/invalid input
+// check if the email does not have an @
+var have_at_username = () => !document.getElementById("username").value.match(/[@]/g);
 var whitespace = () => document.getElementById("username").value.match(/\s/g);
 // checks if the lentgh of username is smaller than 5
-var length_username = () => document.getElementById("username").value.length <= 5;
-valid_invalid("#username", [whitespace, length_username])
+var length_username = () => document.getElementById("username").value.length < 1;
+
+valid_invalid("#username", [have_at_username, length_username])
 
 // they return true if there is an incorrect/invalid input
 // check if the email does not have an @
@@ -133,8 +143,10 @@ valid_invalid("#gender", [choose_gender])
 // TODO: BUG HERE
 // return true if there is an incorrect/invalid input
 // check if the input is not a real date
-
-var valid_date = () => !Date.parse(document.getElementById("date").value);
+month = document.getElementById("month").value
+year = document.getElementById("year").value
+date = "01"
+var valid_date = () => !Date.parse( year + "/" + month + "/" + date);
 function valid_date(){
   date = document.getElementById("date").value
   console.log(Date.parse(date))
@@ -168,12 +180,26 @@ date.blur(function(){
 username.onblur = function(){
   $.getJSON("/availability", {'username': username.value}, function(result, state){
     if (state === "success"){
-      if (result && !length_username() && !whitespace()){
+      if (result && !have_at_username() && !length_username()){
         $("#username").addClass("is-valid");
         $("#username").removeClass("is-invalid");
       } else {
         $("#username").addClass("is-invalid");
         $("#username").removeClass("is-valid");
+      }
+    }
+  });
+}
+var password = document.getElementById("email");
+email.onblur = function(){
+  $.getJSON("/email", {'email': email.value, 'username': username.value }, function(result, state){
+    if (state === "success"){
+      if (result){
+        $("#email").addClass("is-valid");
+        $("#email").removeClass("is-invalid");
+      } else {
+        $("#email").addClass("is-invalid");
+        $("#email").removeClass("is-valid");
       }
     }
   });

@@ -70,3 +70,8 @@ tr:nth-child(even)
 {
   display: none;
 }
+
+#register_form
+{
+  display: none;
+}

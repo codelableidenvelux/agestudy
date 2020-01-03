@@ -4,9 +4,9 @@
 EGG
 {% endblock %} {% block main %}
 
-<h1> This page contains information about the EEG task </h1>
-<p>If you are willing to participate click the button hereunder and we will contact you to set up a date. </p>
+<h1> {{ eeg_csv["h11"] }} </h1>
+<p>{{ eeg_csv["p1"] }} </p>
 <form action="/eeg" method="post">
-<button id="eeg" class="btn btn-primary" type="submit">Participate with EEG</button>
+<button id="eeg" class="btn btn-primary" type="submit">{{ eeg_csv["button1"] }}</button>
 </form>
 {% endblock %}
