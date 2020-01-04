@@ -1,4 +1,4 @@
-﻿tag,text
-input1,Email
-input2,Password
-button1,Log In
+﻿tag,english,dutch
+input1,Email,Email
+input2,Password,Paswoord
+button1,Log In,Inloggen

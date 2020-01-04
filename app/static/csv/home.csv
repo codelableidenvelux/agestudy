@@ -1,6 +1,7 @@
-﻿tag,text
-h11,Welcome Participant
-p1,If you are looking for the next task to perform we chose this one especially for you 
-p2,There are also more tasks you could perform click the button to try other tasks
-button1,Try another task
-button2,Collect payment
+﻿tag,english,dutch
+h11,Welcome Participant,Welkom deelnemer
+p1,If you are looking for the next task to perform we chose this one especially for you ,"Als je een suggestie zoekt, is deze oefening aanbevolen"
+p2,There are also more tasks you could perform click the button to try other tasks,Er zijn meerdere oefeningen die u kunt proberen
+button1,Try another task,Probeer een andere oefening
+button2,Collect payment,Betaling ophalen
+js_title,Money earned so far:,Geld verdiend tot nu toe

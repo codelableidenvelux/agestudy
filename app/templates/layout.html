@@ -17,8 +17,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
 
-<!-- https://icons8.com/icons/set/favicon -->
+
+  <!-- https://icons8.com/icons/set/favicon -->
   <link rel="shortcut icon" type="image/png" href="/static/images/favicon.png"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.1.0/css/flag-icon.min.css" rel="stylesheet">
   <!-- <script src="/static/js/register.js"></script>-->
 
   <title>Agestudy: {% block title %}{% endblock %}</title>
@@ -36,26 +38,52 @@
       <!-- If logged in  -->
       {% if session.user_id %}
       <ul class="navbar-nav mr-auto mt-2">
-        <li class="nav-item"><a class="nav-link" href="/home">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="/">Tests</a></li>
-        <li class="nav-item"><a class="nav-link" href="/eeg">EEG</a></li>
-        <li class="nav-item"><a class="nav-link" href="/consent">Consent</a></li>
+        <li class="nav-item"><a class="nav-link" href="/home">{{ layout["list1"] }}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/">{{ layout["list2"] }}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/eeg">{{ layout["list3"] }}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/consent">{{ layout["list4"] }}</a></li>
       </ul>
-      <ul class="navbar-nav ml-auto mt-2">
-        <li class="nav-item"><a class="nav-link" href="/account">Account</a></li>
-        <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
+      <ul class="navbar-nav mr-auto mt-2">
+        <li class="nav-item dropdown">
+          {% if session.language == "english" %}
+          <a class="nav-link dropdown-toggle" href="{{url_for(request.endpoint)}}" id="dropdown09" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="flag-icon flag-icon-us"> </span> English</a>
+          <div class="dropdown-menu" aria-labelledby="dropdown09">
+            <a class="dropdown-item" href="{{url_for(request.endpoint)}}?language=dutch"><span class="flag-icon flag-icon-nl"> </span> Nederlands </a>
+          </div>
+          {%else%}
+          <a class="nav-link dropdown-toggle" href="{{url_for(request.endpoint)}}" id="dropdown09" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="flag-icon flag-icon-nl"> </span> Nederlands </a>
+          <div class="dropdown-menu" aria-labelledby="dropdown09">
+            <a class="dropdown-item" href="{{url_for(request.endpoint)}}?language=english"><span class="flag-icon flag-icon-us"> </span>English </a>
+          </div>
+          {% endif %}
+        </li>
+        <li class="nav-item"><a class="nav-link" href="/account">{{ layout["list5"] }}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/logout">{{ layout["list6"] }}</a></li>
       </ul>
       <!-- login or register  -->
       {% else %}
       <ul class="navbar-nav mr-auto mt-2">
-        <li class="nav-item"><a class="nav-link" href="/about_study">About the study</a></li>
-        <li class="nav-item"><a class="nav-link" href="/for_participant">For participant</a></li>
-        <li class="nav-item"><a class="nav-link" href="/about_app">About the app</a></li>
-        <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="/about_study">{{ layout["list7"] }}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/for_participant">{{ layout["list8"] }}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/about_app">{{ layout["list9"] }}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact">{{ layout["list10"] }}</a></li>
       </ul>
-      <ul class="navbar-nav ml-auto mt-2">
-        <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
-        <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
+      <ul class="navbar-nav mr-auto mt-2">
+        <li class="nav-item dropdown">
+          {% if session.language == "english" %}
+          <a class="nav-link dropdown-toggle" href="{{url_for(request.endpoint)}}" id="dropdown09" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="flag-icon flag-icon-us"> </span> English</a>
+          <div class="dropdown-menu" aria-labelledby="dropdown09">
+            <a class="dropdown-item" href="{{url_for(request.endpoint)}}?language=dutch"><span class="flag-icon flag-icon-nl"> </span> Nederlands </a>
+          </div>
+          {%else%}
+          <a class="nav-link dropdown-toggle" href="{{url_for(request.endpoint)}}" id="dropdown09" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="flag-icon flag-icon-nl"> </span> Nederlands </a>
+          <div class="dropdown-menu" aria-labelledby="dropdown09">
+            <a class="dropdown-item" href="{{url_for(request.endpoint)}}?language=english"><span class="flag-icon flag-icon-us"> </span>English </a>
+          </div>
+          {% endif %}
+        </li>
+        <li class="nav-item"><a class="nav-link" href="/register">{{ layout["list11"] }}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/login">{{ layout["list12"] }}</a></li>
       </ul>
       {% endif %}
     </div>
@@ -79,7 +107,7 @@
   $(document).ready(function() {
     setTimeout(function() {
       $('.alert').fadeOut('slow');}, 2000); // <-- time in milliseconds
-   });
-  </script>
-</body>
-</html>
+    });
+    </script>
+  </body>
+  </html>

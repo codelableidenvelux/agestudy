@@ -12,7 +12,7 @@ from dateutil.parser import parse
 def read_csv(filename):
     df = pd.read_csv(filename, sep=",", index_col=0, encoding = "utf-8")
     df = df.to_dict()
-    return df["text"]
+    return df
 
 def preprocess_birthdate(date):
     """
@@ -82,6 +82,24 @@ def login_required(f):
             return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
+
+def language_check(f):
+    """
+    Decorator function to set the chosen language
+
+    http://flask.pocoo.org/docs/0.12/patterns/viewdecorators/
+    """
+    @wraps(f)
+    def language_function(*args, **kwargs):
+        if request.method == "GET":
+            language = request.args.get('language')
+            if language:
+                if language.lower() == "english":
+                    session['language'] = "english"
+                elif language.lower() == "dutch":
+                    session['language'] = "dutch"
+        return f(*args, **kwargs)
+    return language_function
 
 def send_email(sender_email, password, message):
     """

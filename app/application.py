@@ -3,7 +3,7 @@ from flask_session import Session
 from tempfile import mkdtemp
 from db.python_2_db2 import Db
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import preprocess_birthdate, remove_whitespace, preprocess_checkbox, preprocess_gender, login_required, send_email, read_csv
+from helpers import *
 import re
 from datetime import datetime, timedelta
 
@@ -25,7 +25,33 @@ Session(app)
 # make an instance of the database class
 db = Db("db/key.txt")
 layout = read_csv("static/csv/layout.csv")
-print(layout["list1"])
+login_csv = read_csv("static/csv/login.csv")
+end_csv = read_csv("static/csv/end_task.csv")
+tasks = read_csv("static/csv/index.csv")
+register_csv = read_csv("static/csv/register.csv")
+account_csv = read_csv("static/csv/account.csv")
+consent_csv = read_csv("static/csv/consent.csv")
+eeg_csv = read_csv("static/csv/eeg.csv")
+sent_email_csv = read_csv("static/csv/sent_email.csv")
+home_csv = read_csv("static/csv/home.csv")
+collected_csv = read_csv("static/csv/collected.csv")
+about_study_csv = read_csv("static/csv/about_study.csv")
+for_participant_csv = read_csv("static/csv/for_participant.csv")
+about_app_csv = read_csv("static/csv/about_app.csv")
+contact_csv = read_csv("static/csv/about_study.csv")
+
+
+def language_set():
+    language = request.args.get('language')
+    if language:
+        if language.lower() == "english":
+            session['language'] = "english"
+        elif language.lower() == "dutch":
+            session['language'] = "dutch"
+    # set the default language
+    if "language" not in session:
+        session["language"] = "english"
+
 ################################################################################
 ########################### TASK MANAGEMENT ####################################
 ###############################################################################
@@ -72,7 +98,6 @@ def task_completed(task_id):
 ################################################################################
 ##################### LINK TO CORSI TASK_ID = 0 ################################
 ###############################################################################
-end_csv = read_csv("static/csv/end_task.csv")
 @app.route('/corsi', methods=["GET"])
 @login_required
 def corsi():
@@ -82,10 +107,11 @@ def corsi():
 
 @app.route('/corsi_end', methods=["GET"])
 @login_required
+@language_check
 def corsi_end():
     task_id = 0
     task_completed(task_id)
-    return render_template("end_task.html", end_csv=end_csv)
+    return render_template("end_task.html", end_csv=end_csv[session["language"]], layout=layout[session["language"]])
 
 ################################################################################
 #################### LINK TO N_BACK TASK_ID = 1 ################################
@@ -99,10 +125,11 @@ def n_back():
 
 @app.route('/n_back_end', methods=["GET"])
 @login_required
+@language_check
 def n_back_end():
     task_id = 1
     task_completed(task_id)
-    return render_template("end_task.html", end_csv=end_csv)
+    return render_template("end_task.html", end_csv=end_csv[session["language"]], layout=layout[session["language"]])
 
 ################################################################################
 ############# LINK TO TASK_SWITCHING TASK_ID = 2 ##############################
@@ -116,15 +143,17 @@ def task_switching():
 
 @app.route('/task_switching_end', methods=["GET"])
 @login_required
+@language_check
 def task_switching_end():
     task_id = 2
     task_completed(task_id)
-    return render_template("end_task.html", end_csv=end_csv)
+    return render_template("end_task.html", end_csv=end_csv[session["language"]], layout=layout[session["language"]])
 
 ################################################################################
 ##################### LINK TO SF-36 TASK_ID = 3 ################################
 ###############################################################################
 @app.route('/sf_36', methods=["GET"])
+@language_check
 @login_required
 def sf_36():
     task_id = 3
@@ -133,10 +162,11 @@ def sf_36():
 
 @app.route('/sf_36_end', methods=["GET"])
 @login_required
+@language_check
 def sf_3_end():
     task_id = 3
     task_completed(task_id)
-    return render_template("end_task.html", end_csv=end_csv)
+    return render_template("end_task.html", end_csv=end_csv[session["language"]], layout=layout[session["language"]])
 
 ################################################################################
 ################## LINK TO PHONE SURVEY TASK_ID = 4 ############################
@@ -150,10 +180,11 @@ def phone_survey():
 
 @app.route('/phone_survey_end', methods=["GET"])
 @login_required
+@language_check
 def phone_survey_end():
     task_id = 4
     task_completed(task_id)
-    return render_template("end_task.html", end_csv=end_csv)
+    return render_template("end_task.html", end_csv=end_csv[session["language"]], layout=layout[session["language"]])
 
 
 def should_show_task(task_id):
@@ -203,8 +234,8 @@ def calculate_money():
 # Home page Login required
 @app.route('/', methods=["GET"])
 @login_required
+@language_check
 def index():
-    tasks = read_csv("static/csv/index.csv")
     if request.method == "GET":
         show_corsi  = should_show_task(0)
         show_n_back = should_show_task(1)
@@ -212,7 +243,7 @@ def index():
         show_sf_36 = should_show_task(3)
         show_phone_survey = should_show_task(4)
         calculate_money()
-        return render_template("index.html", tasks=tasks, show_corsi=show_corsi, show_n_back=show_n_back, show_task_switching=show_task_switching, show_sf_36=show_sf_36, show_phone_survey=show_phone_survey)
+        return render_template("index.html", layout=layout[session["language"]], tasks=tasks[session["language"]], show_corsi=show_corsi, show_n_back=show_n_back, show_task_switching=show_task_switching, show_sf_36=show_sf_36, show_phone_survey=show_phone_survey)
 
 ################################################################################
 ################################ REGISTER #####################################
@@ -220,10 +251,13 @@ def index():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Register user"""
+    preferred_language = "english"
+    if "language" in session:
+        preferred_language = session["language"]
     session.clear()
-    register = read_csv("static/csv/register.csv")
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
+        session["language"] = preferred_language
         # set to lowercase
         username_r = request.form.get("username").lower()
         # set to lowercase
@@ -240,7 +274,7 @@ def register():
         # ensure that all fiels that are required were filled in correctly
         if not username_r or not birthdate_r or not gender_r or not email_r:
             flash("Fill in all fields")
-            return render_template("register.html",  register=register)
+            return render_template("register.html",  register_csv=register_csv[session["language"]], layout=layout[session["language"]])
 
         # preprocesses inputs to get in right format for database
         username = remove_whitespace(username_r)
@@ -264,7 +298,7 @@ def register():
             # check true it means it is in use
             if rows:
                 flash("Username already in use")
-                return render_template("register.html",  register=register)
+                return render_template("register.html",  register_csv=register_csv[session["language"]], layout=layout[session["language"]])
 
             # add user to the database
             param = (username, email, gender, collect_possible, for_money, user_type, birthdate, hash)
@@ -275,6 +309,7 @@ def register():
             rows = db.prepare(select, (username,), 1)
             # Remember which user has logged in
             session['user_id'] = rows[0]['USER_ID']
+            #session['language'] = rows[0]['USER_ID']
             # Redirect user to home page
 
             # send_email
@@ -292,7 +327,9 @@ def register():
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
-        return render_template("register.html",  register=register)
+        session["language"] = preferred_language
+        language_set()
+        return render_template("register.html",  register_csv=register_csv[session["language"]], layout=layout[session["language"]])
 
 
 @app.route("/availability", methods=["GET"])
@@ -329,10 +366,13 @@ def login():
     """Log user in"""
 
     # Forget any user_id
+    preferred_language = "english"
+    if "language" in session:
+        preferred_language = session["language"]
     session.clear()
-    login_csv = read_csv("static/csv/login.csv")
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
+        session["language"] = preferred_language
         # set to lowercase
         username = request.form.get("username").lower()
         password = request.form.get("password")
@@ -352,16 +392,19 @@ def login():
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]['PAS_HASH'], request.form.get("password")):
             flash("invalid username and/or password")
-            return render_template("login.html", login_csv=login_csv)
+            return render_template("login.html", login_csv=login_csv[session["language"]])
 
         # Remember which user has logged in
         session['user_id'] = rows[0]['USER_ID']
+
         # Redirect user to home page
         return redirect("/home")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
-        return render_template("login.html", login_csv=login_csv)
+        session["language"] = preferred_language
+        language_set()
+        return render_template("login.html", login_csv=login_csv[session["language"]], layout=layout[session["language"]])
 
 def check_password(password, new_password):
     """Make sure password is correctly chosen"""
@@ -395,12 +438,12 @@ def logout():
 ###############################################################################
 @app.route("/account", methods=["GET", "POST"])
 @login_required
+@language_check
 def account():
     """
     User can view their account information
     User can update their password
     """
-    account_csv = read_csv("static/csv/account.csv")
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
         # change password, get old password and two new entries
@@ -419,7 +462,7 @@ def account():
         # Check if the old password matches
         if not check_password_hash(rows[0]['PAS_HASH'], old_password):
             flash("Password incorrect")
-            return render_template("account.html", account_csv=account_csv, username=username.capitalize(), email=email)
+            return render_template("account.html", account_csv=account_csv[session["language"]], username=username.capitalize(), email=email, layout=layout[session["language"]])
         # check if the new password is properly implemented
         if check_password(password, confirmation):
             # encrypt the users' password
@@ -432,7 +475,7 @@ def account():
             return redirect("/")
         else:
             flash("One or more fields filled incorrectly")
-            return render_template("account.html", account_csv=account_csv, username=username.capitalize(), email=email)
+            return render_template("account.html", account_csv=account_csv[session["language"]], username=username.capitalize(), email=email, layout=layout[session["language"]])
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         # Show them their account information
@@ -441,28 +484,27 @@ def account():
         rows = db.prepare(select, (id,), 1)
         username = rows[0]["USER_NAME"]
         email = rows[0]["EMAIL"]
-        return render_template("account.html", account_csv=account_csv, username=username.capitalize(), email=email)
 
+        return render_template("account.html", account_csv=account_csv[session["language"]], username=username.capitalize(), email=email, layout=layout[session["language"]])
 ################################################################################
 ################################ STATIC #####################################
 ###############################################################################
 @app.route("/consent", methods=["GET", "POST"])
 @login_required
+@language_check
 def consent():
     """
     Consent form
     """
-    consent_csv = read_csv("static/csv/consent.csv")
-    return render_template("consent.html", consent_csv=consent_csv)
+    return render_template("consent.html", consent_csv=consent_csv[session["language"]], layout=layout[session["language"]])
 
 @app.route("/eeg", methods=["GET", "POST"])
 @login_required
+@language_check
 def eeg():
     """
     EEG information
     """
-    eeg_csv = read_csv("static/csv/eeg.csv")
-    sent_email_csv = read_csv("static/csv/sent_email.csv")
     # If they clicked on the submit button
     if request.method == "POST":
         id = session["user_id"]
@@ -479,17 +521,17 @@ def eeg():
         send_email(email, pasw, message)
 
         # render a thank you page
-        return render_template("sent_email.html", sent_email_csv=sent_email_csv)
+        return render_template("sent_email.html", sent_email_csv=sent_email_csv[session["language"]], layout=layout[session["language"]])
     else:
-        return render_template("eeg.html", eeg_csv=eeg_csv)
+        return render_template("eeg.html", eeg_csv=eeg_csv[session["language"]], layout=layout[session["language"]])
 
 @app.route("/home", methods=["GET", "POST"])
 @login_required
+@language_check
 def home():
     """
     Home page, contains a money tab and a recommended task
     """
-    home_csv = read_csv("static/csv/home.csv")
     # calculate the money earned to draw the barchart
     price = calculate_money()
 
@@ -533,15 +575,15 @@ def home():
     else:
         recomendation = False
         task = {"img":"", "alt":"", "title":"",  "text" : "", "link" : "", "button_text": ""}
-    return render_template("home.html", price=price, user_type=user_type, recomendation=recomendation, home_csv=home_csv, img=task["img"], alt=task["alt"], title=task["title"], text=task["text"], link=task["link"], button_text=task["button_text"])
+    return render_template("home.html", price=price, user_type=user_type, recomendation=recomendation, layout=layout[session["language"]], home_csv=home_csv[session["language"]], img=task["img"], alt=task["alt"], title=task["title"], text=task["text"], link=task["link"], button_text=task["button_text"])
 
 @app.route("/collection", methods=["POST"])
 @login_required
+@language_check
 def collection():
     """
     Button to collect payment
     """
-    collected_csv = read_csv("static/csv/collected.csv")
     money_earned = calculate_money()
     collection = request.form.get("collection")
     id = session["user_id"]
@@ -565,24 +607,28 @@ def collection():
     send_email(email, pasw, message)
 
     # render a thank you page
-    return render_template("collected.html", money_earned=money_earned, collected_csv=collected_csv)
+    return render_template("collected.html", money_earned=money_earned, collected_csv=collected_csv[session["language"]], layout=layout[session["language"]])
 
 @app.route("/about_study", methods=["GET"])
+@language_check
 def about_study():
-    about_study_csv = read_csv("static/csv/about_study.csv")
-    return render_template("about_study.html", about_study_csv=about_study_csv)
+    language_set()
+    return render_template("about_study.html", about_study_csv=about_study_csv[session["language"]], layout=layout[session["language"]])
 
 @app.route("/for_participant", methods=["GET"])
+@language_check
 def for_participant():
-    for_participant_csv = read_csv("static/csv/for_participant.csv")
-    return render_template("for_participant.html", for_participant_csv=for_participant_csv)
+    language_set()
+    return render_template("for_participant.html", for_participant_csv=for_participant_csv[session["language"]], layout=layout[session["language"]])
 
 @app.route("/about_app", methods=["GET"])
+@language_check
 def about_app():
-    about_app_csv = read_csv("static/csv/about_app.csv")
-    return render_template("about_app.html", about_app_csv=about_app_csv)
+    language_set()
+    return render_template("about_app.html", about_app_csv=about_app_csv[session["language"]], layout=layout[session["language"]])
 
 @app.route("/contact", methods=["GET"])
+@language_check
 def contact():
-    contact_csv = read_csv("static/csv/about_study.csv", contact_csv=contact_csv)
-    return render_template("contact.html", contact_csv=contact_csv)
+    language_set()
+    return render_template("contact.html", contact_csv=contact_csv[session["language"]], layout=layout[session["language"]])

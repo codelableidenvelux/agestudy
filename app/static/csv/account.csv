@@ -1,9 +1,9 @@
-﻿tag,text
-label1,Email:
-button1,Change password
-placeholder1,Type in previous password
-placeholder2,Password
-placeholder3,Retype password
-button2,Change
-message_number,  A number
-message_length,Minimum 5 characters
+﻿tag,english,dutch
+label1,Email:,
+button1,Change password,
+placeholder1,Type in previous password,
+placeholder2,Password,
+placeholder3,Retype password,
+button2,Change,
+message_number,  A number,
+message_length,Minimum 5 characters,

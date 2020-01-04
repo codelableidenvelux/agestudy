@@ -1,13 +1,13 @@
-﻿tag,text
-list1,Home
-list2,Tests
-list3,EEG
-list4,Consent
-list5,Account
-list6,Log Out
-list7,About the study
-list8,For participant
-list9,About the app
-list10,Contact
-list11,Register
-list12,Log In
+﻿tag,english,dutch
+list1,Home,Home
+list2,Tests,Tests
+list3,EEG,EEG
+list4,Consent,Consent
+list5,Account,Account
+list6,Log Out,Uitloggen
+list7,About the study,Over de studie
+list8,For participant,Voor deelnemer
+list9,About the app,Over de app
+list10,Contact,Contact
+list11,Register,Registreren
+list12,Log In,Inloggen
