@@ -7,7 +7,7 @@ Each csv file corresponds to each html file.
 ![layout2](../images/layout_tags_2.jpg)
 
 ## Register.csv
-![register1](../images/register_tags-1.jpg)
+![register1](../images/register_tags_1.jpg)
 ![register2](../images/register_tags_2.jpg)
 ![register3](../images/register_tags_3.jpg)
 
