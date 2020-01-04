@@ -1,0 +1,21 @@
+﻿tag,text
+h51,"Dear participant,"
+p1_1,"If you are here, you probably are willing to test our studies and give us feedback on how to improve them. "
+p1_2, Hereunder you will find a few buttons which will lead you to the cognitive task you are willing to give feedback on.
+p1_3," After the task, you will be asked to answer a few questions where you can give us feedback and help us improve the tasks."
+p1_4,Enjoy the testing!!
+corsi_title,Corsi Block
+corsi_description,"This is basic card with image on top, title, description and button."
+corsi_button,Try Corsi Block
+n_back_title,N-back
+n_back_description,In the N-back task you try to remember a letter that was shown N times back in a sequence.
+n_back_button,Try N-back task
+task_switching_title,Task Switching
+task_switching_description,Short descirption
+task_switching_button,Try Task Switching
+sf_36_title,SF-36
+sf_36_description,The SF-36 is a survey that consists of 36 questions to access general wellbeing.
+sf_36_button,Try SF-36
+phone_survey_title,Phone survey
+phone_survey_description,This is some random text that explains the phone survey but I am too tired to look up what it even stands for
+phone_survey_button,Try phone survey

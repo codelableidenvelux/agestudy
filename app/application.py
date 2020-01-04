@@ -72,6 +72,7 @@ def task_completed(task_id):
 ################################################################################
 ##################### LINK TO CORSI TASK_ID = 0 ################################
 ###############################################################################
+end_csv = read_csv("static/csv/end_task.csv")
 @app.route('/corsi', methods=["GET"])
 @login_required
 def corsi():
@@ -84,7 +85,7 @@ def corsi():
 def corsi_end():
     task_id = 0
     task_completed(task_id)
-    return render_template("end.html")
+    return render_template("end_task.html", end_csv=end_csv)
 
 ################################################################################
 #################### LINK TO N_BACK TASK_ID = 1 ################################
@@ -101,7 +102,7 @@ def n_back():
 def n_back_end():
     task_id = 1
     task_completed(task_id)
-    return render_template("end.html")
+    return render_template("end_task.html", end_csv=end_csv)
 
 ################################################################################
 ############# LINK TO TASK_SWITCHING TASK_ID = 2 ##############################
@@ -118,7 +119,7 @@ def task_switching():
 def task_switching_end():
     task_id = 2
     task_completed(task_id)
-    return render_template("end.html")
+    return render_template("end_task.html", end_csv=end_csv)
 
 ################################################################################
 ##################### LINK TO SF-36 TASK_ID = 3 ################################
@@ -135,7 +136,7 @@ def sf_36():
 def sf_3_end():
     task_id = 3
     task_completed(task_id)
-    return render_template("end.html")
+    return render_template("end_task.html", end_csv=end_csv)
 
 ################################################################################
 ################## LINK TO PHONE SURVEY TASK_ID = 4 ############################
@@ -152,7 +153,7 @@ def phone_survey():
 def phone_survey_end():
     task_id = 4
     task_completed(task_id)
-    return render_template("end.html")
+    return render_template("end_task.html", end_csv=end_csv)
 
 
 def should_show_task(task_id):
@@ -203,6 +204,7 @@ def calculate_money():
 @app.route('/', methods=["GET"])
 @login_required
 def index():
+    tasks = read_csv("static/csv/index.csv")
     if request.method == "GET":
         show_corsi  = should_show_task(0)
         show_n_back = should_show_task(1)
@@ -210,7 +212,7 @@ def index():
         show_sf_36 = should_show_task(3)
         show_phone_survey = should_show_task(4)
         calculate_money()
-        return render_template("index.html", show_corsi=show_corsi, show_n_back=show_n_back, show_task_switching=show_task_switching, show_sf_36=show_sf_36, show_phone_survey=show_phone_survey)
+        return render_template("index.html", tasks=tasks, show_corsi=show_corsi, show_n_back=show_n_back, show_task_switching=show_task_switching, show_sf_36=show_sf_36, show_phone_survey=show_phone_survey)
 
 ################################################################################
 ################################ REGISTER #####################################
@@ -540,6 +542,7 @@ def collection():
     Button to collect payment
     """
     collected_csv = read_csv("static/csv/collected.csv")
+    money_earned = calculate_money()
     collection = request.form.get("collection")
     id = session["user_id"]
     # update the collection to 0 which means that the user has/will collect the money_earned
@@ -550,7 +553,7 @@ def collection():
     # select the user info
     select = f"SELECT * FROM SESSION_INFO WHERE USER_ID = {id}"
     rows = db.prepare(select, (id,), 1)
-    money_earned = calculate_money()
+
 
     # send_email with the users info to our email to contact them about participating
     # email contains username, email, usertype, user_id and the ammount to be collect
@@ -582,4 +585,4 @@ def about_app():
 @app.route("/contact", methods=["GET"])
 def contact():
     contact_csv = read_csv("static/csv/about_study.csv", contact_csv=contact_csv)
-    return render_template("contact.html")
+    return render_template("contact.html", contact_csv=contact_csv)

@@ -194,7 +194,7 @@ var password = document.getElementById("email");
 email.onblur = function(){
   $.getJSON("/email", {'email': email.value, 'username': username.value }, function(result, state){
     if (state === "success"){
-      if (result){
+      if (result && have_at && length_email){
         $("#email").addClass("is-valid");
         $("#email").removeClass("is-invalid");
       } else {

@@ -8,13 +8,13 @@ Register
 
 <section id="team" class="pb-5">
   <div class="container">
-    <h5 class="section-title h1">Dear participant,</h5>
+    <h5 class="section-title h1">{{ tasks["h51"] }}</h5>
     <p>
-      If you are here, you probably are willing to test our studies and give us feedback on how to improve them. <br>
-      Hereunder you will find a few buttons which will lead you to the cognitive task you are willing to give feedback on. <br>
-      After the task, you will be asked to answer a few questions where you can give us feedback and help us improve the tasks. <br>
+      {{ tasks["p1_1"] }} <br>
+      {{ tasks["p1_2"] }} <br>
+      {{ tasks["p1_3"] }} <br>
 
-      Enjoy the testing!!
+      {{ tasks["p1_4"] }}
     </p>
     <div class="row">
       <!-- Task 0 Corsi -->
@@ -22,13 +22,13 @@ Register
         <div class="card">
           <div class="card-body text-center">
             <p><img class=" img-fluid" src="/static/images/corsi.png" alt="card image"></p>
-            <h4 class="card-title">Corsi Block</h4>
-            <p class="card-text">This is basic card with image on top, title, description and button.</p>
+            <h4 class="card-title">{{ tasks["corsi_title"] }}</h4>
+            <p class="card-text">{{ tasks["corsi_description"] }}</p>
             {% if show_corsi %}
             <div id="corsi_button" name="corsi_button">
               <ul class="list-inline">
                 <li class="list-inline-item">
-                  <a href="/corsi" target="_blank" name="corsi" id="corsi" class="btn btn-primary btn-sm stretched-link" >Try Corsi Block</a>
+                  <a href="/corsi" target="_blank" name="corsi" id="corsi" class="btn btn-primary btn-sm stretched-link" >{{ tasks["corsi_button"] }}</a>
                 </li>
               </ul>
             </div>
@@ -43,13 +43,13 @@ Register
         <div class="card">
           <div class="card-body text-center">
             <p><img class=" img-fluid" src="/static/images/N_back.png" alt="card image"></p>
-            <h4 class="card-title">N-back</h4>
-            <p class="card-text">In the N-back task you try to remember a letter that was shown N times back in a sequence.</p>
+            <h4 class="card-title">{{ tasks["n_back_title"] }}</h4>
+            <p class="card-text">{{ tasks["n_back_description"] }}</p>
             {% if show_n_back %}
             <div id="n_back_button" name="n_back_button">
               <ul class="list-inline">
                 <li class="list-inline-item">
-                  <a href="/n_back" target="_blank" class="btn btn-primary stretched-link">Try N-back task</a>
+                  <a href="/n_back" target="_blank" class="btn btn-primary stretched-link">{{ tasks["n_back_button"] }}</a>
                 </li>
               </ul>
             </div>
@@ -63,13 +63,13 @@ Register
         <div class="card">
           <div class="card-body text-center">
             <p><img class=" img-fluid" src="/static/images/task_switching.png" alt="card image"></p>
-            <h4 class="card-title">Task Switching</h4>
-            <p class="card-text">Short descirption</p>
+            <h4 class="card-title">{{ tasks["task_switching_title"] }}</h4>
+            <p class="card-text">{{ tasks["task_switching_description"] }}</p>
             {% if show_task_switching %}
             <div id="task_switching_button" name="task_switching_button">
               <ul class="list-inline">
                 <li class="list-inline-item">
-                  <a href="/task_switching" target="_blank" class="btn btn-primary stretched-link">Try Task Switching</a>
+                  <a href="/task_switching" target="_blank" class="btn btn-primary stretched-link">{{ tasks["task_switching_button"] }}</a>
                 </li>
               </ul>
             </div>
@@ -85,13 +85,13 @@ Register
         <div class="card">
           <div class="card-body text-center">
             <p><img class=" img-fluid" src="/static/images/SF_36.png" alt="card image"></p>
-            <h4 class="card-title">SF-36</h4>
-            <p class="card-text">The SF-36 is a survey that consists of 36 questions to access general wellbeing. </p>
+            <h4 class="card-title">{{ tasks["sf_36_title"] }}</h4>
+            <p class="card-text">{{ tasks["sf_36_description"] }} </p>
             {% if show_sf_36 %}
             <div id="sf_36_button" name="sf_36_button">
               <ul class="list-inline">
                 <li class="list-inline-item">
-                  <a href="/sf_36" target="_blank" class="btn btn-primary stretched-link">Try SF-36</a>
+                  <a href="/sf_36" target="_blank" class="btn btn-primary stretched-link">{{ tasks["sf_36_button"] }}</a>
                 </li>
               </ul>
             </div>
@@ -105,13 +105,13 @@ Register
         <div class="card">
           <div class="card-body text-center">
             <p><img class=" img-fluid" src="/static/images/phone_survey.png" alt="card image"></p>
-            <h4 class="card-title">Phone survey</h4>
-            <p class="card-text">This is some random text that explains the phone survey but I am too tired to look up what it even stands for</p>
+            <h4 class="card-title">{{ tasks["phone_survey_title"] }}</h4>
+            <p class="card-text">{{ tasks["phone_survey_description"] }}</p>
             {% if show_phone_survey %}
             <div id="phone_survey_button" name="phone_survey_button">
               <ul class="list-inline">
                 <li class="list-inline-item">
-                  <a href="/phone_survey" target="_blank" class="btn btn-primary stretched-link">Try phone survey</a>
+                  <a href="/phone_survey" target="_blank" class="btn btn-primary stretched-link">{{ tasks["phone_survey_button"] }}</a>
                 </li>
               </ul>
             </div>
