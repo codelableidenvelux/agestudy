@@ -1,9 +1,5 @@
+---
 applications:
- - name: agestudy
-   buildpacks:
-    - https://github.com/cloudfoundry/php-buildpack.git
-   memory: 512M
-   env:
-    CF_STAGING_TIMEOUT: '20'
-    NODE_ENV: development
-    LogLevel: debug
+ - name: GetStartedPython
+   random-route: true
+   memory: 128M

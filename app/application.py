@@ -378,7 +378,7 @@ def login():
         password = request.form.get("password")
         # Ensure username was submitted
         if not username:
-            flash("must provide username")
+            flash("must provide email address")
             return render_template("login.html")
         # Ensure password was submitted
         elif not password:
@@ -392,6 +392,10 @@ def login():
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]['PAS_HASH'], request.form.get("password")):
             flash("invalid username and/or password")
+            if len(rows) != 1:
+                app.logger.info('%s invalid username', username)
+            else:
+                app.logger.info('%s invalid password with email combination', username)
             return render_template("login.html", login_csv=login_csv[session["language"]])
 
         # Remember which user has logged in
@@ -462,6 +466,7 @@ def account():
         # Check if the old password matches
         if not check_password_hash(rows[0]['PAS_HASH'], old_password):
             flash("Password incorrect")
+            app.logger.warning('%s Tried to change password in the /account but old password was incorrect', username)
             return render_template("account.html", account_csv=account_csv[session["language"]], username=username.capitalize(), email=email, layout=layout[session["language"]])
         # check if the new password is properly implemented
         if check_password(password, confirmation):
@@ -474,6 +479,7 @@ def account():
             # Redirect user to home page
             return redirect("/")
         else:
+            app.logger.warning('%s In /account password did not match with confirmation password', username)
             flash("One or more fields filled incorrectly")
             return render_template("account.html", account_csv=account_csv[session["language"]], username=username.capitalize(), email=email, layout=layout[session["language"]])
     # User reached route via GET (as by clicking a link or via redirect)
