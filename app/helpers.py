@@ -77,7 +77,6 @@ def login_required(f):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        print(session.get('user_id'))
         if session.get('user_id') is None:
             return redirect("/login")
         return f(*args, **kwargs)
@@ -106,13 +105,4 @@ def send_email(sender_email, password, message):
     This function takes an input email and password from sender and an input
     email from receiver. It sends an email with input text.
     """
-    port = 465  # For SSL
-    smtp_server = "smtp.gmail.com"
-    sender_email = 'ruchellakock@gmail.com' # Enter your address
-    receiver_email = 'ruchellakock@gmail.com'  # Enter receiver address
-    password = 'catcatcat'
-
-    context = ssl.create_default_context()
-    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
-        server.login(sender_email, password)
-        server.sendmail(sender_email, sender_email, message)
+    return True 

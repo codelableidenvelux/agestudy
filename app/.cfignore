@@ -2,3 +2,5 @@
 LICENSE
 README.md
 vcap-local.json
+CSR.csr
+as.key

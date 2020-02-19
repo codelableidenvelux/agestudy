@@ -1,7 +1,7 @@
 from flask import Flask, redirect, render_template, request, session, flash, jsonify
 from flask_session import Session
 from tempfile import mkdtemp
-from db.python_2_db2 import Db
+from db.postgresql import Db
 from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import *
 import re
@@ -23,7 +23,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # make an instance of the database class
-db = Db("db/key.txt")
+db = Db(app.logger)
 layout = read_csv("static/csv/layout.csv")
 login_csv = read_csv("static/csv/login.csv")
 end_csv = read_csv("static/csv/end_task.csv")
@@ -40,7 +40,7 @@ for_participant_csv = read_csv("static/csv/for_participant.csv")
 about_app_csv = read_csv("static/csv/about_app.csv")
 contact_csv = read_csv("static/csv/about_study.csv")
 
-
+# See which language was chosen and update the language
 def language_set():
     language = request.args.get('language')
     if language:
@@ -51,6 +51,15 @@ def language_set():
     # set the default language
     if "language" not in session:
         session["language"] = "english"
+
+# Force user to a save location
+@app.before_request
+def before_request():
+    scheme = request.headers.get('X-Forwarded-Proto')
+    if scheme and scheme == 'http' and request.url.startswith('http://'):
+        url = request.url.replace('http://', 'https://', 1)
+        code = 301
+        return redirect(url, code=code)
 
 ################################################################################
 ########################### TASK MANAGEMENT ####################################
@@ -64,15 +73,12 @@ def task_opening(task_id):
     """
     id = session["user_id"]
 
-    select_link = f"SELECT TASK_LINK FROM TASKS WHERE TASK_ID={task_id}"
-    link =  db.execute(select_link, 1)
-    insert = f"INSERT INTO TRACKED_TASK (user_id, task_id, status) VALUES ({id},{task_id}, 0)"
-    db.execute(insert, 0)
+    select_link = f"SELECT TASK_LINK FROM TASKS WHERE TASK_ID=(%s)"
+    link =  db.execute(select_link, (task_id, ), 1)
+    insert = f"INSERT INTO TRACKED_TASK (user_id, task_id, status) VALUES (%s, %s, %s)"
+    insert_values = (id, task_id, 0)
+    db.execute(insert, insert_values, 0)
 
-    # Testing
-    #select = f"SELECT * FROM TRACKED_TASK WHERE USER_ID = {id}"
-    #row = db.execute(select, 1)
-    #print(row)
     return link
 
 def task_completed(task_id):
@@ -82,18 +88,16 @@ def task_completed(task_id):
     If the task the user last started is the same as the task the user completed
     Update the status of the task to completed
     Insert the completed task in the table task_completed
-    TODO: DO THIS AS TRANSACTION
     """
     id = session["user_id"]
-    select = f"SELECT * FROM TRACKED_TASK WHERE time_exec= (SELECT MAX(time_exec) FROM TRACKED_TASK WHERE USER_ID = {id});"
-    newest_task = db.execute(select, 1)
-    print(newest_task)
-    opened_task = newest_task[0]["TASK_ID"]
+    select = f"SELECT * FROM TRACKED_TASK WHERE time_exec= (SELECT MAX(time_exec) FROM TRACKED_TASK WHERE USER_ID = (%s));"
+    newest_task = db.execute(select, (id,), 1)
+    opened_task = newest_task[0]["task_id"]
     if opened_task == task_id:
-        update = f"UPDATE TRACKED_TASK SET status = 1 WHERE time_exec= (SELECT MAX(time_exec) FROM TRACKED_TASK WHERE USER_ID = {id});"
-        insert = f"INSERT INTO TASK_COMPLETED (user_id, task_id, collect) VALUES ({id}, {task_id}, 1);"
-        db.execute(update, 0)
-        db.execute(insert, 0)
+        update = f"UPDATE TRACKED_TASK SET status = 1 WHERE time_exec= (SELECT MAX(time_exec) FROM TRACKED_TASK WHERE USER_ID = (%s));"
+        insert = f"INSERT INTO TASK_COMPLETED (user_id, task_id, collect) VALUES (%s, %s, 1);"
+        db.execute(update, (id,), 0)
+        db.execute(insert, (id, task_id), 0)
 
 ################################################################################
 ##################### LINK TO CORSI TASK_ID = 0 ################################
@@ -101,15 +105,21 @@ def task_completed(task_id):
 @app.route('/corsi', methods=["GET"])
 @login_required
 def corsi():
-    task_id = 0
+    """
+    This function gives the link to the corsi task in psytoolkit
+    """
+    task_id = 1
     link = task_opening(task_id)
-    return redirect(link[0]["TASK_LINK"])
+    return redirect(link[0]["task_link"])
 
 @app.route('/corsi_end', methods=["GET"])
 @login_required
 @language_check
 def corsi_end():
-    task_id = 0
+    """
+    This function redirects user to a thank you page. It registers that they have completed the task (thus updating their money earned)
+    """
+    task_id = 1
     task_completed(task_id)
     return render_template("end_task.html", end_csv=end_csv[session["language"]], layout=layout[session["language"]])
 
@@ -119,15 +129,15 @@ def corsi_end():
 @app.route('/n_back', methods=["GET"])
 @login_required
 def n_back():
-    task_id = 1
+    task_id = 2
     link = task_opening(task_id)
-    return redirect(link[0]["TASK_LINK"])
+    return redirect(link[0]["task_link"])
 
 @app.route('/n_back_end', methods=["GET"])
 @login_required
 @language_check
 def n_back_end():
-    task_id = 1
+    task_id = 2
     task_completed(task_id)
     return render_template("end_task.html", end_csv=end_csv[session["language"]], layout=layout[session["language"]])
 
@@ -137,15 +147,15 @@ def n_back_end():
 @app.route('/task_switching', methods=["GET"])
 @login_required
 def task_switching():
-    task_id = 2
+    task_id = 3
     link = task_opening(task_id)
-    return redirect(link[0]["TASK_LINK"])
+    return redirect(link[0]["task_link"])
 
 @app.route('/task_switching_end', methods=["GET"])
 @login_required
 @language_check
 def task_switching_end():
-    task_id = 2
+    task_id = 3
     task_completed(task_id)
     return render_template("end_task.html", end_csv=end_csv[session["language"]], layout=layout[session["language"]])
 
@@ -156,15 +166,15 @@ def task_switching_end():
 @language_check
 @login_required
 def sf_36():
-    task_id = 3
+    task_id = 4
     link = task_opening(task_id)
-    return redirect(link[0]["TASK_LINK"])
+    return redirect(link[0]["task_link"])
 
 @app.route('/sf_36_end', methods=["GET"])
 @login_required
 @language_check
 def sf_3_end():
-    task_id = 3
+    task_id = 4
     task_completed(task_id)
     return render_template("end_task.html", end_csv=end_csv[session["language"]], layout=layout[session["language"]])
 
@@ -174,15 +184,15 @@ def sf_3_end():
 @app.route('/phone_survey', methods=["GET"])
 @login_required
 def phone_survey():
-    task_id = 4
+    task_id = 5
     link = task_opening(task_id)
-    return redirect(link[0]["TASK_LINK"])
+    return redirect(link[0]["task_link"])
 
 @app.route('/phone_survey_end', methods=["GET"])
 @login_required
 @language_check
 def phone_survey_end():
-    task_id = 4
+    task_id = 5
     task_completed(task_id)
     return render_template("end_task.html", end_csv=end_csv[session["language"]], layout=layout[session["language"]])
 
@@ -196,13 +206,14 @@ def should_show_task(task_id):
     else return False
     """
     id = session['user_id']
-    select = f"SELECT MAX(time_exec) FROM TASK_COMPLETED WHERE USER_ID = {id} AND TASK_ID = {task_id}"
-    last_timestamp = db.execute(select, 1)
-    print(last_timestamp)
-    if last_timestamp[0]["1"]:
-        task_last_timestamp = last_timestamp[0]["1"]
-        task = db.execute(f"SELECT FREQUENCY FROM TASKS WHERE TASK_ID={task_id}", 1)
-        task_freq = round(float(task[0]["FREQUENCY"])*10*30,1)
+    select = f"SELECT MAX(time_exec) FROM TASK_COMPLETED WHERE USER_ID = (%s) AND TASK_ID = (%s)"
+    values = (id, task_id)
+    last_timestamp = db.execute(select, values, 1)
+    # [0][0] the second 0 refers to the maximum value
+    if last_timestamp[0][0]:
+        task_last_timestamp = last_timestamp[0][0]
+        task = db.execute(f"SELECT FREQUENCY FROM TASKS WHERE TASK_ID=(%s)",(task_id,), 1)
+        task_freq = round(float(task[0]["frequency"])*10*30,1)
         # TODO: REMOVE THIS LINE
         #task_freq = 1
         new_date = task_last_timestamp + timedelta(days=task_freq)
@@ -218,13 +229,13 @@ def calculate_money():
     Calculate the amount of money the user has
     """
     id = session['user_id']
-    select = f"SELECT * FROM TASK_COMPLETED WHERE USER_ID = {id} AND COLLECT NOT IN ( 0 )"
-    completed_tasks = db.execute(select, 1)
+    select = f"SELECT * FROM TASK_COMPLETED WHERE USER_ID = (%s) AND COLLECT NOT IN ( 0 )"
+    completed_tasks = db.execute(select, (id,), 1)
     money_earned = 0
     for i in completed_tasks:
-        task_id = i["TASK_ID"]
-        money = db.execute(f"SELECT PRICE FROM TASKS WHERE TASK_ID={task_id}" , 1)
-        money_earned = money_earned + float(money[0]["PRICE"])
+        task_id = i["task_id"]
+        money = db.execute(f"SELECT PRICE FROM TASKS WHERE TASK_ID=(%s)", (task_id,), 1)
+        money_earned = money_earned + float(money[0]["price"])
     return money_earned
 
 
@@ -237,11 +248,11 @@ def calculate_money():
 @language_check
 def index():
     if request.method == "GET":
-        show_corsi  = should_show_task(0)
-        show_n_back = should_show_task(1)
-        show_task_switching = should_show_task(2)
-        show_sf_36 = should_show_task(3)
-        show_phone_survey = should_show_task(4)
+        show_corsi  = should_show_task(1)
+        show_n_back = should_show_task(2)
+        show_task_switching = should_show_task(3)
+        show_sf_36 = should_show_task(4)
+        show_phone_survey = should_show_task(5)
         calculate_money()
         return render_template("index.html", layout=layout[session["language"]], tasks=tasks[session["language"]], show_corsi=show_corsi, show_n_back=show_n_back, show_task_switching=show_task_switching, show_sf_36=show_sf_36, show_phone_survey=show_phone_survey)
 
@@ -293,8 +304,8 @@ def register():
             hash = generate_password_hash(password)
 
             # check if the username is already in use
-            select = "SELECT user_name FROM SESSION_INFO WHERE user_name = ?"
-            rows = db.prepare(select, (username,), 1)
+            select = "SELECT user_name FROM SESSION_INFO WHERE user_name = (%s)"
+            rows = db.execute(select, (username,), 1)
             # check true it means it is in use
             if rows:
                 flash("Username already in use")
@@ -302,13 +313,13 @@ def register():
 
             # add user to the database
             param = (username, email, gender, collect_possible, for_money, user_type, birthdate, hash)
-            insert = "INSERT INTO session_info (user_name, email, gender, collect_possible, for_money, user_type, birthyear, pas_hash) VALUES (?,?,?,?,?,?,?,?)"
-            result = db.prepare(insert, param, 0)
+            insert = "INSERT INTO session_info (user_name, email, gender, collect_possible, for_money, user_type, birthyear, pas_hash) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+            result = db.execute(insert, param, 0)
 
-            select = "SELECT * FROM SESSION_INFO WHERE user_name = ?"
-            rows = db.prepare(select, (username,), 1)
+            select = "SELECT * FROM SESSION_INFO WHERE user_name = %s"
+            rows = db.execute(select, (username,), 1)
             # Remember which user has logged in
-            session['user_id'] = rows[0]['USER_ID']
+            session['user_id'] = rows[0][0]
             #session['language'] = rows[0]['USER_ID']
             # Redirect user to home page
 
@@ -317,13 +328,14 @@ def register():
             email = email_r.read()
             pasw_r  = open("pass.txt", "r")
             pasw = pasw_r.read()
-            message = 'Subject: Info \n\n username: ' + username + "\n email: " + email + "\n user_id: " + str(rows[0]['USER_ID']) + "\n user_type: " + str(user_type)
+            message = 'Subject: Info \n\n username: ' + username + "\n email: " + email + "\n user_id: " + str(rows[0][0]) + "\n user_type: " + str(user_type)
             send_email(email, pasw, message)
 
             return redirect("/")
         else:
             # the passwords did not match
             flash("Passwords did not match")
+            return render_template("register.html",  register_csv=register_csv[session["language"]], layout=layout[session["language"]])
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
@@ -341,8 +353,8 @@ def availability():
     # set to lowercase
     username = request.args.get('username').lower()
     # get the user information
-    select = "SELECT user_name FROM SESSION_INFO WHERE user_name = ?"
-    rows = db.prepare(select, (username,), 1)
+    select = "SELECT user_name FROM SESSION_INFO WHERE user_name = (%s)"
+    rows = db.execute(select, (username,), 1)
     return jsonify(len(rows) == 0)
 
 @app.route("/email", methods=["GET"])
@@ -379,27 +391,27 @@ def login():
         # Ensure username was submitted
         if not username:
             flash("must provide email address")
-            return render_template("login.html")
+            return render_template("login.html", login_csv=login_csv[session["language"]], layout=layout[session["language"]])
         # Ensure password was submitted
         elif not password:
             flash("must provide password")
-            return render_template("login.html")
+            return render_template("login.html", login_csv=login_csv[session["language"]], layout=layout[session["language"]])
 
         # get the user information
-        select = "SELECT * FROM SESSION_INFO WHERE user_name = ?"
-        rows = db.prepare(select, (username,), 1)
+        select = "SELECT * FROM SESSION_INFO WHERE user_name = (%s)"
+        rows = db.execute(select, (username,), 1)
 
         # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0]['PAS_HASH'], request.form.get("password")):
+        if len(rows) != 1 or not check_password_hash(rows[0]['pas_hash'], request.form.get("password")):
             flash("invalid username and/or password")
             if len(rows) != 1:
                 app.logger.info('%s invalid username', username)
             else:
                 app.logger.info('%s invalid password with email combination', username)
-            return render_template("login.html", login_csv=login_csv[session["language"]])
+            return render_template("login.html", login_csv=login_csv[session["language"]], layout=layout[session["language"]])
 
         # Remember which user has logged in
-        session['user_id'] = rows[0]['USER_ID']
+        session['user_id'] = rows[0]['user_id']
 
         # Redirect user to home page
         return redirect("/home")
@@ -456,15 +468,15 @@ def account():
         confirmation = request.form.get("confirmation")
 
         # select users information
-        select = "SELECT * FROM SESSION_INFO WHERE USER_ID = ?"
+        select = "SELECT * FROM SESSION_INFO WHERE USER_ID = (%s)"
         id=session["user_id"]
-        rows = db.prepare(select, (id,), 1)
-        username = rows[0]["USER_NAME"]
-        email = rows[0]["EMAIL"]
+        rows = db.execute(select, (id,), 1)
+        username = rows[0]["user_name"]
+        email = rows[0]["email"]
 
 
         # Check if the old password matches
-        if not check_password_hash(rows[0]['PAS_HASH'], old_password):
+        if not check_password_hash(rows[0]['pas_hash'], old_password):
             flash("Password incorrect")
             app.logger.warning('%s Tried to change password in the /account but old password was incorrect', username)
             return render_template("account.html", account_csv=account_csv[session["language"]], username=username.capitalize(), email=email, layout=layout[session["language"]])
@@ -472,9 +484,9 @@ def account():
         if check_password(password, confirmation):
             # encrypt the users' password
             hash = generate_password_hash(password)
-            update = "UPDATE SESSION_INFO SET pas_hash = ? WHERE USER_ID = ?"
+            update = "UPDATE SESSION_INFO SET pas_hash = (%s) WHERE USER_ID = (%s)"
             param = (hash,id)
-            db.prepare(update, param, 0)
+            db.execute(update, param, 0)
             flash("Password changed!")
             # Redirect user to home page
             return redirect("/")
@@ -486,17 +498,16 @@ def account():
     else:
         # Show them their account information
         id = session["user_id"]
-        select = "SELECT * FROM SESSION_INFO WHERE USER_ID = ?"
-        rows = db.prepare(select, (id,), 1)
-        username = rows[0]["USER_NAME"]
-        email = rows[0]["EMAIL"]
+        select = "SELECT * FROM SESSION_INFO WHERE USER_ID = (%s)"
+        rows = db.execute(select, (id,), 1)
+        username = rows[0]["user_name"]
+        email = rows[0]["email"]
 
         return render_template("account.html", account_csv=account_csv[session["language"]], username=username.capitalize(), email=email, layout=layout[session["language"]])
 ################################################################################
 ################################ STATIC #####################################
 ###############################################################################
 @app.route("/consent", methods=["GET", "POST"])
-@login_required
 @language_check
 def consent():
     """
@@ -515,15 +526,15 @@ def eeg():
     if request.method == "POST":
         id = session["user_id"]
         # select the user info
-        select = "SELECT * FROM SESSION_INFO WHERE USER_ID = ?"
-        rows = db.prepare(select, (id,), 1)
+        select = "SELECT * FROM SESSION_INFO WHERE USER_ID = (%s)"
+        rows = db.execute(select, (id,), 1)
 
         # send_email with the users info to our server to contact them about participating
         email_r  = open("email.txt", "r")
         email = email_r.read()
         pasw_r  = open("pass.txt", "r")
         pasw = pasw_r.read()
-        message = 'Subject: EEG \n\n The following participant wants to participate in the EEG study' + '\n username: ' + str(rows[0]['USER_NAME']) + "\n email: " + str(rows[0]['EMAIL']) + "\n user_id: " + str(rows[0]['USER_ID']) + "\n user_type: " + str(str(rows[0]['USER_TYPE']))
+        message = 'Subject: EEG \n\n The following participant wants to participate in the EEG study' + '\n username: ' + str(rows[0]['user_name']) + "\n email: " + str(rows[0]['email']) + "\n user_id: " + str(rows[0]['user_id']) + "\n user_type: " + str(str(rows[0]['user_type']))
         send_email(email, pasw, message)
 
         # render a thank you page
@@ -544,14 +555,14 @@ def home():
     # make the recomendation system which will recommend one task, show only 1 div
     id = session["user_id"]
     # select all the completed tasks
-    select = f"SELECT * FROM TASK_COMPLETED WHERE USER_ID = {id}"
-    rows = db.execute(select, 1)
+    select = f"SELECT * FROM TASK_COMPLETED WHERE USER_ID = (%s)"
+    rows = db.execute(select,(id,), 1)
 
     # select the user type to see if money barchart should be shown
-    select = f"SELECT USER_TYPE FROM SESSION_INFO WHERE USER_ID = {id}"
-    user_type_row = db.execute(select, 1)
+    select = f"SELECT USER_TYPE FROM SESSION_INFO WHERE USER_ID = (%s)"
+    user_type_row = db.execute(select,(id,), 1)
     # user type of 1 indicates they want and are able to participate for money
-    if user_type_row[0]["USER_TYPE"] == 1:
+    if user_type_row[0]["user_type"] == 1:
         user_type = True
     # user type of 2 indicates they are unable to participate for money
     else:
@@ -560,22 +571,22 @@ def home():
     # put the completed tasks in a list
     completed_tasks = []
     for i in rows:
-        completed_tasks.append(i["TASK_ID"])
+        completed_tasks.append(i["task_id"])
 
     # First recomendation is to do the phone survey
-    if 4 not in completed_tasks or should_show_task(4):
+    if 5 not in completed_tasks or should_show_task(5):
         task = {"img":"/static/images/phone_survey.png", "alt":"Phone survey", "title":"Phone survey",  "text" : "Placeholder Phone survey task", "link" : "/phone_survey", "button_text": "Try Phone survey"}
     # Second recomendation is to do the sf-36
-    elif 3 not in completed_tasks or should_show_task(3):
+    elif 4 not in completed_tasks or should_show_task(4):
         task = {"img":"/static/images/SF_36.png", "alt":"sf_36", "title":"SF-36",  "text" : "Placeholder SF-36 task", "link" : "/sf_36", "button_text": "Try SF-36"}
     # Third recomendation is to do corsi task
-    elif  0 not in completed_tasks or should_show_task(0):
+    elif  1 not in completed_tasks or should_show_task(1):
         task = {"img":"/static/images/corsi.png", "alt":"corsi",  "title" : "Corsi", "text" : "Placeholder corsi task", "link" : "/corsi", "button_text": "Try corsi"}
     # Fourth recomendation is to do n_back task
-    elif 1 not in completed_tasks or should_show_task(1):
+    elif 2 not in completed_tasks or should_show_task(2):
         task = {"img":"/static/images/N_back.png", "alt":"N-back", "title" : "N-back", "text" : "Placeholder n_back task", "link" : "/n_back", "button_text": "Try N-back"}
     # Fifth recomendation is to do task switching task
-    elif 2 not in completed_tasks or should_show_task(2):
+    elif 3 not in completed_tasks or should_show_task(3):
         task = {"img":"/static/images/task_switching.png", "alt":"task switching", "title" : "Task switching", "text" : "Placeholder task_switching task", "link" : "/task_switching", "button_text": "Try Task switching"}
     # If all tasks have been completed and are locked then give no recommendation dont show the div
     else:
@@ -595,12 +606,12 @@ def collection():
     id = session["user_id"]
     # update the collection to 0 which means that the user has/will collect the money_earned
     # otherwise collect is 1
-    update = f"UPDATE TASK_COMPLETED SET COLLECT=0 WHERE USER_ID = {id}"
-    db.prepare(update, (id,), 0)
+    update = f"UPDATE TASK_COMPLETED SET COLLECT=0 WHERE USER_ID = (%s)"
+    db.execute(update, (id,), 0)
 
     # select the user info
-    select = f"SELECT * FROM SESSION_INFO WHERE USER_ID = {id}"
-    rows = db.prepare(select, (id,), 1)
+    select = f"SELECT * FROM SESSION_INFO WHERE USER_ID = (%s)"
+    rows = db.execute(select, (id,), 1)
 
 
     # send_email with the users info to our email to contact them about participating
@@ -609,7 +620,7 @@ def collection():
     email = email_r.read()
     pasw_r  = open("pass.txt", "r")
     pasw = pasw_r.read()
-    message = 'Subject: Payment collection \n\n The following participant wants to collect their payment for the study' + '\n username: ' + str(rows[0]['USER_NAME']) + "\n email: " + str(rows[0]['EMAIL']) + "\n user_id: " + str(rows[0]['USER_ID']) + "\n user_type: " + str(rows[0]['USER_TYPE']) + "\n ammount to collect: " + str(money_earned)
+    message = 'Subject: Payment collection \n\n The following participant wants to collect their payment for the study' + '\n username: ' + str(rows[0]['user_name']) + "\n email: " + str(rows[0]['email']) + "\n user_id: " + str(rows[0]['user_id']) + "\n user_type: " + str(rows[0]['user_type']) + "\n ammount to collect: " + str(money_earned)
     send_email(email, pasw, message)
 
     # render a thank you page
@@ -638,3 +649,7 @@ def about_app():
 def contact():
     language_set()
     return render_template("contact.html", contact_csv=contact_csv[session["language"]], layout=layout[session["language"]])
+port = int(os.getenv("PORT"))
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=port)

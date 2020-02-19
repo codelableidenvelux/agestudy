@@ -249,6 +249,13 @@ Register
       <a href="/about_study" class="btn btn-secondary btn-sm">{{ register_csv['button2'] }}</a>
     </div>
   </div>
+  <div class="form-check">
+    <input type="checkbox" class="form-check-input" id="consent" name="consent" value="" required>
+    <label class="form-check-label" for="consent">I Consent</label>
+    <div class="invalid-feedback d-block">
+      <a href="/consent" class="btn btn-secondary btn-sm">Read about consent</a>
+    </div>
+  </div>
 
 
   <button id="submit" class="btn btn-primary" type="submit">{{ register_csv['button3'] }}</button>

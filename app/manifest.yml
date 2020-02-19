@@ -1,5 +1,4 @@
 ---
 applications:
- - name: GetStartedPython
-   random-route: true
+ - name: agestudy
    memory: 128M

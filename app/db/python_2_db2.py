@@ -31,7 +31,7 @@ class Db():
             result = fetch_assoc(command)
         return ret
 
-    def execute(self, sql, fetch):
+    def execute(self, sql,  fetch):
         """
         Execute the sql statement and fetch the results with the results method
         Fetch is a BOOL, if true the statement needs a result
