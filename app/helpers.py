@@ -99,10 +99,3 @@ def language_check(f):
                     session['language'] = "dutch"
         return f(*args, **kwargs)
     return language_function
-
-def send_email(sender_email, password, message):
-    """
-    This function takes an input email and password from sender and an input
-    email from receiver. It sends an email with input text.
-    """
-    return True 

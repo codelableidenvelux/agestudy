@@ -31,6 +31,7 @@ tasks = read_csv("static/csv/index.csv")
 register_csv = read_csv("static/csv/register.csv")
 account_csv = read_csv("static/csv/account.csv")
 consent_csv = read_csv("static/csv/consent.csv")
+email_unsent = read_csv("static/csv/email_unsent.csv")
 eeg_csv = read_csv("static/csv/eeg.csv")
 sent_email_csv = read_csv("static/csv/sent_email.csv")
 home_csv = read_csv("static/csv/home.csv")
@@ -98,6 +99,26 @@ def task_completed(task_id):
         insert = f"INSERT INTO TASK_COMPLETED (user_id, task_id, collect) VALUES (%s, %s, 1);"
         db.execute(update, (id,), 0)
         db.execute(insert, (id, task_id), 0)
+
+def send_email(message, username):
+    """
+    This function takes an input email and password from sender and an input
+    email from receiver. It sends an email with input text.
+    """
+    try:
+        email_r  = open("email.txt", "r")
+        email = email_r.read().strip('\n')
+        pasw_r  = open("pass.txt", "r")
+        pasw = pasw_r.read().strip('\n')
+
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL("mail.privateemail.com", 465, context=context) as server:
+            server.login(email, pasw)
+            server.sendmail(email, email, message)
+        return True
+    except:
+        app.logger.info('%s tried to send the following email: %s. There was an error', username, message)
+        return False
 
 ################################################################################
 ##################### LINK TO CORSI TASK_ID = 0 ################################
@@ -213,9 +234,8 @@ def should_show_task(task_id):
     if last_timestamp[0][0]:
         task_last_timestamp = last_timestamp[0][0]
         task = db.execute(f"SELECT FREQUENCY FROM TASKS WHERE TASK_ID=(%s)",(task_id,), 1)
+        #task_freq = round(float(task[0]["frequency"])*10*30,1)
         task_freq = round(float(task[0]["frequency"])*10*30,1)
-        # TODO: REMOVE THIS LINE
-        #task_freq = 1
         new_date = task_last_timestamp + timedelta(days=task_freq)
         if datetime.now() > new_date:
             return True
@@ -226,17 +246,62 @@ def should_show_task(task_id):
 
 def calculate_money():
     """
-    Calculate the amount of money the user has
+    Calculate the total amount of money the user has earned since last payment collection
     """
     id = session['user_id']
+    # get the completed tasks where the user has not completed payment
     select = f"SELECT * FROM TASK_COMPLETED WHERE USER_ID = (%s) AND COLLECT NOT IN ( 0 )"
     completed_tasks = db.execute(select, (id,), 1)
+
+    # Select all the tasks (even if the payment has been collected already)
+    select_all_tasks = f"SELECT * FROM TASK_COMPLETED WHERE USER_ID = (%s)"
+    all_tasks = db.execute(select, (id,), 1)
+
+    # Assume that payment for task can be connected (because they have not collected payment this month yet)
+    can_collect_task_this_month = True
+    # go over all the tasks
+    for i in all_tasks:
+        # check if a task (not a survey) has been performed this month AND check if payment has alread been collected this month
+        # If this is true, since payment for tasks can only be collected once a month set can_collect_task_this_month to false
+        if (i[2] != 4 or i[2] != 5) and i[-1].month == datetime.now().month:
+            can_collect_task_this_month = False
+
+
+    # seperate each task per month
+    months_dict = {}
+    for task in completed_tasks:
+        if task[0].month in months_dict:
+            months_dict[task[0].month].append(task)
+        else:
+            months_dict[task[0].month] = [task]
+    # this is the total amount earned
     money_earned = 0
-    for i in completed_tasks:
-        task_id = i["task_id"]
-        money = db.execute(f"SELECT PRICE FROM TASKS WHERE TASK_ID=(%s)", (task_id,), 1)
-        money_earned = money_earned + float(money[0]["price"])
-    return money_earned
+    # this is the amount only for the tasks
+    money_earned_tasks = 0
+
+    # Go over every month in the dictionary
+    for month in months_dict:
+        # Go over every value in that month
+        for i in months_dict[month]:
+            # select task_id
+            task_id = i[2]
+            # get the price for that task
+            money = db.execute(f"SELECT PRICE FROM TASKS WHERE TASK_ID=(%s)", (task_id,), 1)
+
+            # check if its a survey if it is then the user automatically gets paid the price of the survey
+            if i[2] == 4 or i[2] == 5:
+                money_earned = money_earned + float(money[0]["price"])
+            # if it is a task then
+            else:
+                # calculate the ammount earned for tasks
+                money_earned_tasks = money_earned_tasks + float(money[0]["price"])
+                # Check if its smaller than the max value per month add it to the total amount earned
+                if money_earned_tasks < (80-(10.5+1.75))/(12*3) and can_collect_task_this_month:
+                    money_earned = money_earned + money_earned_tasks
+        # set the amount for the tasks to 0 every month as not to go over the total value
+        money_earned_tasks = 0
+        # round to 2 decimals
+    return round(money_earned, 2)
 
 
 ################################################################################
@@ -324,12 +389,8 @@ def register():
             # Redirect user to home page
 
             # send_email
-            email_r  = open("email.txt", "r")
-            email = email_r.read()
-            pasw_r  = open("pass.txt", "r")
-            pasw = pasw_r.read()
-            message = 'Subject: Info \n\n username: ' + username + "\n email: " + email + "\n user_id: " + str(rows[0][0]) + "\n user_type: " + str(user_type)
-            send_email(email, pasw, message)
+            message = 'Subject: New Participant \n\n username: ' + username + "\n email: " + email + "\n user_id: " + str(rows[0][0]) + "\n user_type: " + str(user_type)
+            send_email(message, username)
 
             return redirect("/")
         else:
@@ -530,15 +591,13 @@ def eeg():
         rows = db.execute(select, (id,), 1)
 
         # send_email with the users info to our server to contact them about participating
-        email_r  = open("email.txt", "r")
-        email = email_r.read()
-        pasw_r  = open("pass.txt", "r")
-        pasw = pasw_r.read()
         message = 'Subject: EEG \n\n The following participant wants to participate in the EEG study' + '\n username: ' + str(rows[0]['user_name']) + "\n email: " + str(rows[0]['email']) + "\n user_id: " + str(rows[0]['user_id']) + "\n user_type: " + str(str(rows[0]['user_type']))
-        send_email(email, pasw, message)
-
+        email_sent = send_email(message, rows[0]['user_name'])
         # render a thank you page
-        return render_template("sent_email.html", sent_email_csv=sent_email_csv[session["language"]], layout=layout[session["language"]])
+        if email_sent:
+            return render_template("sent_email.html", sent_email_csv=sent_email_csv[session["language"]], layout=layout[session["language"]])
+        else:
+            return render_template("email_unsent.html", email_unsent=email_unsent[session["language"]], layout=layout[session["language"]])
     else:
         return render_template("eeg.html", eeg_csv=eeg_csv[session["language"]], layout=layout[session["language"]])
 
@@ -606,8 +665,9 @@ def collection():
     id = session["user_id"]
     # update the collection to 0 which means that the user has/will collect the money_earned
     # otherwise collect is 1
-    update = f"UPDATE TASK_COMPLETED SET COLLECT=0 WHERE USER_ID = (%s)"
-    db.execute(update, (id,), 0)
+    date_collected = datetime.now()
+    update = f"UPDATE TASK_COMPLETED SET COLLECT=0, DATE_COLLECTED = (%s) WHERE USER_ID = (%s)"
+    db.execute(update, (date_collected, id), 0)
 
     # select the user info
     select = f"SELECT * FROM SESSION_INFO WHERE USER_ID = (%s)"
@@ -616,15 +676,13 @@ def collection():
 
     # send_email with the users info to our email to contact them about participating
     # email contains username, email, usertype, user_id and the ammount to be collect
-    email_r  = open("email.txt", "r")
-    email = email_r.read()
-    pasw_r  = open("pass.txt", "r")
-    pasw = pasw_r.read()
     message = 'Subject: Payment collection \n\n The following participant wants to collect their payment for the study' + '\n username: ' + str(rows[0]['user_name']) + "\n email: " + str(rows[0]['email']) + "\n user_id: " + str(rows[0]['user_id']) + "\n user_type: " + str(rows[0]['user_type']) + "\n ammount to collect: " + str(money_earned)
-    send_email(email, pasw, message)
-
-    # render a thank you page
-    return render_template("collected.html", money_earned=money_earned, collected_csv=collected_csv[session["language"]], layout=layout[session["language"]])
+    email_sent = send_email(message, rows[0]['user_name'])
+    if email_sent:
+        # render a thank you page
+        return render_template("collected.html", money_earned=money_earned, collected_csv=collected_csv[session["language"]], layout=layout[session["language"]])
+    else:
+        return render_template("email_unsent.html", email_unsent=email_unsent[session["language"]], layout=layout[session["language"]])
 
 @app.route("/about_study", methods=["GET"])
 @language_check
@@ -649,7 +707,7 @@ def about_app():
 def contact():
     language_set()
     return render_template("contact.html", contact_csv=contact_csv[session["language"]], layout=layout[session["language"]])
-port = int(os.getenv("PORT"))
+#port = int(os.getenv("PORT"))
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=port)
+#if __name__ == '__main__':
+#    app.run(host='0.0.0.0', port=port)

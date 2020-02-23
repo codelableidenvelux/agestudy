@@ -42,17 +42,27 @@
         <li class="nav-item"><a class="nav-link" href="/">{{ layout["list2"] }}</a></li>
         <li class="nav-item"><a class="nav-link" href="/eeg">{{ layout["list3"] }}</a></li>
         <li class="nav-item"><a class="nav-link" href="/consent">{{ layout["list4"] }}</a></li>
+        <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{ layout["list13"] }}
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="/about_study">{{ layout["list7"] }}</a>
+          <a class="dropdown-item" href="/for_participant">{{ layout["list8"] }}</a>
+          <a class="dropdown-item" href="/about_app">{{ layout["list9"] }}</a>
+          <a class="dropdown-item" href="/contact">{{ layout["list10"] }}</a>
+        </div>
       </ul>
       <ul class="navbar-nav mr-auto mt-2">
         <li class="nav-item dropdown">
           {% if session.language == "english" %}
           <a class="nav-link dropdown-toggle" href="{{url_for(request.endpoint)}}" id="dropdown09" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="flag-icon flag-icon-us"> </span> English</a>
-          <div class="dropdown-menu" aria-labelledby="dropdown09">
+          <div class="dropdown-menu dropdown" aria-labelledby="dropdown09">
             <a class="dropdown-item" href="{{url_for(request.endpoint)}}?language=dutch"><span class="flag-icon flag-icon-nl"> </span> Nederlands </a>
           </div>
           {%else%}
           <a class="nav-link dropdown-toggle" href="{{url_for(request.endpoint)}}" id="dropdown09" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="flag-icon flag-icon-nl"> </span> Nederlands </a>
-          <div class="dropdown-menu" aria-labelledby="dropdown09">
+          <div class="dropdown-menu dropdown" aria-labelledby="dropdown09">
             <a class="dropdown-item" href="{{url_for(request.endpoint)}}?language=english"><span class="flag-icon flag-icon-us"> </span>English </a>
           </div>
           {% endif %}
@@ -72,18 +82,18 @@
         <li class="nav-item dropdown">
           {% if session.language == "english" %}
           <a class="nav-link dropdown-toggle" href="{{url_for(request.endpoint)}}" id="dropdown09" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="flag-icon flag-icon-us"> </span> English</a>
-          <div class="dropdown-menu" aria-labelledby="dropdown09">
+          <div class="dropdown-menu dropdown" aria-labelledby="dropdown09">
             <a class="dropdown-item" href="{{url_for(request.endpoint)}}?language=dutch"><span class="flag-icon flag-icon-nl"> </span> Nederlands </a>
           </div>
           {%else%}
           <a class="nav-link dropdown-toggle" href="{{url_for(request.endpoint)}}" id="dropdown09" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="flag-icon flag-icon-nl"> </span> Nederlands </a>
-          <div class="dropdown-menu" aria-labelledby="dropdown09">
+          <div class="dropdown-menu dropdown" aria-labelledby="dropdown09">
             <a class="dropdown-item" href="{{url_for(request.endpoint)}}?language=english"><span class="flag-icon flag-icon-us"> </span>English </a>
           </div>
           {% endif %}
         </li>
-        <li class="nav-item"><a class="nav-link" href="/register">{{ layout["list11"] }}</a></li>
-        <li class="nav-item"><a class="nav-link" href="/login">{{ layout["list12"] }}</a></li>
+        <li class="nav-item nav_popup_register"><a class="btn btn-outline-success" href="/register">{{ layout["list11"] }}</a></li>
+        <li class="nav-item nav_popup_login"><a class="nav-link" href="/login">{{ layout["list12"] }}</a></li>
       </ul>
       {% endif %}
     </div>
