@@ -4,5 +4,163 @@
 For participant
 {% endblock %} {% block main %}
 
-<h1>{{for_participant_csv["h11"]}}</h1>
+<section id="header">
+<h1> {{for_participant_csv.loc["h11"]}} </h1>
+<ul>
+  <li>{{for_participant_csv.loc["li1"]}}  </li>
+  <li>{{for_participant_csv.loc["li2"]}} </li>
+  <li>{{for_participant_csv.loc["li3"]}} <a href="https://play.google.com/store/apps/details?id=com.quantactions.tapcounter">TapCounter App </a> </li>
+</ul>
+<h1>{{for_participant_csv.loc["h12"]}}</h1>
+<ul>
+  <li>{{for_participant_csv.loc["li4"]}} </li>
+  <li>{{for_participant_csv.loc["li5"]}}</li>
+  <li>{{for_participant_csv.loc["li6"]}}</li>
+  <li>{{for_participant_csv.loc["li7"]}}</li>
+</ul>
+
+<p>{{for_participant_csv.loc["p1"]}}</p>
+<br>
+<b><h3>{{for_participant_csv.loc["p2"]}}</h3></b>
+</section>
+
+<section id="start_info">
+  <h1>{{for_participant_csv.loc["h13"]}}</h1>
+  <p>{{for_participant_csv.loc["p3"]}}</p>
+  <h1>{{for_participant_csv.loc["h14"]}}</h1>
+  <p>{{for_participant_csv.loc["p4"]}}</p>
+  <p>{{for_participant_csv.loc["p5"]}}</p>
+</section>
+
+<section id="purpose">
+  <h1>{{for_participant_csv.loc["h15"]}}</h1>
+  <p>{{for_participant_csv.loc["p6"]}}</p>
+</section>
+
+<section id="time">
+  <h1>{{for_participant_csv.loc["h16"]}}</h1>
+  <p>{{for_participant_csv.loc["p7"]}}</p>
+</section>
+
+<section id="location">
+  <h1>{{for_participant_csv.loc["h17"]}}</h1>
+  <p>{{for_participant_csv.loc["p8"]}}</p>
+</section>
+
+<section id="communication">
+  <h1>{{for_participant_csv.loc["h18"]}}</h1>
+  <p>{{for_participant_csv.loc["p9"]}}</p>
+</section>
+
+<section id="online">
+  <h1>{{for_participant_csv.loc["h19"]}}</h1>
+  <p>{{for_participant_csv.loc["p10"]}}</p>
+  <ul>
+    <li>{{for_participant_csv.loc["li_online_1"]}}</li>
+    <li>{{for_participant_csv.loc["li_online_2"]}}</li>
+    <li>{{for_participant_csv.loc["li_online_3"]}}</li>
+    <li>{{for_participant_csv.loc["li_online_4"]}}</li>
+    <li>{{for_participant_csv.loc["li_online_5"]}}</li>
+  </ul>
+</section>
+
+
+<section id="smartphone">
+  <h1>{{for_participant_csv.loc["h20"]}}</h1>
+  <p>{{for_participant_csv.loc["p11"]}}</p>
+  <ol>
+    <li>{{for_participant_csv.loc["li_smartphone_1"]}}</li>
+    <li>{{for_participant_csv.loc["li_smartphone_2"]}}</li>
+    <li>{{for_participant_csv.loc["li_smartphone_3"]}}</li>
+    <li>{{for_participant_csv.loc["li_smartphone_4"]}}</li>
+    <li>{{for_participant_csv.loc["li_smartphone_5"]}}</li>
+    <li>{{for_participant_csv.loc["li_smartphone_6"]}}</li>
+    <li>{{for_participant_csv.loc["li_smartphone_7"]}}</li>
+  </ol>
+  <p>{{for_participant_csv.loc["p12"]}}</p>
+  <br><br>
+  <p>{{for_participant_csv.loc["p13"]}}</p>
+  <br><br>
+  <p>{{for_participant_csv.loc["p14"]}}</p>
+</section>
+
+<section id="life_events">
+  <h1>{{for_participant_csv.loc["h21"]}}</h1>
+  <p>{{for_participant_csv.loc["p15"]}}</p>
+</section>
+
+<section id="lab">
+  <h1>{{for_participant_csv.loc["h22"]}}</h1>
+  <p>{{for_participant_csv.loc["p16"]}}</p>
+  <br><br>
+  <p>{{for_participant_csv.loc["p17"]}}</p>
+</section>
+
+<section id="data">
+  <h1>{{for_participant_csv.loc["h23"]}}</h1>
+  <p>{{for_participant_csv.loc["p18"]}}</p>
+  <br><br>
+  <p>{{for_participant_csv.loc["p19"]}}</p>
+  <ol type="a">
+    <li>{{for_participant_csv.loc["li_data_1"]}}</li>
+    <li>{{for_participant_csv.loc["li_data_2"]}}</li>
+    <li>{{for_participant_csv.loc["li_data_3"]}}</li>
+  </ol>
+  <p>{{for_participant_csv.loc["p20"]}}</p>
+</section>
+
+<section id="compensation">
+  <h1>{{for_participant_csv.loc["h24"]}}</h1>
+  <p><u>{{for_participant_csv.loc["p21_u"]}}</u></p>
+  <p>{{for_participant_csv.loc["p22"]}}</p>
+  <br><br>
+  <p>{{for_participant_csv.loc["p23"]}}</p>
+  <br><br>
+  <p>{{for_participant_csv.loc["p24"]}}</p>
+</section>
+
+<section id="exclusion">
+  <h1>{{for_participant_csv.loc["h25"]}}</h1>
+  <p>{{for_participant_csv.loc["p25"]}}</p>
+  <ol type="1">
+    <li>{{for_participant_csv.loc["li_exlusion_1"]}}</li>
+    <li>{{for_participant_csv.loc["li_exlusion_2"]}}</li>
+    <li>{{for_participant_csv.loc["li_exlusion_3"]}}</li>
+    <li>{{for_participant_csv.loc["li_exlusion_4"]}}</li>
+    <li>{{for_participant_csv.loc["li_exlusion_5"]}}</li>
+    <li>{{for_participant_csv.loc["li_exlusion_6"]}}</li>
+    <li>{{for_participant_csv.loc["li_exlusion_7"]}}</li>
+    <li>{{for_participant_csv.loc["li_exlusion_8"]}}</li>
+    <li>{{for_participant_csv.loc["li_exlusion_9"]}}</li>
+  </ol>
+</section>
+
+<section id="withdrawal">
+  <h1>{{for_participant_csv.loc["h26"]}}</h1>
+  <p>{{for_participant_csv.loc["p26"]}}</p>
+  <ol type="a">
+    <li>{{for_participant_csv.loc["li_withdrawal_1"]}}</li>
+    <li>{{for_participant_csv.loc["li_withdrawal_2"]}}</li>
+    <li>{{for_participant_csv.loc["li_withdrawal_3"]}}</li>
+    <li>{{for_participant_csv.loc["li_withdrawal_4"]}}</li>
+    <li>{{for_participant_csv.loc["li_withdrawal_5"]}}</li>
+    <li>{{for_participant_csv.loc["li_withdrawal_6"]}}</li>
+  </ol>
+  <p>{{for_participant_csv.loc["p27"]}}</p>
+</section>
+
+<section id="consent">
+  <h1>{{for_participant_csv.loc["h27"]}}</h1>
+  <p>{{for_participant_csv.loc["p28"]}}</p>
+  <br>
+  <a class='btn btn-primary' href="/consent" target="_blank">{{for_participant_csv.loc["consent_link"]}}</a>
+</section>
+
+<section id="contact">
+  <h1>{{for_participant_csv.loc["h28"]}}</h1>
+  <p>{{for_participant_csv.loc["p29"]}}</p>
+</section>
+
+
+
 {% endblock %}

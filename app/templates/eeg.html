@@ -1,12 +1,62 @@
 {% extends "layout.html" %}
 
 {% block title %}
-EGG
+EEG
 {% endblock %} {% block main %}
 
-<h1> {{ eeg_csv["h11"] }} </h1>
-<p>{{ eeg_csv["p1"] }} </p>
+<h1> {{ eeg_csv.loc["h11"] }} </h1>
+<p>{{ eeg_csv.loc["p1"] }} </p>
 <form action="/eeg" method="post">
-<button id="eeg" class="btn btn-primary" type="submit">{{ eeg_csv["button1"] }}</button>
+<button id="eeg" class="btn btn-primary" type="submit">{{ eeg_csv.loc["button1"] }}</button>
 </form>
+
+<section id="description">
+<h1> {{ eeg_csv.loc["h12"] }} </h1>
+<p>{{ eeg_csv.loc["p2"] }} </p>
+</section>
+
+<section id="lab">
+<h1> {{ eeg_csv.loc["h13"] }} </h1>
+<p>{{ eeg_csv.loc["p3"] }} </p>
+
+<img src="../static/images/eeg_lab.png" alt="doing eeg lab session" class="lab_eeg">
+
+</section>
+
+<section id="participant">
+<h1> {{ eeg_csv.loc["h14"] }} </h1>
+<p>{{ eeg_csv.loc["p4"] }} </p>
+<br><br>
+<p>{{ eeg_csv.loc["p5"] }} </p>
+</section>
+
+<section id="location">
+<h1> {{ eeg_csv.loc["h18"] }} </h1>
+<p>{{ eeg_csv.loc["p8"] }} </p>
+<a href="https://www.universiteitleiden.nl/locaties/pieter-de-la-court#tab-1 ">https://www.universiteitleiden.nl/locaties/pieter-de-la-court#tab-1  </a>
+</section>
+
+<section id="length">
+<h1> {{ eeg_csv.loc["h15"] }} </h1>
+<p>{{ eeg_csv.loc["p6"] }} </p>
+</section>
+
+<section id="after_eeg">
+<h1> {{ eeg_csv.loc["h16"] }} </h1>
+<p>{{ eeg_csv.loc["p7"] }} </p>
+</section>
+
+<section id="prepare_eeg">
+<h1> {{ eeg_csv.loc["h17"] }} </h1>
+<ul>
+  <li><b>{{ eeg_csv.loc["li1_a"] }} </b> {{ eeg_csv.loc["li1_b"] }} <b>{{ eeg_csv.loc["li1_c"] }}</b>
+    {{ eeg_csv.loc["li1_d"] }}
+  </li>
+  <li><b>{{ eeg_csv.loc["li2_a"] }}</b>{{ eeg_csv.loc["li2_b"] }}  <b><u>{{ eeg_csv.loc["li2_c"] }} </u></b></li>
+  <li>{{ eeg_csv.loc["li3_a"] }} <b>{{ eeg_csv.loc["li3_b"] }} </b> {{ eeg_csv.loc["li3_c"] }} </li>
+  <li><b>{{ eeg_csv.loc["li4_a"] }} </b>{{ eeg_csv.loc["li4_b"] }} </li>
+</ul>
+</section>
+
+
 {% endblock %}

@@ -4,5 +4,65 @@
 Consent
 {% endblock %} {% block main %}
 
-<h1> {{consent_csv["h11"]}} </h1>
+<h1> {{consent_csv.loc["h11"]}} </h1>
+<p> {{consent_csv.loc["p1"]}} </p>
+<h1> {{consent_csv.loc["h12"]}} </h1>
+<p> {{consent_csv.loc["p2"]}} </p>
+
+<section id="about">
+  <h1> {{consent_csv.loc["h13"]}} </h1>
+  <p> {{consent_csv.loc["p3"]}} </p>
+</section>
+
+<section id="time">
+  <h1> {{consent_csv.loc["h14"]}} </h1>
+  <p> {{consent_csv.loc["p4"]}} </p>
+</section>
+
+<section id="expectation">
+  <h1> {{consent_csv.loc["h15"]}} </h1>
+  <p> {{consent_csv.loc["p5"]}} </p>
+</section>
+
+<section id="reward">
+  <h1> {{consent_csv.loc["h16"]}} </h1>
+  <p> {{consent_csv.loc["p6"]}} </p>
+  <p> <ul>{{consent_csv.loc["p7"]}}</ul> </p>
+  <p> {{consent_csv.loc["p8"]}} </p>
+</section>
+
+<section id="contact">
+  <h1> {{consent_csv.loc["h17"]}} </h1>
+  <p> {{consent_csv.loc["p9"]}} </p>
+</section>
+
+<section id="consent">
+  <p> {{consent_csv.loc["p10"]}} </p>
+  <ul>
+    <li>{{consent_csv.loc["li1"]}}</li>
+    <li>{{consent_csv.loc["li2"]}}</li>
+    <li>{{consent_csv.loc["li3"]}}</li>
+    <li>{{consent_csv.loc["li4"]}}</li>
+    <li>{{consent_csv.loc["li5"]}}</li>
+    <li>{{consent_csv.loc["li6"]}}</li>
+    <li>{{consent_csv.loc["li7_a"]}} <u>{{consent_csv.loc["li7_b"]}}</u>{{consent_csv.loc["li7_c"]}}</li>
+    <li>{{consent_csv.loc["li8"]}}</li>
+    <li>{{consent_csv.loc["li9"]}}</li>
+  </ul>
+
+  {% if session.user_id %}
+    {% if not session.consent %}
+  <div>
+  <form action="/consent" method="post">
+    <input type="checkbox" class="form-check-input" id="consent" name="consent">
+    <label class="form-check-label" for="consent">{{consent_csv.loc["p11"]}}</label>
+    <br>
+    <button class="btn btn-primary" type="submit">{{consent_csv.loc["button1"]}}</button>
+  </form>
+  </div>
+    {% endif %}
+  {% endif %}
+
+</section>
+
 {% endblock %}

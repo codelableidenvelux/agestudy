@@ -1,7 +1,7 @@
 nav .navbar-brand
 {
     /* size for brand */
-    font-size: xx-large;
+    font-size: 40px;
 }
 
 /* colors for brand */
@@ -22,6 +22,9 @@ nav .navbar-brand .green
     color: #2e944b;
 }
 
+nav {
+  font-size: 20px;
+}
 main
 {
     /* scroll horizontally as needed */
@@ -29,6 +32,15 @@ main
 
     /* center contents */
     text-align: center;
+    font-size: 22px;
+}
+.nav_popup_register{
+  font-size: 30px
+}
+
+.nav-item{
+  margin-right: 8px;
+  margin-left: 8px;
 }
 
 main img
@@ -51,6 +63,44 @@ th
 tr:nth-child(even)
 {
     background-color: #f2f2f2;
+}
+/* FontAwesome for working BootSnippet :> */
+@import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+html {
+  scroll-behavior: smooth;
+}
+section {
+    padding: 50px 50px;
+    background: #eee !important;
+    margin-bottom: 50px;
+    margin-top: 50px;
+}
+
+section .section-title {
+    text-align: center;
+    color: #007b5e;
+    margin-bottom: 50px;
+    text-transform: uppercase;
+}
+
+.logo_about_study_velux{
+   position:absolute;
+   top:600px;
+   left:600px;
+    width:300px;
+    height:200px;
+}
+p {
+   display: inline;
+    margin: 0;
+    padding: 0;
+}
+.logo_about_study_leiden{
+  position:absolute;
+  top:600px;
+  left:1000px;
+    width:200px;
+    height:200px;
 }
 
 

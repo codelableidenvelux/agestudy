@@ -6,17 +6,32 @@ Register
 
 <link href="/static/css/index.css" rel="stylesheet"/>
 
-<section id="team" class="pb-5">
+<section id="team" class="pb-6">
   <div class="container">
-    <h5 class="section-title h1">{{ tasks["h51"] }}</h5>
-    <p>
-      {{ tasks["p1_1"] }} <br>
-      {{ tasks["p1_2"] }} <br>
-      {{ tasks["p1_3"] }} <br>
 
-      {{ tasks["p1_4"] }}
-    </p>
     <div class="row">
+
+      <!-- Task 2 task-switching -->
+      <div class="col-xs-12 col-sm-6 col-md-4" id="task_switching" name="task_switching">
+        <div class="card">
+          <div class="card-body text-center">
+            <p><img class=" img-fluid" src="/static/images/task_switching.png" alt="card image"></p>
+            <h4 class="card-title">{{ tasks["task_switching_title"] }}</h4>
+            <p class="card-text">{{ tasks["task_switching_description"] }}</p>
+            {% if show_task_switching %}
+            <div id="task_switching_button" name="task_switching_button">
+              <ul class="list-inline">
+                <li class="list-inline-item">
+                  <a href="/task_switching" target="_blank" class="btn btn-primary stretched-link">{{ tasks["task_switching_button"] }}</a>
+                </li>
+              </ul>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- End task 2 task-switching-->
       <!-- Task 0 Corsi -->
       <div class="col-xs-12 col-sm-6 col-md-4" id="corsi" name="corsi">
         <div class="card">
@@ -38,48 +53,31 @@ Register
       </div>
       <!-- End task 0 corsi -->
 
-      <!-- Task 1 N-back -->
-      <div class="col-xs-12 col-sm-6 col-md-4" id="n_back" name="n_back">
-        <div class="card">
-          <div class="card-body text-center">
-            <p><img class=" img-fluid" src="/static/images/N_back.png" alt="card image"></p>
-            <h4 class="card-title">{{ tasks["n_back_title"] }}</h4>
-            <p class="card-text">{{ tasks["n_back_description"] }}</p>
-            {% if show_n_back %}
-            <div id="n_back_button" name="n_back_button">
-              <ul class="list-inline">
-                <li class="list-inline-item">
-                  <a href="/n_back" target="_blank" class="btn btn-primary stretched-link">{{ tasks["n_back_button"] }}</a>
-                </li>
-              </ul>
-            </div>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-      <!-- End task 1 N-back -->
-      <!-- Task 2 task-switching -->
-      <div class="col-xs-12 col-sm-6 col-md-4" id="task_switching" name="task_switching">
-        <div class="card">
-          <div class="card-body text-center">
-            <p><img class=" img-fluid" src="/static/images/task_switching.png" alt="card image"></p>
-            <h4 class="card-title">{{ tasks["task_switching_title"] }}</h4>
-            <p class="card-text">{{ tasks["task_switching_description"] }}</p>
-            {% if show_task_switching %}
-            <div id="task_switching_button" name="task_switching_button">
-              <ul class="list-inline">
-                <li class="list-inline-item">
-                  <a href="/task_switching" target="_blank" class="btn btn-primary stretched-link">{{ tasks["task_switching_button"] }}</a>
-                </li>
-              </ul>
-            </div>
-            {% endif %}
-          </div>
-        </div>
-      </div>
 
-      <!-- End ask 2 task-switching-->
 
+
+            <!-- Task 1 N-back -->
+            <div class="col-xs-12 col-sm-6 col-md-4" id="n_back" name="n_back">
+              <div class="card">
+                <div class="card-body text-center">
+                  <p><img class=" img-fluid" src="/static/images/N_back.png" alt="card image"></p>
+                  <h4 class="card-title">{{ tasks["n_back_title"] }}</h4>
+                  <p class="card-text">{{ tasks["n_back_description"] }}</p>
+                  {% if show_n_back %}
+                  <div id="n_back_button" name="n_back_button">
+                    <ul class="list-inline">
+                      <li class="list-inline-item">
+                        <a href="/n_back" target="_blank" class="btn btn-primary stretched-link">{{ tasks["n_back_button"] }}</a>
+                      </li>
+                    </ul>
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <!-- End task 1 N-back -->
+            </div>
+        <div class="row">
       <!-- Task 3 SF-36 -->
       <div id="sf_36" name="sf_36" class="col-xs-12 col-sm-6 col-md-4">
         <div class="card">
@@ -120,7 +118,27 @@ Register
         </div>
       </div>
       <!-- End task 4 Phone survey-->
+
+      <!-- eeg  -->
+      <div id="eeg" name="eeg" class="col-xs-12 col-sm-6 col-md-4">
+        <div class="card">
+          <div class="card-body text-center">
+            <p><img class=" img-fluid" src="/static/images/eeg_lab_2.png" alt="card image"></p>
+            <h4 class="card-title">{{ tasks["eeg_title"] }}</h4>
+            <p class="card-text">{{ tasks["eeg_description"] }}</p>
+            <div id="eeg_button" name="eeg_button">
+              <ul class="list-inline">
+                <li class="list-inline-item">
+                  <a href="/eeg" target="_blank" class="btn btn-primary stretched-link">{{ tasks["eeg_botton"] }}</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- eeg-->
     </div>
   </div>
+  </section>
 
   {% endblock %}

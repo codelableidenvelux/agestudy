@@ -1,7 +1,7 @@
 ﻿tag,english,dutch
-h11,Welcome Participant,Welkom deelnemer
-p1,If you are looking for the next task to perform we chose this one especially for you ,"Als je een suggestie zoekt, is deze oefening aanbevolen"
-p2,There are also more tasks you could perform click the button to try other tasks,Er zijn meerdere oefeningen die u kunt proberen
+h11,Welcome,Welkom
+p1,This task is recommended,Deze oefening wordt aanbevolen
+p2,There are more (optional) tasks for you. Try them out!,Er zijn meer (optionele) taken voor u. Probeer ze!
 button1,Try another task,Probeer een andere oefening
 button2,Collect payment,Betaling ophalen
 js_title,Money earned so far:,Geld verdiend tot nu toe

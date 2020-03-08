@@ -14,20 +14,29 @@ Register
 <!-- source: https://getbootstrap.com/docs/4.0/components/forms/ -->
 <form action="/register" method="post" class="needs-validation">
   <div class="minimum_requirements" id="minimum_requirements">
-  <p>{{ register_csv['p1'] }}</p>
+  <p>{{ register_csv.loc['p1'] }}</p>
+  <br><br>
   <div class="form-check">
     <input type="checkbox" class="form-check-input" id="age_appropriate" name="age_appropriate" value="" required>
-    <label class="form-check-label" for="age_appropriate">{{ register_csv['age_appropriate'] }}</label>
+    <label class="form-check-label" for="age_appropriate">{{ register_csv.loc['age_appropriate'] }}</label>
   </div>
   <div class="form-check">
     <input type="checkbox" class="form-check-input" id="have_smartphone" name="have_smartphone" value="" required>
-    <label class="form-check-label" for="have_smartphone">{{ register_csv['have_smartphone'] }}</label>
+    <label class="form-check-label" for="have_smartphone">{{ register_csv.loc['have_smartphone'] }}</label>
   </div>
   <div class="form-check">
     <input type="checkbox" class="form-check-input" id="app_installed" name="app_installed" value="" required>
-    <label class="form-check-label" for="app_installed">{{ register_csv['app_installed'] }}</label>
+    <label class="form-check-label" for="app_installed">{{ register_csv.loc['app_installed'] }}</label>
+  </div>
+  <div class="form-check">
+    <input type="checkbox" class="form-check-input" id="read_participant" name="read_participant" value="" required>
+    <label class="form-check-label" for="read_participant">{{ register_csv.loc['read_participant'] }}<a href="/for_participant" target="_blank">{{ register_csv.loc['participant_info'] }}</a></label>
+  </div>
+  <div class="form-check">
+    <input type="checkbox" class="form-check-input" id="mental_health" name="mental_health" value="" required>
+    <label class="form-check-label" for="mental_health">{{ register_csv.loc['mental_health'] }}</label>
     <div class="invalid-feedback d-block">
-      <a href="/about_app" class="btn btn-secondary btn-sm">{{ register_csv['button1'] }}</a>
+      <a href="/about_app" target="_blank" class="btn btn-secondary btn-sm">{{ register_csv.loc['button1'] }}</a>
     </div>
   </div>
   </div>
@@ -35,72 +44,72 @@ Register
   <div class="register_form" id="register_form">
   <div class="form-group">
     <!-- Userame -->
-    <label class="control-label" for="username">{{ register_csv['label_email'] }}</label>
-    <input class="form-control" id="username" name="username" placeholder="{{ register_csv['placeholder_email'] }}" type="text" required />
+    <label class="control-label" for="username">{{ register_csv.loc['label_email'] }}</label>
+    <input class="form-control" id="username" name="username" placeholder="{{ register_csv.loc['placeholder_email'] }}" type="text" required />
     <div class="valid-feedback">
-      {{ register_csv['valid_feedback_email'] }}
+      {{ register_csv.loc['valid_feedback_email'] }}
     </div>
     <div class="invalid-feedback">
-        {{ register_csv['invalid_feedback_email_1'] }} <br>
-        {{ register_csv['invalid_feedback_email_2'] }} <br>
+        {{ register_csv.loc['invalid_feedback_email_1'] }} <br>
+        {{ register_csv.loc['invalid_feedback_email_2'] }} <br>
     </div>
   </div>
   <div class="form-group">
     <!-- Userame -->
-    <label class="control-label" for="email">{{ register_csv['label_email_ver'] }}</label>
-    <input class="form-control" id="email" name="email" placeholder="{{ register_csv['placeholder_email_ver'] }}" type="text" required />
+    <label class="control-label" for="email">{{ register_csv.loc['label_email_ver'] }}</label>
+    <input class="form-control" id="email" name="email" placeholder="{{ register_csv.loc['placeholder_email_ver'] }}" type="text" required />
     <div class="valid-feedback">
-        {{ register_csv['valid_feedback_email_ver'] }}
+        {{ register_csv.loc['valid_feedback_email_ver'] }}
     </div>
     <div class="invalid-feedback">
-        {{ register_csv['invalid_feedback_email_ver_1'] }} <br>
-        {{ register_csv['invalid_feedback_email_ver_2'] }}
+        {{ register_csv.loc['invalid_feedback_email_ver_1'] }} <br>
+        {{ register_csv.loc['invalid_feedback_email_ver_2'] }}
     </div>
   </div>
   <!-- Gender -->
   <div class="form-drop">
-    <label class="control-label" for="gender">{{ register_csv['label_gender'] }}</label>
+    <label class="control-label" for="gender">{{ register_csv.loc['label_gender'] }}</label>
     <!-- mb3 == default size , m=margin, b=margin-bottom, 3 is size of 1-->
     <select class="form-control custom-select custom-select-lg mb-3" id="gender" name="gender" required>
-      <option selected disabled value="">{{ register_csv['option_gender_0'] }}</option>
-      <option value="male">{{ register_csv['option_gender_1'] }}</option>
-      <option value="female">{{ register_csv['option_gender_2'] }}</option>
-      <option value="other">{{ register_csv['option_gender_3'] }}</option>
+      <option selected disabled value="">{{ register_csv.loc['option_gender_0'] }}</option>
+      <option value="male">{{ register_csv.loc['option_gender_1'] }}</option>
+      <option value="female">{{ register_csv.loc['option_gender_2'] }}</option>
+      <option value="other">{{ register_csv.loc['option_gender_3'] }}</option>
     </select>
     <div class="valid-feedback">
-    {{ register_csv['valid_feedback_gender'] }}
+    {{ register_csv.loc['valid_feedback_gender'] }}
     </div>
     <div class="invalid-feedback">
-    {{ register_csv['invalid_feedback_gender'] }}
+    {{ register_csv.loc['invalid_feedback_gender'] }}
     </div>
   </div>
   <div class="form-group">
     <!-- Date input -->
     <div class="form-row">
     <div class="col">
-      <label class="control-label" for="month">{{ register_csv['label_month'] }}</label>
+      <label class="control-label" for="month">{{ register_csv.loc['label_month'] }}</label>
       <!-- mb3 == default size , m=margin, b=margin-bottom, 3 is size of 1-->
       <select class="form-control custom-select custom-select-lg mb-3" id="month" name="month" required>
-        <option selected disabled value="">{{ register_csv['option_month_0'] }}</option>
-        <option value="01">{{ register_csv['option_month_1'] }}</option>
-        <option value="02">{{ register_csv['option_month_2'] }}</option>
-        <option value="03">{{ register_csv['option_month_3'] }}</option>
-        <option value="04">{{ register_csv['option_month_4'] }}</option>
-        <option value="05">{{ register_csv['option_month_5'] }}</option>
-        <option value="06">{{ register_csv['option_month_6'] }}</option>
-        <option value="07">{{ register_csv['option_month_7'] }}</option>
-        <option value="08">{{ register_csv['option_month_8'] }}</option>
-        <option value="09">{{ register_csv['option_month_9'] }}</option>
-        <option value="10">{{ register_csv['option_month_10'] }}</option>
-        <option value="11">{{ register_csv['option_month_11'] }}</option>
-        <option value="12">{{ register_csv['option_month_12'] }}</option>
+        <option selected disabled value="">{{ register_csv.loc['option_month_0'] }}</option>
+        <option value="01">{{ register_csv.loc['option_month_1'] }}</option>
+        <option value="02">{{ register_csv.loc['option_month_2'] }}</option>
+        <option value="03">{{ register_csv.loc['option_month_3'] }}</option>
+        <option value="04">{{ register_csv.loc['option_month_4'] }}</option>
+        <option value="05">{{ register_csv.loc['option_month_5'] }}</option>
+        <option value="06">{{ register_csv.loc['option_month_6'] }}</option>
+        <option value="07">{{ register_csv.loc['option_month_7'] }}</option>
+        <option value="08">{{ register_csv.loc['option_month_8'] }}</option>
+        <option value="09">{{ register_csv.loc['option_month_9'] }}</option>
+        <option value="10">{{ register_csv.loc['option_month_10'] }}</option>
+        <option value="11">{{ register_csv.loc['option_month_11'] }}</option>
+        <option value="12">{{ register_csv.loc['option_month_12'] }}</option>
       </select>
     </div>
     <div class="col">
-      <label class="control-label" for="year">{{ register_csv['label_year'] }}</label>
+      <label class="control-label" for="year">{{ register_csv.loc['label_year'] }}</label>
       <!-- mb3 == default size , m=margin, b=margin-bottom, 3 is size of 1-->
       <select class="form-control custom-select custom-select-lg mb-3" id="year" name="year" required>
-        <option selected disabled value="">{{ register_csv['option_year_0'] }}</option>
+        <option selected disabled value="">{{ register_csv.loc['option_year_0'] }}</option>
         <option value="2007">2007</option>
     <option value="2006">2006</option>
     <option value="2005">2005</option>
@@ -209,56 +218,57 @@ Register
   </div>
   <!-- Password -->
   <div class="form-group">
-    <label class="control-label" for="password">{{ register_csv['label_password'] }}</label>
-    <input class="form-control" id="password" name="password" placeholder="{{ register_csv['placeholder_password'] }}" type="password" required/>
+    <label class="control-label" for="password">{{ register_csv.loc['label_password'] }}</label>
+    <input class="form-control" id="password" name="password" placeholder="{{ register_csv.loc['placeholder_password'] }}" type="password" required/>
     <div class="valid-feedback">
-      {{ register_csv['valid_feedback_password'] }}
+      {{ register_csv.loc['valid_feedback_password'] }}
     </div>
     <div class="invalid-feedback">
-      {{ register_csv['invalid_feedback_password'] }}
+      {{ register_csv.loc['invalid_feedback_password'] }}
     </div>
   </div>
   <div class="form-group">
-    <label class="control-label" for="confirmation">{{ register_csv['label_confirmation'] }}</label>
-    <input class="form-control" name="confirmation" placeholder="{{ register_csv['placeholder_confirmation'] }}" type="password" required/>
+    <label class="control-label" for="confirmation">{{ register_csv.loc['label_confirmation'] }}</label>
+    <input class="form-control" name="confirmation" placeholder="{{ register_csv.loc['placeholder_confirmation'] }}" type="password" required/>
     <div class="valid-feedback">
-      {{ register_csv['valid_feedback_confirmation'] }}
+      {{ register_csv.loc['valid_feedback_confirmation'] }}
     </div>
     <div class="invalid-feedback">
-      {{ register_csv['invalid_feedback_confirmation'] }}
+      {{ register_csv.loc['invalid_feedback_confirmation'] }}
     </div>
   </div>
 
   <div id="message_number" class="invalid-feedback">
-    {{ register_csv['message_number'] }}
+    {{ register_csv.loc['message_number'] }}
   </div>
   <div id="message_length" class="invalid-feedback">
-    {{ register_csv['message_length'] }}
+    {{ register_csv.loc['message_length'] }}
   </div>
   <!-- Live in the Netherlands checkbox -->
   <div class="form-check">
     <input type="checkbox" class="form-check-input" id="money" name="money">
-    <label class="form-check-label" for="money">{{ register_csv['checkbox_money'] }}</label>
+    <label class="form-check-label" for="money">{{ register_csv.loc['checkbox_money'] }}</label>
+    <input type="button"  class="btn" value="?" title="{{register_csv.loc['tooltip']}}">
   </div>
   <!-- City -->
   <div class="form-group" id="collect_possible_id">
     <input  class="form-check-input" type="checkbox" id="collect_possible" name="collect_possible">
-    <label class="form-check-label" for="collect_possible">{{ register_csv['checkbox_collection'] }}</label>
+    <label class="form-check-label" for="collect_possible">{{ register_csv.loc['checkbox_collection'] }}</label>
     <div class="invalid-feedback d-block">
-      {{ register_csv['invalid_feedback_collection'] }} <br>
-      <a href="/about_study" class="btn btn-secondary btn-sm">{{ register_csv['button2'] }}</a>
+      {{ register_csv.loc['invalid_feedback_collection'] }} <br>
+      <a href="/for_participant#compensation" target="_blank" class="btn btn-secondary btn-sm">{{ register_csv.loc['button2'] }}</a>
     </div>
   </div>
   <div class="form-check">
     <input type="checkbox" class="form-check-input" id="consent" name="consent" value="" required>
-    <label class="form-check-label" for="consent">{{ register_csv['consent'] }}</label>
+    <label class="form-check-label" for="consent">{{ register_csv.loc['consent'] }}</label>
     <div class="invalid-feedback d-block">
-      <a href="/consent" class="btn btn-secondary btn-sm">{{ register_csv['read_consent'] }}</a>
+      <a href="/consent" target="_blank" class="btn btn-secondary btn-sm">{{ register_csv.loc['read_consent'] }}</a>
     </div>
   </div>
 
 
-  <button id="submit" class="btn btn-primary" type="submit">{{ register_csv['button3'] }}</button>
+  <button id="submit" class="btn btn-primary" type="submit">{{ register_csv.loc['button3'] }}</button>
   </div>
 </form>
 

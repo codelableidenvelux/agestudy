@@ -30,7 +30,7 @@
 <body>
   <!-- Navbar -->
   <nav class="navbar navbar-expand-md navbar-light bg-light border">
-    <a class="navbar-brand" href="/"><span class="blue">A</span><span class="red">G</span><span class="yellow">E</span> <span class="red">Study</span></a>
+    <a class="navbar-brand" href="/home"><span class="blue">A</span><span class="red">G</span><span class="yellow">E</span> <span class="red">Study</span></a>
     <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -67,16 +67,16 @@
           </div>
           {% endif %}
         </li>
-        <li class="nav-item"><a class="nav-link" href="/account">{{ layout["list5"] }}</a></li>
-        <li class="nav-item"><a class="nav-link" href="/logout">{{ layout["list6"] }}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/account">{{ layout["list5"] }}  </a></li>
+        <li class="nav-item"><a class="nav-link" href="/logout">{{ layout["list6"] }}   </a></li>
       </ul>
       <!-- login or register  -->
       {% else %}
       <ul class="navbar-nav mr-auto mt-2">
-        <li class="nav-item"><a class="nav-link" href="/about_study">{{ layout["list7"] }}</a></li>
-        <li class="nav-item"><a class="nav-link" href="/for_participant">{{ layout["list8"] }}</a></li>
-        <li class="nav-item"><a class="nav-link" href="/about_app">{{ layout["list9"] }}</a></li>
-        <li class="nav-item"><a class="nav-link" href="/contact">{{ layout["list10"] }}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/about_study">{{ layout["list7"] }}  </a></li>
+        <li class="nav-item"><a class="nav-link" href="/for_participant">{{ layout["list8"] }}   </a></li>
+        <li class="nav-item"><a class="nav-link" href="/about_app">{{ layout["list9"] }}</a>   </li>
+        <li class="nav-item"><a class="nav-link" href="/consent">{{ layout["list4"] }}    </a></li>
       </ul>
       <ul class="navbar-nav mr-auto mt-2">
         <li class="nav-item dropdown">
@@ -92,8 +92,9 @@
           </div>
           {% endif %}
         </li>
-        <li class="nav-item nav_popup_register"><a class="btn btn-outline-success" href="/register">{{ layout["list11"] }}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact">{{ layout["list10"] }}</a></li>
         <li class="nav-item nav_popup_login"><a class="nav-link" href="/login">{{ layout["list12"] }}</a></li>
+        <li class="nav-item nav_popup_register"><a class="btn btn-outline-success" href="/register">{{ layout["list11"] }}</a></li>
       </ul>
       {% endif %}
     </div>

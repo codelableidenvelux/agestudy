@@ -5,6 +5,8 @@
 {% endblock %}
 
 {% block main %}
+<h1>{{ login_csv['h11'] }}</h1>
+<br><br>
     <form class = "login" action="/login" method="post">
         <div class="form-group">
             <input autocomplete="off" autofocus class="form-control" name="username" placeholder="{{ login_csv['input1'] }}" type="text"/>
@@ -14,4 +16,6 @@
         </div>
         <button class="btn btn-primary" type="submit">{{ login_csv['button1'] }}</button>
     </form>
+  <br>
+  <p>{{ login_csv['p1'] }}<a href="/register">{{ login_csv['href1'] }}</a></p>
 {% endblock %}

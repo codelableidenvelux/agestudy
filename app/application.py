@@ -28,18 +28,18 @@ layout = read_csv("static/csv/layout.csv")
 login_csv = read_csv("static/csv/login.csv")
 end_csv = read_csv("static/csv/end_task.csv")
 tasks = read_csv("static/csv/index.csv")
-register_csv = read_csv("static/csv/register.csv")
+register_csv = pd.read_excel('static/csv/register.xlsx', index_col="tag")
 account_csv = read_csv("static/csv/account.csv")
-consent_csv = read_csv("static/csv/consent.csv")
+consent_csv = pd.read_excel('static/csv/consent.xlsx', index_col="tag")
 email_unsent = read_csv("static/csv/email_unsent.csv")
-eeg_csv = read_csv("static/csv/eeg.csv")
+eeg_csv = pd.read_excel('static/csv/eeg.xlsx', index_col="tag")
 sent_email_csv = read_csv("static/csv/sent_email.csv")
 home_csv = read_csv("static/csv/home.csv")
 collected_csv = read_csv("static/csv/collected.csv")
 about_study_csv = read_csv("static/csv/about_study.csv")
-for_participant_csv = read_csv("static/csv/for_participant.csv")
-about_app_csv = read_csv("static/csv/about_app.csv")
-contact_csv = read_csv("static/csv/about_study.csv")
+for_participant_csv = pd.read_excel('static/csv/for_participant.xlsx', index_col="tag")
+about_app_csv = pd.read_excel('static/csv/about_app.xlsx', index_col="tag")
+contact_csv = read_csv("static/csv/contact.csv")
 
 # See which language was chosen and update the language
 def language_set():
@@ -73,12 +73,16 @@ def task_opening(task_id):
     a status of 0 means its open and a status of 1 means its completed
     """
     id = session["user_id"]
+    if session["language"] == "english":
+        select_link = f"SELECT TASK_LINK FROM TASKS WHERE TASK_ID=(%s)"
+    else:
+        select_link = f"SELECT dutch_link FROM TASKS WHERE TASK_ID=(%s)"
 
-    select_link = f"SELECT TASK_LINK FROM TASKS WHERE TASK_ID=(%s)"
     link =  db.execute(select_link, (task_id, ), 1)
     insert = f"INSERT INTO TRACKED_TASK (user_id, task_id, status) VALUES (%s, %s, %s)"
     insert_values = (id, task_id, 0)
     db.execute(insert, insert_values, 0)
+    print(link)
 
     return link
 
@@ -131,7 +135,7 @@ def corsi():
     """
     task_id = 1
     link = task_opening(task_id)
-    return redirect(link[0]["task_link"])
+    return redirect(link[0][0])
 
 @app.route('/corsi_end', methods=["GET"])
 @login_required
@@ -152,7 +156,7 @@ def corsi_end():
 def n_back():
     task_id = 2
     link = task_opening(task_id)
-    return redirect(link[0]["task_link"])
+    return redirect(link[0][0])
 
 @app.route('/n_back_end', methods=["GET"])
 @login_required
@@ -170,7 +174,7 @@ def n_back_end():
 def task_switching():
     task_id = 3
     link = task_opening(task_id)
-    return redirect(link[0]["task_link"])
+    return redirect(link[0][0])
 
 @app.route('/task_switching_end', methods=["GET"])
 @login_required
@@ -189,7 +193,7 @@ def task_switching_end():
 def sf_36():
     task_id = 4
     link = task_opening(task_id)
-    return redirect(link[0]["task_link"])
+    return redirect(link[0][0])
 
 @app.route('/sf_36_end', methods=["GET"])
 @login_required
@@ -207,7 +211,7 @@ def sf_3_end():
 def phone_survey():
     task_id = 5
     link = task_opening(task_id)
-    return redirect(link[0]["task_link"])
+    return redirect(link[0][0])
 
 @app.route('/phone_survey_end', methods=["GET"])
 @login_required
@@ -263,8 +267,9 @@ def calculate_money():
     for i in all_tasks:
         # check if a task (not a survey) has been performed this month AND check if payment has alread been collected this month
         # If this is true, since payment for tasks can only be collected once a month set can_collect_task_this_month to false
-        if (i[2] != 4 or i[2] != 5) and i[-1].month == datetime.now().month:
-            can_collect_task_this_month = False
+        if type(i[-1]) is datetime:
+            if (i[2] != 4 or i[2] != 5) and i[-1].month == datetime.now().month:
+                can_collect_task_this_month = False
 
 
     # seperate each task per month
@@ -392,7 +397,7 @@ def register():
             message = 'Subject: New Participant \n\n username: ' + username + "\n email: " + email + "\n user_id: " + str(rows[0][0]) + "\n user_type: " + str(user_type)
             send_email(message, username)
 
-            return redirect("/")
+            return redirect("/home")
         else:
             # the passwords did not match
             flash("Passwords did not match")
@@ -473,6 +478,7 @@ def login():
 
         # Remember which user has logged in
         session['user_id'] = rows[0]['user_id']
+        session['consent'] = rows[0]['consent']
 
         # Redirect user to home page
         return redirect("/home")
@@ -492,9 +498,7 @@ def check_password(password, new_password):
 
     # check if password has number, length and symbols
     number = len(re.findall(r"[0-9]", password))
-    capital = len(re.findall(r"[A-Z]", password))
-    lower = len(re.findall(r"[a-z]", password))
-    return len(password) > 5 and number > 0 and capital > 0 and lower > 0
+    return len(password) > 5 and number > 0
 
 ################################################################################
 ################################ LOGOUT #####################################
@@ -574,10 +578,20 @@ def consent():
     """
     Consent form
     """
-    return render_template("consent.html", consent_csv=consent_csv[session["language"]], layout=layout[session["language"]])
+    language_set()
+    if request.method == "POST":
+        id = session["user_id"]
+        if request.form.get("consent") == "on":
+            update = f"UPDATE SESSION_INFO SET CONSENT=1 WHERE USER_ID = (%s)"
+            db.execute(update, (id,), 0)
+            select = "SELECT CONSENT FROM SESSION_INFO WHERE USER_ID = (%s)"
+            rows = db.execute(select, (id,), 1)
+            session['consent'] = rows[0]['consent']
+        return redirect("/home")
+    else:
+        return render_template("consent.html", consent_csv=consent_csv[session["language"]], layout=layout[session["language"]])
 
 @app.route("/eeg", methods=["GET", "POST"])
-@login_required
 @language_check
 def eeg():
     """
@@ -632,21 +646,22 @@ def home():
     for i in rows:
         completed_tasks.append(i["task_id"])
 
+    tasks[session["language"]]['corsi_title']
     # First recomendation is to do the phone survey
     if 5 not in completed_tasks or should_show_task(5):
-        task = {"img":"/static/images/phone_survey.png", "alt":"Phone survey", "title":"Phone survey",  "text" : "Placeholder Phone survey task", "link" : "/phone_survey", "button_text": "Try Phone survey"}
+        task = {"img":"/static/images/phone_survey.png", "alt":"Phone survey", "title":tasks[session["language"]]['phone_survey_title'],  "text" : tasks[session["language"]]['phone_survey_description'], "link" : "/phone_survey", "button_text": tasks[session["language"]]['phone_survey_button']}
     # Second recomendation is to do the sf-36
     elif 4 not in completed_tasks or should_show_task(4):
-        task = {"img":"/static/images/SF_36.png", "alt":"sf_36", "title":"SF-36",  "text" : "Placeholder SF-36 task", "link" : "/sf_36", "button_text": "Try SF-36"}
+        task = {"img":"/static/images/SF_36.png", "alt":"sf_36", "title":tasks[session["language"]]['sf_36_title'],  "text" : tasks[session["language"]]['sf_36_description'], "link" : "/sf_36", "button_text": tasks[session["language"]]['sf_36_button']}
     # Third recomendation is to do corsi task
     elif  1 not in completed_tasks or should_show_task(1):
-        task = {"img":"/static/images/corsi.png", "alt":"corsi",  "title" : "Corsi", "text" : "Placeholder corsi task", "link" : "/corsi", "button_text": "Try corsi"}
+        task = {"img":"/static/images/corsi.png", "alt":"corsi",  "title" : tasks[session["language"]]['corsi_title'], "text" : tasks[session["language"]]['corsi_description'], "link" : "/corsi", "button_text": tasks[session["language"]]['corsi_button']}
     # Fourth recomendation is to do n_back task
     elif 2 not in completed_tasks or should_show_task(2):
-        task = {"img":"/static/images/N_back.png", "alt":"N-back", "title" : "N-back", "text" : "Placeholder n_back task", "link" : "/n_back", "button_text": "Try N-back"}
+        task = {"img":"/static/images/N_back.png", "alt":"N-back", "title" : tasks[session["language"]]['n_back_title'], "text" : tasks[session["language"]]['n_back_description'], "link" : "/n_back", "button_text": tasks[session["language"]]['n_back_button']}
     # Fifth recomendation is to do task switching task
     elif 3 not in completed_tasks or should_show_task(3):
-        task = {"img":"/static/images/task_switching.png", "alt":"task switching", "title" : "Task switching", "text" : "Placeholder task_switching task", "link" : "/task_switching", "button_text": "Try Task switching"}
+        task = {"img":"/static/images/task_switching.png", "alt":"task switching", "title" : tasks[session["language"]]['task_switching_title'], "text" : tasks[session["language"]]['task_switching_description'], "link" : "/task_switching", "button_text": tasks[session["language"]]['task_switching_button']}
     # If all tasks have been completed and are locked then give no recommendation dont show the div
     else:
         recomendation = False

@@ -1,9 +1,9 @@
 ﻿tag,english,dutch
-label1,Email:,
-button1,Change password,
-placeholder1,Type in previous password,
-placeholder2,Password,
-placeholder3,Retype password,
-button2,Change,
-message_number,  A number,
-message_length,Minimum 5 characters,
+label1,Email Address:,Email Adres:
+button1,Change password,Verander wachtwoord
+placeholder1,Type in previous password,Type hier het oude wachtwoord
+placeholder2,Type in new password,Type hier het nieuwe wachtwoord
+placeholder3,Retype new password,Type hier opnieuw het nieuwe wachtwoord
+button2,Change password,Verander wachtwoord
+message_number,  A number,Een getal
+message_length,Password length: Minimum 5 characters,Wachtwoord lengte: Minimaal 5 karakters

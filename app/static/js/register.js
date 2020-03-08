@@ -8,13 +8,17 @@ var age_appropriate = document.getElementById("age_appropriate").addEventListene
 var have_smartphone = document.getElementById("have_smartphone").addEventListener("click", onClick);
 // check if the user has the app installed
 var app_installed = document.getElementById("app_installed").addEventListener("click", onClick);
+// check if they have no mental disorders
+var mental_health = document.getElementById("mental_health").addEventListener("click", onClick);
+//check if they have read the participant informationn
+var read_participant = document.getElementById("read_participant").addEventListener("click", onClick);
 // these are the divs where the minimum requirements are and the rest of the register form
 var register_form = document.getElementById("register_form");
 var minimum_requirements = document.getElementById("minimum_requirements")
 
 // Onclick of the checkboxes check if all the minimum requirements are met (if all boxes checked), if they are then dissplay the register form
 function onClick(){
-  if (document.getElementById("age_appropriate").checked && document.getElementById("have_smartphone").checked && document.getElementById("app_installed").checked){
+  if (document.getElementById("age_appropriate").checked && document.getElementById("have_smartphone").checked && document.getElementById("read_participant").checked && document.getElementById("app_installed").checked && document.getElementById("mental_health").checked){
     console.log("show")
     register_form.style.display = "block";
   } else {
