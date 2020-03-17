@@ -1,0 +1,7 @@
+tag,english,dutch,
+h11,Provide your IBAN name and address to receive your payment,
+input1,First name,Voornaam
+input2,Last name,Achternaam
+input3,IBAN number,IBAN nummer
+input4,Address,Adres
+button1,Send request,Stuur verzoek

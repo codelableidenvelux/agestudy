@@ -27,6 +27,7 @@ db = Db(app.logger)
 layout = read_csv("static/csv/layout.csv")
 login_csv = read_csv("static/csv/login.csv")
 end_csv = read_csv("static/csv/end_task.csv")
+payment_csv = read_csv("static/csv/payment.csv")
 tasks = read_csv("static/csv/index.csv")
 register_csv = pd.read_excel('static/csv/register.xlsx', index_col="tag")
 account_csv = read_csv("static/csv/account.csv")
@@ -118,7 +119,7 @@ def send_email(message, username):
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL("mail.privateemail.com", 465, context=context) as server:
             server.login(email, pasw)
-            server.sendmail(email, email, message)
+            server.sendmail(email, "agestudy@fsw.leidenuniv.nl", message)
         return True
     except:
         app.logger.info('%s tried to send the following email: %s. There was an error', username, message)
@@ -355,7 +356,7 @@ def register():
         # ensure that all fiels that are required were filled in correctly
         if not username_r or not birthdate_r or not gender_r or not email_r:
             flash("Fill in all fields")
-            return render_template("register.html",  register_csv=register_csv[session["language"]], layout=layout[session["language"]])
+            return render_template("register.html",   consent_csv=consent_csv[session["language"]], register_csv=register_csv[session["language"]], layout=layout[session["language"]])
 
         # preprocesses inputs to get in right format for database
         username = remove_whitespace(username_r)
@@ -379,7 +380,7 @@ def register():
             # check true it means it is in use
             if rows:
                 flash("Username already in use")
-                return render_template("register.html",  register_csv=register_csv[session["language"]], layout=layout[session["language"]])
+                return render_template("register.html",   consent_csv=consent_csv[session["language"]], register_csv=register_csv[session["language"]], layout=layout[session["language"]])
 
             # add user to the database
             param = (username, email, gender, collect_possible, for_money, user_type, birthdate, hash)
@@ -401,13 +402,13 @@ def register():
         else:
             # the passwords did not match
             flash("Passwords did not match")
-            return render_template("register.html",  register_csv=register_csv[session["language"]], layout=layout[session["language"]])
+            return render_template("register.html",   consent_csv=consent_csv[session["language"]], register_csv=register_csv[session["language"]], layout=layout[session["language"]])
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         session["language"] = preferred_language
         language_set()
-        return render_template("register.html",  register_csv=register_csv[session["language"]], layout=layout[session["language"]])
+        return render_template("register.html",  consent_csv=consent_csv[session["language"]], register_csv=register_csv[session["language"]], layout=layout[session["language"]])
 
 
 @app.route("/availability", methods=["GET"])
@@ -613,6 +614,7 @@ def eeg():
         else:
             return render_template("email_unsent.html", email_unsent=email_unsent[session["language"]], layout=layout[session["language"]])
     else:
+        language_set()
         return render_template("eeg.html", eeg_csv=eeg_csv[session["language"]], layout=layout[session["language"]])
 
 @app.route("/home", methods=["GET", "POST"])
@@ -649,55 +651,75 @@ def home():
     tasks[session["language"]]['corsi_title']
     # First recomendation is to do the phone survey
     if 5 not in completed_tasks or should_show_task(5):
-        task = {"img":"/static/images/phone_survey.png", "alt":"Phone survey", "title":tasks[session["language"]]['phone_survey_title'],  "text" : tasks[session["language"]]['phone_survey_description'], "link" : "/phone_survey", "button_text": tasks[session["language"]]['phone_survey_button']}
+        task = {"img":"/static/images/TaskIcons/phone_survey.png", "alt":"Phone survey", "title":tasks[session["language"]]['phone_survey_title'],  "text" : tasks[session["language"]]['phone_survey_description'], "link" : "/phone_survey", "button_text": tasks[session["language"]]['phone_survey_button']}
     # Second recomendation is to do the sf-36
     elif 4 not in completed_tasks or should_show_task(4):
-        task = {"img":"/static/images/SF_36.png", "alt":"sf_36", "title":tasks[session["language"]]['sf_36_title'],  "text" : tasks[session["language"]]['sf_36_description'], "link" : "/sf_36", "button_text": tasks[session["language"]]['sf_36_button']}
+        task = {"img":"/static/images/TaskIcons/SF-36.png", "alt":"sf_36", "title":tasks[session["language"]]['sf_36_title'],  "text" : tasks[session["language"]]['sf_36_description'], "link" : "/sf_36", "button_text": tasks[session["language"]]['sf_36_button']}
     # Third recomendation is to do corsi task
     elif  1 not in completed_tasks or should_show_task(1):
-        task = {"img":"/static/images/corsi.png", "alt":"corsi",  "title" : tasks[session["language"]]['corsi_title'], "text" : tasks[session["language"]]['corsi_description'], "link" : "/corsi", "button_text": tasks[session["language"]]['corsi_button']}
+        task = {"img":"/static/images/TaskIcons/corsi.png", "alt":"corsi",  "title" : tasks[session["language"]]['corsi_title'], "text" : tasks[session["language"]]['corsi_description'], "link" : "/corsi", "button_text": tasks[session["language"]]['corsi_button']}
     # Fourth recomendation is to do n_back task
     elif 2 not in completed_tasks or should_show_task(2):
-        task = {"img":"/static/images/N_back.png", "alt":"N-back", "title" : tasks[session["language"]]['n_back_title'], "text" : tasks[session["language"]]['n_back_description'], "link" : "/n_back", "button_text": tasks[session["language"]]['n_back_button']}
+        task = {"img":"/static/images/TaskIcons/N-back.png", "alt":"N-back", "title" : tasks[session["language"]]['n_back_title'], "text" : tasks[session["language"]]['n_back_description'], "link" : "/n_back", "button_text": tasks[session["language"]]['n_back_button']}
     # Fifth recomendation is to do task switching task
     elif 3 not in completed_tasks or should_show_task(3):
-        task = {"img":"/static/images/task_switching.png", "alt":"task switching", "title" : tasks[session["language"]]['task_switching_title'], "text" : tasks[session["language"]]['task_switching_description'], "link" : "/task_switching", "button_text": tasks[session["language"]]['task_switching_button']}
+        if session["language"] == "english":
+            task = {"img":"/static/images/TaskIcons/TSwitch_EN.png", "alt":"task switching", "title" : tasks[session["language"]]['task_switching_title'], "text" : tasks[session["language"]]['task_switching_description'], "link" : "/task_switching", "button_text": tasks[session["language"]]['task_switching_button']}
+        else:
+            task = {"img":"/static/images/TaskIcons/TSwitch_NL.png", "alt":"task switching", "title" : tasks[session["language"]]['task_switching_title'], "text" : tasks[session["language"]]['task_switching_description'], "link" : "/task_switching", "button_text": tasks[session["language"]]['task_switching_button']}
     # If all tasks have been completed and are locked then give no recommendation dont show the div
     else:
         recomendation = False
         task = {"img":"", "alt":"", "title":"",  "text" : "", "link" : "", "button_text": ""}
     return render_template("home.html", price=price, user_type=user_type, recomendation=recomendation, layout=layout[session["language"]], home_csv=home_csv[session["language"]], img=task["img"], alt=task["alt"], title=task["title"], text=task["text"], link=task["link"], button_text=task["button_text"])
 
-@app.route("/collection", methods=["POST"])
+
+@app.route("/payment", methods=["POST", "GET"])
+@login_required
+@language_check
+def payment():
+    """
+    payment
+    """
+    if request.method == "POST":
+        first_name = request.form.get("first_name")
+        last_name = request.form.get("last_name")
+        IBAN = request.form.get("IBAN")
+        address = request.form.get("address")
+        collection = request.form.get("collection")
+        id = session["user_id"]
+        money_earned = calculate_money()
+        # update the collection to 0 which means that the user has/will collect the money_earned
+        # otherwise collect is 1
+        date_collected = datetime.now()
+        update = f"UPDATE TASK_COMPLETED SET COLLECT=0, DATE_COLLECTED = (%s) WHERE USER_ID = (%s)"
+        db.execute(update, (date_collected, id), 0)
+
+        # select the user info
+        select = f"SELECT * FROM SESSION_INFO WHERE USER_ID = (%s)"
+        rows = db.execute(select, (id,), 1)
+        # send_email with the users info to our email to contact them about participating
+        # email contains username, email, usertype, user_id and the ammount to be collect
+        message = 'Subject: Payment collection \n\n The following participant wants to collect their payment for the study' + '\n username: ' + str(rows[0]['user_name']) + "\n First name: " + first_name + "\n Last name: " + last_name + "\n IBAN: " + IBAN + "\n Address: " + address +  "\n email: " + str(rows[0]['email']) + "\n user_id: " + str(rows[0]['user_id']) + "\n user_type: " + str(rows[0]['user_type']) + "\n ammount to collect: " + str(money_earned)
+        email_sent = send_email(message, rows[0]['user_name'])
+
+        if email_sent:
+            # render a thank you page
+            return render_template("collected.html", money_earned=money_earned, collected_csv=collected_csv[session["language"]], layout=layout[session["language"]])
+        else:
+            return render_template("email_unsent.html", email_unsent=email_unsent[session["language"]], layout=layout[session["language"]])
+    else:
+        return render_template("payment.html", payment=payment_csv[session["language"]], layout=layout[session["language"]])
+
+@app.route("/collection", methods=["POST", "GET"])
 @login_required
 @language_check
 def collection():
     """
     Button to collect payment
     """
-    money_earned = calculate_money()
-    collection = request.form.get("collection")
-    id = session["user_id"]
-    # update the collection to 0 which means that the user has/will collect the money_earned
-    # otherwise collect is 1
-    date_collected = datetime.now()
-    update = f"UPDATE TASK_COMPLETED SET COLLECT=0, DATE_COLLECTED = (%s) WHERE USER_ID = (%s)"
-    db.execute(update, (date_collected, id), 0)
-
-    # select the user info
-    select = f"SELECT * FROM SESSION_INFO WHERE USER_ID = (%s)"
-    rows = db.execute(select, (id,), 1)
 
 
-    # send_email with the users info to our email to contact them about participating
-    # email contains username, email, usertype, user_id and the ammount to be collect
-    message = 'Subject: Payment collection \n\n The following participant wants to collect their payment for the study' + '\n username: ' + str(rows[0]['user_name']) + "\n email: " + str(rows[0]['email']) + "\n user_id: " + str(rows[0]['user_id']) + "\n user_type: " + str(rows[0]['user_type']) + "\n ammount to collect: " + str(money_earned)
-    email_sent = send_email(message, rows[0]['user_name'])
-    if email_sent:
-        # render a thank you page
-        return render_template("collected.html", money_earned=money_earned, collected_csv=collected_csv[session["language"]], layout=layout[session["language"]])
-    else:
-        return render_template("email_unsent.html", email_unsent=email_unsent[session["language"]], layout=layout[session["language"]])
 
 @app.route("/about_study", methods=["GET"])
 @language_check

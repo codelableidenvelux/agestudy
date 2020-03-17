@@ -50,19 +50,6 @@ Consent
     <li>{{consent_csv.loc["li9"]}}</li>
   </ul>
 
-  {% if session.user_id %}
-    {% if not session.consent %}
-  <div>
-  <form action="/consent" method="post">
-    <input type="checkbox" class="form-check-input" id="consent" name="consent">
-    <label class="form-check-label" for="consent">{{consent_csv.loc["p11"]}}</label>
-    <br>
-    <button class="btn btn-primary" type="submit">{{consent_csv.loc["button1"]}}</button>
-  </form>
-  </div>
-    {% endif %}
-  {% endif %}
-
 </section>
 
 {% endblock %}

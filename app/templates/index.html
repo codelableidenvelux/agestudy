@@ -1,23 +1,40 @@
 {% extends "layout.html" %}
 
 {% block title %}
-Register
+Tasks
 {% endblock %} {% block main %}
-
+<script src="/static/js/index.js"></script>
 <link href="/static/css/index.css" rel="stylesheet"/>
+<form>
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="pc" id="pc" onclick="onClickPC()">
+  <label class="form-check-label" for="pc">
+    {{ tasks["check_1"] }}
+  </label>
+  <br>
+ <p>{{ tasks["p0"] }}</p>
+</div>
+
+</form>
 
 <section id="team" class="pb-6">
+
+
   <div class="container">
 
     <div class="row">
 
       <!-- Task 2 task-switching -->
-      <div class="col-xs-12 col-sm-6 col-md-4" id="task_switching" name="task_switching">
-        <div class="card">
+      <div class="col-xs-12 col-sm-6 col-md-4 py-3" id="task_switching" name="task_switching">
+        <div class="card h-100">
           <div class="card-body text-center">
-            <p><img class=" img-fluid" src="/static/images/task_switching.png" alt="card image"></p>
+          {% if session.language == "dutch" %}
+          <p><img class=" img-fluid" src="/static/images/TaskIcons/TSwitch_NL.png" alt="card image"></p>
+          {% else %}
+          <p><img class=" img-fluid" src="/static/images/TaskIcons/TSwitch_EN.png" alt="card image"></p>
+          {% endif %}
             <h4 class="card-title">{{ tasks["task_switching_title"] }}</h4>
-            <p class="card-text">{{ tasks["task_switching_description"] }}</p>
+            <p class="card-text">{{ tasks["task_switching_description"] }}<br><br></p>
             {% if show_task_switching %}
             <div id="task_switching_button" name="task_switching_button">
               <ul class="list-inline">
@@ -33,10 +50,10 @@ Register
 
       <!-- End task 2 task-switching-->
       <!-- Task 0 Corsi -->
-      <div class="col-xs-12 col-sm-6 col-md-4" id="corsi" name="corsi">
-        <div class="card">
+      <div class="col-xs-12 col-sm-6 col-md-4 py-3" id="corsi" name="corsi">
+        <div class="card h-100">
           <div class="card-body text-center">
-            <p><img class=" img-fluid" src="/static/images/corsi.png" alt="card image"></p>
+            <p><img class=" img-fluid" src="/static/images/TaskIcons/corsi.png" alt="card image"></p>
             <h4 class="card-title">{{ tasks["corsi_title"] }}</h4>
             <p class="card-text">{{ tasks["corsi_description"] }}</p>
             {% if show_corsi %}
@@ -57,10 +74,10 @@ Register
 
 
             <!-- Task 1 N-back -->
-            <div class="col-xs-12 col-sm-6 col-md-4" id="n_back" name="n_back">
-              <div class="card">
+            <div class="col-xs-12 col-sm-6 col-md-4 py-3" id="n_back" name="n_back">
+              <div class="card h-100">
                 <div class="card-body text-center">
-                  <p><img class=" img-fluid" src="/static/images/N_back.png" alt="card image"></p>
+                  <p><img class=" img-fluid" src="/static/images/TaskIcons/N-back.png" alt="card image"></p>
                   <h4 class="card-title">{{ tasks["n_back_title"] }}</h4>
                   <p class="card-text">{{ tasks["n_back_description"] }}</p>
                   {% if show_n_back %}
@@ -77,14 +94,14 @@ Register
             </div>
             <!-- End task 1 N-back -->
             </div>
-        <div class="row">
+        <div class="row ">
       <!-- Task 3 SF-36 -->
-      <div id="sf_36" name="sf_36" class="col-xs-12 col-sm-6 col-md-4">
-        <div class="card">
+      <div id="sf_36" name="sf_36" class="col-xs-12 col-sm-6 col-md-4 py-3">
+        <div class="card h-100">
           <div class="card-body text-center">
-            <p><img class=" img-fluid" src="/static/images/SF_36.png" alt="card image"></p>
+            <p><img class=" img-fluid" src="/static/images/TaskIcons/SF-36.png" alt="card image"></p>
             <h4 class="card-title">{{ tasks["sf_36_title"] }}</h4>
-            <p class="card-text">{{ tasks["sf_36_description"] }} </p>
+            <p class="card-text">{{ tasks["sf_36_description"] }}<br> <br></p>
             {% if show_sf_36 %}
             <div id="sf_36_button" name="sf_36_button">
               <ul class="list-inline">
@@ -99,10 +116,10 @@ Register
       </div>
       <!-- End task 3 SF-36  -->
       <!-- Task 4 Phone survey  -->
-      <div id="phone_survey" name="phone_survey" class="col-xs-12 col-sm-6 col-md-4">
-        <div class="card">
+      <div id="phone_survey" name="phone_survey" class="col-xs-12 col-sm-6 col-md-4 py-3">
+        <div class="card h-100">
           <div class="card-body text-center">
-            <p><img class=" img-fluid" src="/static/images/phone_survey.png" alt="card image"></p>
+            <p><img class=" img-fluid" src="/static/images/TaskIcons/phone_survey.png" alt="card image"></p>
             <h4 class="card-title">{{ tasks["phone_survey_title"] }}</h4>
             <p class="card-text">{{ tasks["phone_survey_description"] }}</p>
             {% if show_phone_survey %}
@@ -120,12 +137,12 @@ Register
       <!-- End task 4 Phone survey-->
 
       <!-- eeg  -->
-      <div id="eeg" name="eeg" class="col-xs-12 col-sm-6 col-md-4">
-        <div class="card">
+      <div id="eeg" name="eeg" class="col-xs-12 col-sm-6 col-md-4 py-3">
+        <div class="card h-100">
           <div class="card-body text-center">
-            <p><img class=" img-fluid" src="/static/images/eeg_lab_2.png" alt="card image"></p>
+            <p><img class=" img-fluid" src="/static/images/TaskIcons/EEG.png" alt="card image"></p>
             <h4 class="card-title">{{ tasks["eeg_title"] }}</h4>
-            <p class="card-text">{{ tasks["eeg_description"] }}</p>
+            <p class="card-text">{{ tasks["eeg_description"] }} <br><br></p>
             <div id="eeg_button" name="eeg_button">
               <ul class="list-inline">
                 <li class="list-inline-item">

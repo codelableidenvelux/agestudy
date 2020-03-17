@@ -1,8 +1,3 @@
-nav .navbar-brand
-{
-    /* size for brand */
-    font-size: 40px;
-}
 
 /* colors for brand */
 nav .navbar-brand .blue
@@ -23,16 +18,21 @@ nav .navbar-brand .green
 }
 
 nav {
-  font-size: 20px;
+  font-size: 16px;
 }
+
 main
 {
     /* scroll horizontally as needed */
     overflow-x: auto;
 
     /* center contents */
-    text-align: center;
+    text-align: left;
     font-size: 22px;
+
+}
+h1{
+  font-weight: 200;
 }
 .nav_popup_register{
   font-size: 30px
@@ -69,11 +69,29 @@ tr:nth-child(even)
 html {
   scroll-behavior: smooth;
 }
+
+.consent_small {
+  height: 300px;
+  overflow: scroll;
+}
+
+#task_switching_button,
+#corsi_button,
+#n_back_button,
+#sf_36_button,
+#phone_survey_button,
+#button_task
+{
+  display:none;
+}
+
 section {
-    padding: 50px 50px;
     background: #eee !important;
     margin-bottom: 50px;
     margin-top: 50px;
+    padding-left: 1%;
+    padding-right: 1%;
+    word-wrap: break-word;
 }
 
 section .section-title {
@@ -84,10 +102,7 @@ section .section-title {
 }
 
 .logo_about_study_velux{
-   position:absolute;
-   top:600px;
-   left:600px;
-    width:300px;
+    width:400px;
     height:200px;
 }
 p {
@@ -96,11 +111,8 @@ p {
     padding: 0;
 }
 .logo_about_study_leiden{
-  position:absolute;
-  top:600px;
-  left:1000px;
-    width:200px;
-    height:200px;
+    width:350px;
+    height:150px;
 }
 
 

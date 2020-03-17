@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Payment Information
+{% endblock %}
+
+{% block main %}
+<h1>{{ payment['h11'] }}</h1>
+<br><br>
+    <form class = "payment" action="/payment" class="needs-validation" method="post">
+        <div class="form-group">
+            <input class="form-control" name="first_name" id="first_name" placeholder="{{ payment['input1'] }}" type="text" required/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="last_name" id="first_name" placeholder="{{ payment['input2'] }}" type="text" required/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="IBAN" id="first_name" placeholder="{{ payment['input3'] }}" type="text" required/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="address" id="address" placeholder="{{ payment['input4'] }}" type="text" required/>
+        </div>
+        <button class="btn btn-primary" type="submit">{{ payment['button1'] }}</button>
+    </form>
+  <br>
+{% endblock %}

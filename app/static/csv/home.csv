@@ -1,7 +1,11 @@
 ﻿tag,english,dutch
 h11,Welcome,Welkom
+check_1,I am comfortably sitting on a chair. I am on a computer with mouse and keyboard,Ik zit comfortabel op een stoel. Ik zit op een computer met muis en toetsenbord
+p0,Some tasks are only possible on a desktop computer.,Sommige taken zijn alleen mogelijk op een desktop computer.
 p1,This task is recommended,Deze oefening wordt aanbevolen
 p2,There are more (optional) tasks for you. Try them out!,Er zijn meer (optionele) taken voor u. Probeer ze!
 button1,Try another task,Probeer een andere oefening
 button2,Collect payment,Betaling ophalen
 js_title,Money earned so far:,Geld verdiend tot nu toe
+p3,Ensure your App is working for successful participation,Zorg ervoor dat uw App werkt voor succesvolle deelname
+button_app,Read more, Lees meer

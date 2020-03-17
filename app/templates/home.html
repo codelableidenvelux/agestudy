@@ -10,6 +10,7 @@ Home
 <script src="/static/js/topojson.js"></script>
 <!-- css script -->
 <link href="/static/css/home.css" rel="stylesheet"/>
+<script src="/static/js/index.js"></script>
 
 <!-- Define a macro that will contain the card, the inputs are
 the image of the task and its alt, the title and description of the task,
@@ -21,7 +22,7 @@ the route to the task and the text in the button. -->
     <h5 class="card-title">{{ title }}</h5>
     <p class="card-text">{{ text }}</p>
     <br>
-    <a href="{{link}}" target="_blank" class="btn btn-primary">{{ button_text }}</a>
+    <a href="{{link}}" target="_blank" class="btn btn-primary" onclick="onClickPC()" id="button_task">{{ button_text }}</a>
   </div>
 </div>
 {%- endmacro %}
@@ -31,26 +32,36 @@ the route to the task and the text in the button. -->
 <!-- if they have unlocked or uncompleted tasks then show them this div
 if its false the div is not show there are no recomendations-->
 {% if recomendation %}
-<p> {{ home_csv["p1"] }} </p>
+<h3> {{ home_csv["p1"] }} </h3>
+<form>
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="pc" id="pc" onclick="onClickPC()">
+  <label class="form-check-label" for="pc">
+    {{ home_csv["check_1"] }}
+  </label>
+  <br>
+ <p>{{ home_csv["p0"] }}</p>
+</div>
+</form>
 {{ card(img, alt, title, text, link, button_text) }}
-<br><br><br>
+<br><br>
 <p> {{ home_csv["p2"] }}</p>
 <br>
 <a href="/" class="btn btn-primary">{{ home_csv["button1"] }}</a>
-<br><br><br><br>
+<br><br>
 {% endif %}
 
 
 <!-- Show the barchart which keeps track of the money the user earned so far-->
 {% if user_type %}
 <div class="price" id="price" value="{{price}}" name="price"></div>
+<h1>{{home_csv["js_title"] }}</h1>
 <div id=barChart></div>
-<form action="/collection" method="post">
-<button id="collection" class="btn btn-primary" type="submit">{{ home_csv["button2"] }}</button>
-</form>
+<a id="collection" href="/payment" class="btn btn-primary">{{ home_csv["button2"] }}</a>
 {% endif %}
 
-<br><br><br><br>
-<p><b>Ensure your App is working for successful participation</b></p>
-<a href="/about_app" class="btn btn-danger"> Read more about app </a>
+<br><br>
+<p><b>{{ home_csv["p3"] }}</b></p>
+<a href="/about_app#working_app" class="btn btn-danger"> {{ home_csv["button_app"] }}</a>
+
 {% endblock %}

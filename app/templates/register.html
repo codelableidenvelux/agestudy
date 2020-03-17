@@ -5,11 +5,9 @@ Register
 {% endblock %} {% block main %}
 
 <!-- Include jQuery -->
-<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-
-<!-- Include Date Range Picker -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
 <!-- source: https://getbootstrap.com/docs/4.0/components/forms/ -->
 <form action="/register" method="post" class="needs-validation">
@@ -248,7 +246,7 @@ Register
   <div class="form-check">
     <input type="checkbox" class="form-check-input" id="money" name="money">
     <label class="form-check-label" for="money">{{ register_csv.loc['checkbox_money'] }}</label>
-    <input type="button"  class="btn" value="?" title="{{register_csv.loc['tooltip']}}">
+    <input type="button" class="btn btn-primary"  value="?" data-toggle="popover" data-placement="right" data-content="{{register_csv.loc['tooltip']}}">
   </div>
   <!-- City -->
   <div class="form-group" id="collect_possible_id">
@@ -265,9 +263,60 @@ Register
     <div class="invalid-feedback d-block">
       <a href="/consent" target="_blank" class="btn btn-secondary btn-sm">{{ register_csv.loc['read_consent'] }}</a>
     </div>
+    <div class="consent_small">
+      <section>
+      <h1> {{consent_csv.loc["h11"]}} </h1>
+      <p> {{consent_csv.loc["p1"]}} </p>
+      <h1> {{consent_csv.loc["h12"]}} </h1>
+      <p> {{consent_csv.loc["p2"]}} </p>
+      </section>
+
+      <section id="about">
+        <h1> {{consent_csv.loc["h13"]}} </h1>
+        <p> {{consent_csv.loc["p3"]}} </p>
+      </section>
+
+      <section id="time">
+        <h1> {{consent_csv.loc["h14"]}} </h1>
+        <p> {{consent_csv.loc["p4"]}} </p>
+      </section>
+
+      <section id="expectation">
+        <h1> {{consent_csv.loc["h15"]}} </h1>
+        <p> {{consent_csv.loc["p5"]}} </p>
+      </section>
+
+      <section id="reward">
+        <h1> {{consent_csv.loc["h16"]}} </h1>
+        <p> {{consent_csv.loc["p6"]}} </p>
+        <p> <ul>{{consent_csv.loc["p7"]}}</ul> </p>
+        <p> {{consent_csv.loc["p8"]}} </p>
+      </section>
+
+      <section id="contact">
+        <h1> {{consent_csv.loc["h17"]}} </h1>
+        <p> {{consent_csv.loc["p9"]}} </p>
+      </section>
+
+      <section id="consent">
+        <p> {{consent_csv.loc["p10"]}} </p>
+        <ul>
+          <li>{{consent_csv.loc["li1"]}}</li>
+          <li>{{consent_csv.loc["li2"]}}</li>
+          <li>{{consent_csv.loc["li3"]}}</li>
+          <li>{{consent_csv.loc["li4"]}}</li>
+          <li>{{consent_csv.loc["li5"]}}</li>
+          <li>{{consent_csv.loc["li6"]}}</li>
+          <li>{{consent_csv.loc["li7_a"]}} <u>{{consent_csv.loc["li7_b"]}}</u>{{consent_csv.loc["li7_c"]}}</li>
+          <li>{{consent_csv.loc["li8"]}}</li>
+          <li>{{consent_csv.loc["li9"]}}</li>
+        </ul>
+
+      </section>
+    </div>
   </div>
 
-
+  <br>
   <button id="submit" class="btn btn-primary" type="submit">{{ register_csv.loc['button3'] }}</button>
   </div>
 </form>

@@ -27,6 +27,7 @@ function onClick(){
   }
 };
 
+$('[data-toggle="popover"]').popover();
 
 ///////////////////////////////////////////////////////////////////////////
 //////////////////////// Check the password  ///////////////////////////////
@@ -78,19 +79,7 @@ var yyyy = today.getFullYear();
 
 today = yyyy + '-' + mm + '-' + dd;
 
-// Date picker with jquery and bootstrap
-$(document).ready(function() {
-    var date_input = $('input[name="date"]'); //our date input has the name "date"
-    var container = $('.bootstrap-iso form').length > 0 ? $('.bootstrap-iso form').parent() : "body";
-    date_input.datepicker({
-        format: 'yyyy-mm-dd',
-        container: container,
-        todayHighlight: true,
-        autoclose: true,
-        startDate: "1900-01-01",
-        endDate: today
-    })
-})
+
 /////////////////////////////////////////////////////////////////////////
 ////////////////////// client side validation ///////////////////////////
 /////////////////////////////////////////////////////////////////////////

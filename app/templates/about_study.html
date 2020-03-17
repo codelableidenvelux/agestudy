@@ -4,26 +4,23 @@
 About the study
 {% endblock %} {% block main %}
 
-<h1>{{about_study_csv["h11"]}}</h1>
-<p>{{about_study_csv["p1"]}}
-</p>
-<p>{{about_study_csv["p2"]}}</p>,<p>{{about_study_csv["p3"]}}</p>
-<a href="https://www.arkoghosh.com/"> CODELAB</a>,
-<a href="https://www.universiteitleiden.nl/en/social-behavioural-sciences/psychology">Leiden University</a>
-<p>{{about_study_csv["p4"]}}</p>
-<a href="https://veluxstiftung.ch/">VELUX</a>
-<p>{{about_study_csv["p5"]}}
-</p>, <p>{{about_study_csv["p6"]}}
-</p>
-
+<section>
+<p>{{about_study_csv["p1"]|safe()}}</p>
 <br><br>
-<p>{{about_study_csv["p7"]}} </p>
-<a href="/for_participant">{{about_study_csv["link_for_participant"]}}</a>
-<p>{{about_study_csv["p8"]}} </p>
-<a href="/register">{{about_study_csv["link_register"]}}</a>
+<p>{{about_study_csv["p2"]|safe()}}</p>
 <br><br>
-<p>{{about_study_csv["p9"]}} </p>
-
-<img src="../static/images/velux.png" alt="Logo VELUX" class="logo_about_study_velux">
-<object class="logo_about_study_leiden" data="../static/images/leiden.svg" type="image/svg+xml"></object>
+<p>{{about_study_csv["p3"]|safe()}}</p>
+<br><br>
+<p>{{about_study_csv["p9"]|safe()}} </p>
+</section>
+<div class="container">
+  <div class="row">
+    <div class="col-sm">
+      <a target=_blank_ href="https://veluxstiftung.ch/"><img src="../static/images/velux.png" alt="Logo VELUX" class="logo_about_study_velux"></a>
+    </div>
+    <div class="col-sm">
+      <a target=_blank_ href="https://www.universiteitleiden.nl/en/social-behavioural-sciences/psychology"><img src="../static/images/leiden_logo.png" alt="Logo Leiden University" class="logo_about_study_leiden"></a>
+    </div>
+  </div>
+</div>
 {% endblock %}

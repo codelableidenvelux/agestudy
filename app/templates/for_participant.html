@@ -7,16 +7,16 @@ For participant
 <section id="header">
 <h1> {{for_participant_csv.loc["h11"]}} </h1>
 <ul>
-  <li>{{for_participant_csv.loc["li1"]}}  </li>
-  <li>{{for_participant_csv.loc["li2"]}} </li>
-  <li>{{for_participant_csv.loc["li3"]}} <a href="https://play.google.com/store/apps/details?id=com.quantactions.tapcounter">TapCounter App </a> </li>
+  <li>{{for_participant_csv.loc["li1"]|safe()}}  </li>
+  <li>{{for_participant_csv.loc["li2"]|safe()}} </li>
+  <li>{{for_participant_csv.loc["li3"]|safe()}} </li>
 </ul>
 <h1>{{for_participant_csv.loc["h12"]}}</h1>
 <ul>
   <li>{{for_participant_csv.loc["li4"]}} </li>
   <li>{{for_participant_csv.loc["li5"]}}</li>
   <li>{{for_participant_csv.loc["li6"]}}</li>
-  <li>{{for_participant_csv.loc["li7"]}}</li>
+  <li>{{for_participant_csv.loc["li7"]|safe()}}</li>
 </ul>
 
 <p>{{for_participant_csv.loc["p1"]}}</p>
@@ -44,7 +44,7 @@ For participant
 
 <section id="location">
   <h1>{{for_participant_csv.loc["h17"]}}</h1>
-  <p>{{for_participant_csv.loc["p8"]}}</p>
+  <p>{{for_participant_csv.loc["p8"]|safe()}}</p>
 </section>
 
 <section id="communication">
@@ -90,8 +90,8 @@ For participant
 </section>
 
 <section id="lab">
-  <h1>{{for_participant_csv.loc["h22"]}}</h1>
-  <p>{{for_participant_csv.loc["p16"]}}</p>
+  <h1>{{for_participant_csv.loc["h22"]|safe()}}</h1>
+  <p>{{for_participant_csv.loc["p16"]|safe()}}</p>
   <br><br>
   <p>{{for_participant_csv.loc["p17"]}}</p>
 </section>
@@ -111,7 +111,7 @@ For participant
 
 <section id="compensation">
   <h1>{{for_participant_csv.loc["h24"]}}</h1>
-  <p><u>{{for_participant_csv.loc["p21_u"]}}</u></p>
+  <p>{{for_participant_csv.loc["p21_u"]}}</p>
   <p>{{for_participant_csv.loc["p22"]}}</p>
   <br><br>
   <p>{{for_participant_csv.loc["p23"]}}</p>

@@ -4,11 +4,13 @@
 EEG
 {% endblock %} {% block main %}
 
+{% if session.user_id %}
 <h1> {{ eeg_csv.loc["h11"] }} </h1>
 <p>{{ eeg_csv.loc["p1"] }} </p>
 <form action="/eeg" method="post">
 <button id="eeg" class="btn btn-primary" type="submit">{{ eeg_csv.loc["button1"] }}</button>
 </form>
+{% endif %}
 
 <section id="description">
 <h1> {{ eeg_csv.loc["h12"] }} </h1>

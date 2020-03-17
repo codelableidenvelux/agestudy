@@ -17,5 +17,10 @@
         <button class="btn btn-primary" type="submit">{{ login_csv['button1'] }}</button>
     </form>
   <br>
-  <p>{{ login_csv['p1'] }}<a href="/register">{{ login_csv['href1'] }}</a></p>
+  <p>{{ login_csv['p1']|safe() }}</p>
+  <br><br>
+  <p>{{ login_csv['p2']|safe() }}</p>
+  <br>
+  <br>
+  <p> <b>{{ login_csv["beta"] }}</b> </p>
 {% endblock %}
