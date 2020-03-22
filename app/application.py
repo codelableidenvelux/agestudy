@@ -6,6 +6,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import *
 import re
 from datetime import datetime, timedelta
+import string
+import requests
 
 app = Flask(__name__)
 key  = open("secret_key.txt", "r")
@@ -66,6 +68,41 @@ def before_request():
 ################################################################################
 ########################### TASK MANAGEMENT ####################################
 ###############################################################################
+def int2base(x, base):
+    digs = string.ascii_letters + string.digits
+    if x < 0:
+        sign = -1
+    elif x == 0:
+        return digs[0]
+    else:
+        sign = 1
+
+    x *= sign
+    digits = []
+
+    while x:
+        digits.append(digs[int(x % base)])
+        x = int(x / base)
+
+    if sign < 0:
+        digits.append('-')
+
+    digits.reverse()
+
+    return ''.join(digits)
+
+def generate_id(id):
+    """
+    This function takes the user' id and transforms it into a
+    8 digit id.
+    """
+    digs = string.ascii_letters + string.digits
+    x = int2base(id, 62)
+    for i in range(8):
+        if len(x) < 8:
+            x = digs[0] + x
+    return x
+
 def task_opening(task_id):
     """
     This function keeps track of which task the user is doing
@@ -83,7 +120,6 @@ def task_opening(task_id):
     insert = f"INSERT INTO TRACKED_TASK (user_id, task_id, status) VALUES (%s, %s, %s)"
     insert_values = (id, task_id, 0)
     db.execute(insert, insert_values, 0)
-    print(link)
 
     return link
 
@@ -136,7 +172,7 @@ def corsi():
     """
     task_id = 1
     link = task_opening(task_id)
-    return redirect(link[0][0])
+    return redirect(link[0][0]+ "&user_id=" + generate_id(session["user_id"]))
 
 @app.route('/corsi_end', methods=["GET"])
 @login_required
@@ -157,7 +193,7 @@ def corsi_end():
 def n_back():
     task_id = 2
     link = task_opening(task_id)
-    return redirect(link[0][0])
+    return redirect(link[0][0]+ "&user_id=" + generate_id(session["user_id"]))
 
 @app.route('/n_back_end', methods=["GET"])
 @login_required
@@ -175,7 +211,7 @@ def n_back_end():
 def task_switching():
     task_id = 3
     link = task_opening(task_id)
-    return redirect(link[0][0])
+    return redirect(link[0][0]+ "&user_id=" + generate_id(session["user_id"]))
 
 @app.route('/task_switching_end', methods=["GET"])
 @login_required
@@ -194,7 +230,7 @@ def task_switching_end():
 def sf_36():
     task_id = 4
     link = task_opening(task_id)
-    return redirect(link[0][0])
+    return redirect(link[0][0]+ "&user_id=" + generate_id(session["user_id"]))
 
 @app.route('/sf_36_end', methods=["GET"])
 @login_required
@@ -212,7 +248,7 @@ def sf_3_end():
 def phone_survey():
     task_id = 5
     link = task_opening(task_id)
-    return redirect(link[0][0])
+    return redirect(link[0][0]+ "&user_id=" + generate_id(session["user_id"]))
 
 @app.route('/phone_survey_end', methods=["GET"])
 @login_required
@@ -340,6 +376,25 @@ def register():
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
         session["language"] = preferred_language
+        # api-endpoint
+        URL = "https://www.google.com/recaptcha/api/siteverify"
+
+        # location given here
+        location = "delhi technological university"
+
+        # defining a params dict for the parameters to be sent to the API
+        PARAMS = {'secret':"6LfltOIUAAAAAERDowV2X1Tavbry5jjfq5IqDeCW", 'response': request.form.get("g-recaptcha-response")}
+
+        # sending get request and saving the response as response object
+        r = requests.get(url = URL, params = PARAMS)
+
+        # extracting data in json format
+        data = r.json()
+        if not data["success"]:
+            flash("Please click on the I am not a robot checkbox")
+            return render_template("register.html",   consent_csv=consent_csv[session["language"]], register_csv=register_csv[session["language"]], layout=layout[session["language"]])
+
+
         # set to lowercase
         username_r = request.form.get("username").lower()
         # set to lowercase
@@ -424,6 +479,18 @@ def availability():
     rows = db.execute(select, (username,), 1)
     return jsonify(len(rows) == 0)
 
+@app.route("/session_pc", methods=["GET"])
+def session_pc():
+    """
+    Checks if the checkbox on index.html has been checked already
+    this is done by checking the session["pc"]
+    """
+    if request.args.get('checked') == "true":
+        session["pc"] = True
+    else:
+        session["pc"] = False
+    return jsonify(session["pc"])
+
 @app.route("/email", methods=["GET"])
 def email():
     """
@@ -457,11 +524,11 @@ def login():
         password = request.form.get("password")
         # Ensure username was submitted
         if not username:
-            flash("must provide email address")
+            flash("Must provide email address")
             return render_template("login.html", login_csv=login_csv[session["language"]], layout=layout[session["language"]])
         # Ensure password was submitted
         elif not password:
-            flash("must provide password")
+            flash("Must provide password")
             return render_template("login.html", login_csv=login_csv[session["language"]], layout=layout[session["language"]])
 
         # get the user information
@@ -470,7 +537,7 @@ def login():
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]['pas_hash'], request.form.get("password")):
-            flash("invalid username and/or password")
+            flash("Invalid username and/or password")
             if len(rows) != 1:
                 app.logger.info('%s invalid username', username)
             else:
@@ -514,6 +581,17 @@ def logout():
 
     # Redirect user to login form
     return redirect("/")
+
+@app.route("/pc", methods=["POST"])
+@login_required
+def pc():
+    """
+    This function stores if the user is on a pc in the session
+    """
+    if request.form.get("pc"):
+        session["pc"] = 1
+        print(session["pc"])
+    print("hey")
 
 ################################################################################
 ################################ ACCOUNT #####################################
@@ -711,14 +789,6 @@ def payment():
     else:
         return render_template("payment.html", payment=payment_csv[session["language"]], layout=layout[session["language"]])
 
-@app.route("/collection", methods=["POST", "GET"])
-@login_required
-@language_check
-def collection():
-    """
-    Button to collect payment
-    """
-
 
 
 @app.route("/about_study", methods=["GET"])
@@ -744,7 +814,7 @@ def about_app():
 def contact():
     language_set()
     return render_template("contact.html", contact_csv=contact_csv[session["language"]], layout=layout[session["language"]])
-#port = int(os.getenv("PORT"))
+port = int(os.getenv("PORT"))
 
-#if __name__ == '__main__':
-#    app.run(host='0.0.0.0', port=port)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=port)

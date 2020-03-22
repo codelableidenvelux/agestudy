@@ -7,14 +7,15 @@ Tasks
 <link href="/static/css/index.css" rel="stylesheet"/>
 <form>
 <div class="form-check">
-  <input class="form-check-input" type="checkbox" value="pc" id="pc" onclick="onClickPC()">
+  <input class="form-check-input" type="checkbox" value="pc" id="pc" onclick="onClickPC()"
+  {% if session.pc %} checked {%endif%}
+  >
   <label class="form-check-label" for="pc">
     {{ tasks["check_1"] }}
   </label>
   <br>
  <p>{{ tasks["p0"] }}</p>
 </div>
-
 </form>
 
 <section id="team" class="pb-6">

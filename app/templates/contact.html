@@ -5,10 +5,15 @@ Contact
 {% endblock %} {% block main %}
 <section>
   <h1>{{contact_csv["h11"]}}</h1>
-  <p>{{contact_csv["p1"]}}</p>,
-  <p>{{contact_csv["p2"]}}</p>,
-  <p>{{contact_csv["p3"]}}</p>,
-  <p>{{contact_csv["p4"]}}</p>,
+  <p>{{contact_csv["p1"]|safe()}}</p>
+  <br>
+  <p>{{contact_csv["p2"]}}</p>
+  <br>
+  <p>{{contact_csv["p3"]}}</p>
+  <br>
+  <p>{{contact_csv["p4"]|safe()}}</p>
+  <br>
   <p>{{contact_csv["p5"]}}</p>
+
 </section>
 {% endblock %}

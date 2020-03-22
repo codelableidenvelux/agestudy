@@ -8,6 +8,9 @@ Register
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+ <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
+         async defer>
+     </script>
 
 <!-- source: https://getbootstrap.com/docs/4.0/components/forms/ -->
 <form action="/register" method="post" class="needs-validation">
@@ -317,6 +320,7 @@ Register
   </div>
 
   <br>
+  <div class="g-recaptcha" id="g-recaptcha" data-sitekey="6LfltOIUAAAAAIqekOA-OuMB_I-HnGRyXbmFIzHg"></div>
   <button id="submit" class="btn btn-primary" type="submit">{{ register_csv.loc['button3'] }}</button>
   </div>
 </form>

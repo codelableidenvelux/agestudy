@@ -22,5 +22,5 @@ phone_survey_button,Start,Start
 eeg_title,EEG (Optional),EEG (Optioneel)
 eeg_description,Measure your brain activity,Meet uw breinactiviteit
 eeg_botton,More info,Meer info
-check_1,I am comfortably sitting on a chair. I am on a computer with mouse and keyboard,Ik zit comfortabel op een stoel. Ik zit op een computer met muis en toetsenbord
-p0,Some tasks are only possible on a desktop computer.,Sommige taken zijn alleen mogelijk op een desktop computer.
+check_1,I am comfortably sitting on a chair. I am on a computer with a keyboard.,Ik zit comfortabel op een stoel. Ik zit op een computer met een toetsenbord.
+p0,Confirm this by checking the box to activate the tests.,Bevestig dit door het vakje aan te vinken om de onlinetests te activeren.

@@ -179,6 +179,17 @@ username.onblur = function(){
     }
   });
 }
+var verifyCallback = function(response) {
+        console.log(response);
+      };
+var onloadCallback = function() {
+        grecaptcha.render('g-recaptcha', {
+          'sitekey' : '6LfltOIUAAAAAIqekOA-OuMB_I-HnGRyXbmFIzHg',
+          'callback' : verifyCallback,
+        });
+      };
+
+
 var password = document.getElementById("email");
 email.onblur = function(){
   $.getJSON("/email", {'email': email.value, 'username': username.value }, function(result, state){

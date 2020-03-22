@@ -51,35 +51,65 @@ About the app
 <p>{{about_app_csv["p6"]}}</p>
 </section>
 
-<section id="email">
+<section id="email1">
 <h1>{{about_app_csv["h17"]}}</h1>
 <p>{{about_app_csv["p7"]}}</p>
-<img src="../static/images/manual_sync.png" alt="manual sync instructions" class="manual_sync">
+<img src="../static/images/manual_sync.png" alt="manual sync instructions" class="manual_sync" />
+<br>
+</section>
 
-<br><br>
+<section id="email2">
 <h1>{{about_app_csv["h18"]}}</h1>
 <p>{{about_app_csv["p8"]}}</p>
 <ul>
   <li>{{about_app_csv["li_app_1"]}}</li>
   <li>{{about_app_csv["li_app_2"]}}</li>
+  <ul>
+    <li><p>{{about_app_csv["p8a"]}}</p></li>
+  </ul>
 </ul>
+{% if session.language == "dutch" %}
+<img src="../static/images/app_id_nl.png" alt="app id instructions" class="app_id_nl">
+{% else %}
 <img src="../static/images/app_id.png" alt="app id instructions" class="app_id">
+{% endif %}
+<br>
+</section>
 
-<br><br>
+<section id="email3">
 <h1>{{about_app_csv["h19"]}}</h1>
 <p>{{about_app_csv["p9"]}}</p>
+{% if session.language == "dutch" %}
+<img src="../static/images/reinstate_1_nl.png" alt="reinstate instructions" class="reinstate_1_nl">
+{% else%}
 <img src="../static/images/reinstate_1.png" alt="reinstate instructions" class="reinstate_1">
+{% endif %}
 <p>{{about_app_csv["p10"]}}</p>
-<img src="../static/images/reinstate_2.png" alt="reinstate instructions" class="reinstate_2">
-<p>{{about_app_csv["p11"]}}</p>
 
-<br><br>
+{% if session.language == "dutch" %}
+<img src="../static/images/reinstate_2_nl.png" alt="reinstate instructions" class="reinstate_2_nl">
+{% else%}
+<img src="../static/images/reinstate_2.png" alt="reinstate instructions" class="reinstate_2">
+{% endif %}
+<p>{{about_app_csv["p11"]}}</p>
+</section>
+
+<section id="email4">
 <h1>{{about_app_csv["h20"]}}</h1>
 <p>{{about_app_csv["p12"]}}</p>
-<img src="../static/images/usage_access_1.png" alt="reinstate instructions" class="reinstate_1">
+{% if session.language == "dutch" %}
+<img src="../static/images/usage_access_1_nl.png" alt="usage access instructions" class="usage_acces_1_nl">
+{% else%}
+<img src="../static/images/usage_access_1.png" alt="usage access instructions" class="usage_acces_1">
+{% endif %}
+
 <p>{{about_app_csv["p13"]}}</p>
-<img src="../static/images/usage_access_2.png" alt="reinstate instructions" class="reinstate_2">
-<p>{{about_app_csv["p14"]}}</p>
+{% if session.language == "dutch" %}
+<img src="../static/images/usage_access_2_nl.png" alt="usage access instructions" class="usage_acces_2_nl">
+{% else%}
+<img src="../static/images/usage_access_2.png" alt="usage access instructions" class="usage_acces_2">
+{% endif %}
+
 </section>
 
 <section id="data_app">
@@ -102,7 +132,7 @@ About the app
 
 <section id="organization">
 <h1>{{about_app_csv["h23"]}}</h1>
-<p>{{about_app_csv["p16"]}}</p>
+<p>{{about_app_csv["p16"]|safe()}}</p>
 </section>
 
 <section id="stop_app">

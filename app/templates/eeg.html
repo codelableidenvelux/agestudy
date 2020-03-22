@@ -34,8 +34,7 @@ EEG
 
 <section id="location">
 <h1> {{ eeg_csv.loc["h18"] }} </h1>
-<p>{{ eeg_csv.loc["p8"] }} </p>
-<a href="https://www.universiteitleiden.nl/locaties/pieter-de-la-court#tab-1 ">https://www.universiteitleiden.nl/locaties/pieter-de-la-court#tab-1  </a>
+<p>{{ eeg_csv.loc["p8"]|safe() }} </p>
 </section>
 
 <section id="length">
