@@ -18,7 +18,25 @@ About the app
       <a target=_blank_  href="https://play.google.com/store/apps/details?id=com.quantactions.tapcounter"><img src="../static/images/logo_app.png" alt="Logo quantactions"></a>
     </div>
   </div>
+  <div class="row">
+    <div class="col-lg">
+      {% if session.language == "dutch" %}
+      <div class="embed-responsive embed-responsive-16by9">
+        <video class="embed-responsive-item" controls>
+          <source src="../static/videos/smartphone/Download_Install_NL_Edit.mp4"  type="video/mp4">
+        </video>
+      </div>
+      {% else %}
+      <div class="embed-responsive embed-responsive-16by9">
+        <video class="embed-responsive-item" controls>
+          <source src="../static/videos/smartphone/Download_Install_EN_Edit.mp4"  type="video/mp4">
+        </video>
+      </div>
+      {% endif %}
+    </div>
+  </div>
 </div>
+
 </section>
 
 <section id="signed_up">
@@ -39,8 +57,24 @@ About the app
   <li>{{about_app_csv["li2"]}}</li>
   <li>{{about_app_csv["li3"]}}</li>
 </ul>
-
-<img src="../static/images/participation_id.png" alt="participation id instructions" class="participation_id">
+<br><br>
+<div class="row">
+  <div class="col-lg">
+    {% if session.language == "dutch" %}
+    <div class="embed-responsive embed-responsive-16by9">
+      <video class="embed-responsive-item" controls>
+        <source src="../static/videos/smartphone/Download_Install_NL_Edit.mp4"  type="video/mp4">
+      </video>
+    </div>
+    {% else %}
+    <div class="embed-responsive embed-responsive-16by9">
+      <video class="embed-responsive-item" controls>
+        <source src="../static/videos/smartphone/Download_Install_EN_Edit.mp4"  type="video/mp4">
+      </video>
+    </div>
+    {% endif %}
+  </div>
+</div>
 </section>
 
 <section id="working_app">
@@ -68,11 +102,24 @@ About the app
     <li><p>{{about_app_csv["p8a"]}}</p></li>
   </ul>
 </ul>
-{% if session.language == "dutch" %}
-<img src="../static/images/app_id_nl.png" alt="app id instructions" class="app_id_nl">
-{% else %}
-<img src="../static/images/app_id.png" alt="app id instructions" class="app_id">
-{% endif %}
+<br><br>
+<div class="row">
+  <div class="col-lg">
+    {% if session.language == "dutch" %}
+    <div class="embed-responsive embed-responsive-16by9">
+      <video class="embed-responsive-item" controls>
+        <source src="../static/videos/smartphone/ParticipantID_NL_Edit.mp4"  type="video/mp4">
+      </video>
+    </div>
+    {% else %}
+    <div class="embed-responsive embed-responsive-16by9">
+      <video class="embed-responsive-item" controls>
+        <source src="../static/videos/smartphone/ParticipantID_EN_Edit.mp4"  type="video/mp4">
+      </video>
+    </div>
+    {% endif %}
+  </div>
+</div>
 <br>
 </section>
 

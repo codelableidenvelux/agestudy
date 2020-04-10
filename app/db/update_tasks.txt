@@ -1,0 +1,62 @@
+update = """
+  UPDATE TASKS
+  SET task_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=mGJpj',
+  dutch_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=LDWBB',
+  youtube_link='https://www.youtube.com/embed/c7OuoPpu2OQ',
+  frequency=0,
+  price=1.00
+  WHERE task_name ='rt'
+"""
+
+update = """
+  UPDATE TASKS
+  SET task_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=UdGC9',
+  dutch_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=qTtLL',
+  youtube_link='https://www.youtube.com/embed/c7OuoPpu2OQ',
+  frequency=0,
+  price=1.00
+  WHERE task_name ='rt_long'
+"""
+
+update = """
+  UPDATE TASKS
+  SET task_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=MRcZW',
+  dutch_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=8nxHt',
+  youtube_link='https://www.youtube.com/embed/c7OuoPpu2OQ'
+  WHERE task_name ='corsi'
+"""
+
+update = """
+  UPDATE TASKS
+  SET task_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=rN9ba',
+  dutch_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=q7ZCu',
+  youtube_link='https://www.youtube.com/embed/c7OuoPpu2OQ'
+  WHERE task_name ='n_back'
+"""
+
+update = """
+  UPDATE TASKS
+  SET task_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=6dAhY',
+  dutch_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=bFdDQ',
+  youtube_link='https://www.youtube.com/embed/c7OuoPpu2OQ'
+  WHERE task_name ='task_switching'
+"""
+
+update = """
+  UPDATE TASKS
+  SET task_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=Cm2yU',
+  dutch_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=L6OqH'
+  WHERE task_name ='sf_36'
+"""
+
+update = """
+  UPDATE TASKS
+  SET task_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=cX5Fb',
+  dutch_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=akejA'
+  WHERE task_name ='phone_survey'
+"""
+
+
+from db.postgresql import Db
+db = Db("")
+db.execute(update,("",),0)

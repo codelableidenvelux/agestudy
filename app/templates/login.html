@@ -5,6 +5,8 @@
 {% endblock %}
 
 {% block main %}
+<script type='text/javascript' src='https://platform-api.sharethis.com/js/sharethis.js#property=5e77d5f9fac6be0012fa5ea6&product=sticky-share-buttons&cms=website' async='async'></script>
+
 <h1>{{ login_csv['h11'] }}</h1>
 <br><br>
     <form class = "login" action="/login" method="post">
@@ -16,6 +18,9 @@
         </div>
         <button class="btn btn-primary" type="submit">{{ login_csv['button1'] }}</button>
     </form>
+    <!-- forgot my password -->
+    <p> {{ login_csv["forgot_1"] }}, {{ login_csv["forgot_2"]|safe() }}</p>
+
   <br>
   <p>{{ login_csv['p1']|safe() }}</p>
   <br><br>

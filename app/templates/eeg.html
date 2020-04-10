@@ -5,6 +5,7 @@ EEG
 {% endblock %} {% block main %}
 
 {% if session.user_id %}
+<p style='color:red;'>{{ eeg_csv.loc["p9"] }}</p>
 <h1> {{ eeg_csv.loc["h11"] }} </h1>
 <p>{{ eeg_csv.loc["p1"] }} </p>
 <form action="/eeg" method="post">

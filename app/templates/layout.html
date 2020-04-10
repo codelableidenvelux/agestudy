@@ -7,6 +7,7 @@
   <!-- Required meta tags -->
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+  <meta name="norton-safeweb-site-verification" content="jt302-2mv0g89umlqovu56etxvg0bb9wlwdr3y41d5olu13esrabim7nfmrgw5itptxdgnrh1c8drwefaoj4ozrduj4wisd0down1x26tl7o7vmk30ycnc4z7smzftix" />
 
   <!-- documentation at http://getbootstrap.com/docs/4.0/, alternative themes at https://bootswatch.com/4-alpha/ -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
@@ -30,7 +31,7 @@
 
 <body>
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-md navbar-light bg-light border">
+  <nav class="navbar navbar-expand-md navbar-light bg-light border sticky-top">
     <a class="navbar-brand" href="/home"><span class="blue">A</span><span class="red">G</span><span class="yellow">E</span><span class="red">study.nl</span></a>
     <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
       <span class="navbar-toggler-icon"></span>
@@ -55,16 +56,12 @@
         </div>
       </ul>
       <ul class="navbar-nav mr-auto mt-2">
-        <li class="nav-item dropdown">
+        <li class="nav-item">
           {% if session.language == "english" %}
-          <a class="nav-link dropdown-toggle" href="{{url_for(request.endpoint)}}" id="dropdown09" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="flag-icon flag-icon-us"> </span> English</a>
-          <div class="dropdown-menu dropdown" aria-labelledby="dropdown09">
-            <a class="dropdown-item" href="{{url_for(request.endpoint)}}?language=dutch"><span class="flag-icon flag-icon-nl"> </span> Nederlands </a>
-          </div>
+            <a class="nav-link" href="{{url_for(request.endpoint)}}?language=dutch"><span class="flag-icon flag-icon-nl"> </span> Nederlands </a>
           {%else%}
-          <a class="nav-link dropdown-toggle" href="{{url_for(request.endpoint)}}" id="dropdown09" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="flag-icon flag-icon-nl"> </span> Nederlands </a>
-          <div class="dropdown-menu dropdown" aria-labelledby="dropdown09">
-            <a class="dropdown-item" href="{{url_for(request.endpoint)}}?language=english"><span class="flag-icon flag-icon-us"> </span>English </a>
+          <div>
+            <a class="nav-link" href="{{url_for(request.endpoint)}}?language=english"><span class="flag-icon flag-icon-us"> </span> English </a>
           </div>
           {% endif %}
         </li>
@@ -80,16 +77,12 @@
         <li class="nav-item"><a class="nav-link" href="/consent">{{ layout["list4"] }}    </a></li>
       </ul>
       <ul class="navbar-nav mr-auto mt-2">
-        <li class="nav-item dropdown">
+        <li class="nav-item">
           {% if session.language == "english" %}
-          <a class="nav-link dropdown-toggle" href="{{url_for(request.endpoint)}}" id="dropdown09" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="flag-icon flag-icon-us"> </span> English</a>
-          <div class="dropdown-menu dropdown" aria-labelledby="dropdown09">
-            <a class="dropdown-item" href="{{url_for(request.endpoint)}}?language=dutch"><span class="flag-icon flag-icon-nl"> </span> Nederlands </a>
-          </div>
+            <a class="nav-link" href="{{url_for(request.endpoint)}}?language=dutch"><span class="flag-icon flag-icon-nl"> </span> Nederlands </a>
           {%else%}
-          <a class="nav-link dropdown-toggle" href="{{url_for(request.endpoint)}}" id="dropdown09" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="flag-icon flag-icon-nl"> </span> Nederlands </a>
-          <div class="dropdown-menu dropdown" aria-labelledby="dropdown09">
-            <a class="dropdown-item" href="{{url_for(request.endpoint)}}?language=english"><span class="flag-icon flag-icon-us"> </span>English </a>
+          <div>
+            <a class="nav-link" href="{{url_for(request.endpoint)}}?language=english"><span class="flag-icon flag-icon-us"> </span> English </a>
           </div>
           {% endif %}
         </li>

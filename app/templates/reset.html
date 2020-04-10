@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Reset
+{% endblock %}
+
+{% block main %}
+<!-- Form, allow user to change password -->
+<form action="/reset" method="post" class = "needs-validation" novalidate>
+    <div class="form-group">
+      <label class="control-label" for="password">{{ register_csv.loc['label_password'] }}</label>
+      <input class="form-control" id="password" name="password" placeholder="{{ account_csv['placeholder2'] }}" type="password" required/>
+      <div class="valid-feedback">
+        {{ register_csv.loc['valid_feedback_password'] }}
+      </div>
+      <div class="invalid-feedback">
+        {{ register_csv.loc['invalid_feedback_password'] }}
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label" for="confirmation">{{ register_csv.loc['label_confirmation'] }}</label>
+      <input class="form-control" name="confirmation" placeholder="{{ account_csv['placeholder3'] }}" type="password" required/>
+      <div class="valid-feedback">
+        {{ register_csv.loc['valid_feedback_confirmation'] }}
+      </div>
+      <div class="invalid-feedback">
+        {{ register_csv.loc['invalid_feedback_confirmation'] }}
+      </div>
+    </div>
+
+      <div id="message_number" class="invalid-feedback">
+        {{ register_csv.loc['message_number'] }}
+      </div>
+      <div id="message_length" class="invalid-feedback">
+        {{ register_csv.loc['message_length'] }}
+      </div>
+    <button id = "submit" class="btn btn-primary" type="submit">{{account_csv['button2'] }}</button>
+</form>
+
+<script src="/static/js/reset.js"></script>
+
+{% endblock %}

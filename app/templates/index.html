@@ -14,7 +14,7 @@ Tasks
     {{ tasks["check_1"] }}
   </label>
   <br>
- <p>{{ tasks["p0"] }}</p>
+ <p style="color:red;">{{ tasks["p0"] }}</p>
 </div>
 </form>
 
@@ -40,10 +40,13 @@ Tasks
             <div id="task_switching_button" name="task_switching_button">
               <ul class="list-inline">
                 <li class="list-inline-item">
-                  <a href="/task_switching" target="_blank" class="btn btn-primary stretched-link">{{ tasks["task_switching_button"] }}</a>
+                  <a href="/rt?task=task_switching" class="btn btn-primary stretched-link">{{ tasks["task_switching_button"] }}</a>
                 </li>
               </ul>
             </div>
+            {% else %}
+            <br><br>
+            <p>{{ tasks["p_done"] }}</p>
             {% endif %}
           </div>
         </div>
@@ -61,10 +64,13 @@ Tasks
             <div id="corsi_button" name="corsi_button">
               <ul class="list-inline">
                 <li class="list-inline-item">
-                  <a href="/corsi" target="_blank" name="corsi" id="corsi" class="btn btn-primary btn-sm stretched-link" >{{ tasks["corsi_button"] }}</a>
+                  <a href="/rt?task=corsi" name="corsi" id="corsi" class="btn btn-primary btn-sm stretched-link" >{{ tasks["corsi_button"] }}</a>
                 </li>
               </ul>
             </div>
+            {% else %}
+            <br><br>
+            <p>{{ tasks["p_done"] }}</p>
             {% endif %}
           </div>
         </div>
@@ -85,10 +91,13 @@ Tasks
                   <div id="n_back_button" name="n_back_button">
                     <ul class="list-inline">
                       <li class="list-inline-item">
-                        <a href="/n_back" target="_blank" class="btn btn-primary stretched-link">{{ tasks["n_back_button"] }}</a>
+                        <a href="/rt?task=n_back" class="btn btn-primary stretched-link">{{ tasks["n_back_button"] }}</a>
                       </li>
                     </ul>
                   </div>
+                  {% else %}
+                  <br><br>
+                  <p>{{ tasks["p_done"] }}</p>
                   {% endif %}
                 </div>
               </div>
@@ -102,7 +111,7 @@ Tasks
           <div class="card-body text-center">
             <p><img class=" img-fluid" src="/static/images/TaskIcons/SF-36.png" alt="card image"></p>
             <h4 class="card-title">{{ tasks["sf_36_title"] }}</h4>
-            <p class="card-text">{{ tasks["sf_36_description"] }}<br> <br></p>
+            <p class="card-text">{{ tasks["sf_36_description"] }}</p>
             {% if show_sf_36 %}
             <div id="sf_36_button" name="sf_36_button">
               <ul class="list-inline">
@@ -111,6 +120,9 @@ Tasks
                 </li>
               </ul>
             </div>
+            {% else %}
+            <br><br>
+            <p>{{ tasks["p_done"] }}</p>
             {% endif %}
           </div>
         </div>
@@ -131,6 +143,9 @@ Tasks
                 </li>
               </ul>
             </div>
+            {% else %}
+            <br><br>
+            <p>{{ tasks["p_done"] }}</p>
             {% endif %}
           </div>
         </div>
@@ -147,7 +162,7 @@ Tasks
             <div id="eeg_button" name="eeg_button">
               <ul class="list-inline">
                 <li class="list-inline-item">
-                  <a href="/eeg" target="_blank" class="btn btn-primary stretched-link">{{ tasks["eeg_botton"] }}</a>
+                  <a href="/eeg" class="btn btn-primary stretched-link">{{ tasks["eeg_botton"] }}</a>
                 </li>
               </ul>
             </div>

@@ -4,23 +4,24 @@ p1_1,,
 p1_2,,
 p1_3,,
 p1_4,,
-corsi_title,Corsi Block,Corsi Block
+corsi_title,Pattern Memory,Patroon Geheugen
 corsi_description,Click on a pattern of flashing boxes,Klik op een patroon van knipperende vakken
 corsi_button,Start,Start
-n_back_title,N-back,N-back
+n_back_title,Letter Memory,Letter Geheugen
 n_back_description,Recall the last letters you saw,Onthoud en vermeld de laatste letters die u hebt gezien
 n_back_button,Start,Start
 task_switching_title,Task Switching,Task Switching
 task_switching_description,Do two things at once,Doe twee dingen tegelijk
 task_switching_button,Start,Start
-sf_36_title,SF-36,SF-36
+sf_36_title,Health Survey,Gezondheidsvragenlijst
 sf_36_description,Tell us about you,Vertel ons over u
 sf_36_button,Start,Start
-phone_survey_title,Phone survey,Phone survey
+phone_survey_title,Phone Survey,Phone survey
 phone_survey_description,Tell us about your phone usage,Vertel ons over uw telefoongebruik
 phone_survey_button,Start,Start
-eeg_title,EEG (Optional),EEG (Optioneel)
+eeg_title,Brain Measurements (Optional),Breinmeting (Optioneel)
 eeg_description,Measure your brain activity,Meet uw breinactiviteit
 eeg_botton,More info,Meer info
 check_1,I am comfortably sitting on a chair. I am on a computer with a keyboard.,Ik zit comfortabel op een stoel. Ik zit op een computer met een toetsenbord.
 p0,Confirm this by checking the box to activate the tests.,Bevestig dit door het vakje aan te vinken om de onlinetests te activeren.
+p_done,Completed, Voltooid

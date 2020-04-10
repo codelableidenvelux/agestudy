@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, session, flash, jsonify
+from flask import Flask, redirect, render_template, request, session, flash, jsonify,url_for
 from flask_session import Session
 from tempfile import mkdtemp
 from db.postgresql import Db
@@ -8,6 +8,8 @@ import re
 from datetime import datetime, timedelta
 import string
 import requests
+import uuid
+import json
 
 app = Flask(__name__)
 key  = open("secret_key.txt", "r")
@@ -43,6 +45,10 @@ about_study_csv = read_csv("static/csv/about_study.csv")
 for_participant_csv = pd.read_excel('static/csv/for_participant.xlsx', index_col="tag")
 about_app_csv = pd.read_excel('static/csv/about_app.xlsx', index_col="tag")
 contact_csv = read_csv("static/csv/contact.csv")
+forgot_password_csv = read_csv("static/csv/forgot_password.csv")
+verify_csv = read_csv("static/csv/verify.csv")
+reset_password_email = read_csv("static/csv/reset_password_email.csv")
+youtube_csv = read_csv("static/csv/youtube.csv")
 
 # See which language was chosen and update the language
 def language_set():
@@ -141,7 +147,7 @@ def task_completed(task_id):
         db.execute(update, (id,), 0)
         db.execute(insert, (id, task_id), 0)
 
-def send_email(message, username):
+def send_email(message, username, recipient_adress):
     """
     This function takes an input email and password from sender and an input
     email from receiver. It sends an email with input text.
@@ -151,19 +157,109 @@ def send_email(message, username):
         email = email_r.read().strip('\n')
         pasw_r  = open("pass.txt", "r")
         pasw = pasw_r.read().strip('\n')
-
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL("mail.privateemail.com", 465, context=context) as server:
             server.login(email, pasw)
-            server.sendmail(email, "agestudy@fsw.leidenuniv.nl", message)
+            server.sendmail(email, recipient_adress, message)
         return True
     except:
+        print('fail')
         app.logger.info('%s tried to send the following email: %s. There was an error', username, message)
         return False
 
+@app.route('/nortonsw_df670de0-523c-0.html', methods=["GET"])
+def norton():
+    return render_template("nortonsw_df670de0-523c-0.html")
 ################################################################################
 ##################### LINK TO CORSI TASK_ID = 0 ################################
 ###############################################################################
+@app.route('/rt', methods=["GET"])
+@login_required
+def rt():
+    """
+    This function manages the rt task.
+    First it checks if it has been done already if it has it will automatically
+    redirect user to the selected task.
+    If the rt task of rt_long task has not been yet then it will check what task
+    was chosen and select whether the rt or rt_long should be shown.
+    Finally if there is a youtube video it will redirect the user to the video.
+    If not it will redirect user to the task (rt or rt_long)
+    """
+    id = session["user_id"]
+    task = request.args.get('task')
+    print(task)
+    # select tasks that were completed that day by the user
+    select = "SELECT current_date FROM task_completed WHERE user_id = (%s) AND task_id = (%s)"
+    # check if the rt task has been completed
+    rt_done = db.execute(select, (id,8), 1)
+    select = "SELECT current_date FROM task_completed WHERE user_id = (%s) AND task_id = (%s)"
+    # check if the rt_long task has been completed
+    rt_long_done = db.execute(select, (id,9), 1)
+
+    # Check if either the short or long rt task has been done today already
+    # If one of them has been done then redirect the user to the video of the selected task directly
+    # They should not do the rt or rt_long again
+    if rt_done or rt_long_done:
+        # select the youtube link to the video
+        select = 'SELECT youtube_link FROM TASKS WHERE task_name=(%s)'
+        youtube_link = db.execute(select,(task,), 1)
+        task_link = '/' + task
+        return render_template('youtube.html', youtube_csv=youtube_csv[session["language"]], youtube_link=youtube_link[0][0], task_link=task_link, layout=layout[session["language"]])
+
+    # if the task is task_switching then the shortened RT is done
+    # if it is not task switching the long rt is done
+    if task == "task_switching":
+        # task_id for short rt = 8
+        task_id = 8
+        link = task_opening(task_id)
+        task_link = link[0][0] + '&task=' + task + '&user_id=' + generate_id(id)
+        print(task_link)
+        select = 'SELECT youtube_link FROM TASKS WHERE task_id=(%s)'
+        youtube_link = db.execute(select,(task_id,), 1)
+    else:
+        # task_id for long rt = 9
+        task_id = 9
+        link = task_opening(task_id)
+        task_link = link[0][0] + '&task=' + task + '&user_id=' + generate_id(id)
+        print(task_link)
+        select = 'SELECT youtube_link FROM TASKS WHERE task_id=(%s)'
+        youtube_link = db.execute(select,(task_id,), 1)
+    # check if there is a youtube_link
+    # if there is then redirect user to see the youtube video
+    # if not redirect user to the task directly
+    if youtube_link[0][0]:
+        return render_template('youtube.html', youtube_csv=youtube_csv[session["language"]], youtube_link=youtube_link[0][0], task_link=task_link, layout=layout[session["language"]])
+    else:
+        task_link = "/" + task
+        return redirect(task_link)
+
+@app.route('/rt_end', methods=["GET"])
+@login_required
+def rt_end():
+    # get the task that was given as out variable
+    # select the youtube link for the next task
+    task = request.args.get('task')
+    select = 'SELECT youtube_link FROM TASKS WHERE task_name=(%s)'
+    youtube_link = db.execute(select,(task,), 1)
+    task_link = '/' + task
+
+    # end the task
+    if task == "task_switching":
+        task_id = 8
+        task_completed(task_id)
+    else:
+        task_id = 9
+        task_completed(task_id)
+    # check if there is a youtube_link
+    # if there is then redirect user to see the youtube video
+    # if not redirect user to the task directly
+    if youtube_link[0][0]:
+        return render_template('youtube.html', youtube_csv=youtube_csv[session["language"]], youtube_link=youtube_link[0][0], task_link=task_link, layout=layout[session["language"]])
+    else:
+        return redirect(task_link)
+
+
+
 @app.route('/corsi', methods=["GET"])
 @login_required
 def corsi():
@@ -369,7 +465,7 @@ def index():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Register user"""
-    preferred_language = "english"
+    preferred_language = "dutch"
     if "language" in session:
         preferred_language = session["language"]
     session.clear()
@@ -381,9 +477,10 @@ def register():
 
         # location given here
         location = "delhi technological university"
-
+        secret_recaptcha_r  = open("secret_recaptcha.txt", "r")
+        secret_recaptcha = secret_recaptcha_r.read()
         # defining a params dict for the parameters to be sent to the API
-        PARAMS = {'secret':"6LfltOIUAAAAAERDowV2X1Tavbry5jjfq5IqDeCW", 'response': request.form.get("g-recaptcha-response")}
+        PARAMS = {'secret':secret_recaptcha, 'response': request.form.get("g-recaptcha-response")}
 
         # sending get request and saving the response as response object
         r = requests.get(url = URL, params = PARAMS)
@@ -450,14 +547,18 @@ def register():
             # Redirect user to home page
 
             # send_email
-            message = 'Subject: New Participant \n\n username: ' + username + "\n email: " + email + "\n user_id: " + str(rows[0][0]) + "\n user_type: " + str(user_type)
-            send_email(message, username)
+            participation_id = '138THISISADUMMYIDDONOTPASTEINTOAPPNUM1'
+            message = 'Subject: New Participant \n\n username: ' + username + "\npsytoolkit_id: " + generate_id(session['user_id']) + "\n email: " + email + "\n user_id: " + str(rows[0][0]) + "\n user_type: " + str(user_type) + "\n language: " + session["language"] + "\n participation_id: " + participation_id
+            send_email(message, username, "agestudy@fsw.leidenuniv.nl")
+            subject_en='Welcome from Leiden University to Agestudy.nl (Important info, save the email)'
+            subject_nl='Welkom van de Universiteit Leiden bij Agestudy.nl (Belangrijke info, bewaar deze e-mail)'
+            send_direct_email(subject_en, subject_nl, email, 0, False, participation_id)
 
             return redirect("/home")
         else:
             # the passwords did not match
             flash("Passwords did not match")
-            return render_template("register.html",   consent_csv=consent_csv[session["language"]], register_csv=register_csv[session["language"]], layout=layout[session["language"]])
+            return render_template("register.html", consent_csv=consent_csv[session["language"]], register_csv=register_csv[session["language"]], layout=layout[session["language"]])
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
@@ -512,7 +613,7 @@ def login():
     """Log user in"""
 
     # Forget any user_id
-    preferred_language = "english"
+    preferred_language = "dutch"
     if "language" in session:
         preferred_language = session["language"]
     session.clear()
@@ -548,6 +649,16 @@ def login():
         session['user_id'] = rows[0]['user_id']
         session['consent'] = rows[0]['consent']
 
+        ####################### TODO REMOVEE #######################
+        #participation_id = '138THISISADUMMYIDDONOTPASTEINTOAPPNUM1'
+        #message = 'Subject: New Participant \n\n username: ' + username + "\npsytoolkit_id: " + generate_id(session['user_id']) + "\n email: " + email + "\n user_id: " + str(rows[0][0]) + "\n user_type: " + str(user_type) + "\n language: " + session["language"] + "\n participation_id: " + participation_id
+        #message = 'Subject: New Participant \n\n participation_id: ' + participation_id
+        #send_email(message, username, "agestudy@fsw.leidenuniv.nl")
+        #subject_en='Welcome from Leiden University to Agestudy.nl (Important info, save the email)'
+        #subject_nl='Welcome from Leiden University to Agestudy.nl (Important info, save the email)'
+        #username = 'a.ghosh@fsw.leidenuniv.nl'
+        #send_direct_email(subject_en, subject_nl, username, 'false', False, participation_id)
+
         # Redirect user to home page
         return redirect("/home")
 
@@ -566,7 +677,208 @@ def check_password(password, new_password):
 
     # check if password has number, length and symbols
     number = len(re.findall(r"[0-9]", password))
-    return len(password) > 5 and number > 0
+    return len(password) >= 5 and number > 0
+
+from email.message import EmailMessage
+from email.headerregistry import Address
+from email.utils import make_msgid
+
+@app.route("/forgot_password", methods=["GET", "POST"])
+def forgot_password():
+    language_set()
+    if request.method == "POST":
+        email = request.form.get("email")
+        select = "SELECT user_id FROM SESSION_INFO WHERE USER_NAME = (%s)"
+        user_id = db.execute(select, (email.lower(),), 1)
+
+        if user_id:
+            # generate a random token
+            token = str(uuid.uuid4())
+            # generate a reset_id this will be used to find the row in the database
+            reset_id = str(uuid.uuid4())
+            # hash the token
+            hash = generate_password_hash(token)
+
+            # get the current time and the time 30 minutes after email request
+            current_time = datetime.now()
+            expiry_time = current_time + timedelta(minutes = 30)
+
+            # add the values to the database
+            # user_id, expiration time, hash and the reset_id
+            insert = f"INSERT INTO RESET_PASSWORD (user_id, expiry_time, hash, reset_id) VALUES (%s, %s, %s, %s)"
+            insert_values = (user_id[0][0], expiry_time, hash, reset_id)
+            db.execute(insert, insert_values, 0)
+
+            # save the reset_id in the session for later use
+            session["reset_id"] = reset_id
+
+            # get the root url (this case its https://www.agestudy.nl/)
+            url_root = request.url_root
+            # remove the last /
+            url_root = url_root[:-1]
+            s = 'https:'
+            url_root = s + url_root.split(":")[1]
+            # get the link for the reset with the token appended to it
+            reset_link_url = url_for("reset_link", token=token)
+            # combine the root and reset link together to form the final route
+            url = url_root + reset_link_url
+            subject = reset_password_email[session["language"]]['subject']
+            msg_content = reset_password_email[session["language"]]['t1'] + '\n\n' + reset_password_email[session["language"]]['t2'] + '\n' + str(token + "\n\nLink: \n" + url) +  '\n\n\n' + reset_password_email[session["language"]]['expire']
+            send_direct_email(subject, subject, email, msg_content, True, 0)
+
+        return  redirect(url_for('verify'))
+    else:
+        return render_template("forgot_password.html", forgot_password_csv=forgot_password_csv[session["language"]], layout=layout[session["language"]])
+
+def send_direct_email(subject_en, subject_nl, recipient_adress, msg_content, reset_password,participation_id):
+    preferred_language = "dutch"
+    if "language" in session:
+        preferred_language = session["language"]
+
+    if preferred_language == "english":
+        subject = subject_en
+        html_template = "automatic_welcome_encoded_en.htm"
+    else:
+        subject = subject_nl
+        html_template = "automatic_welcome_encoded_nl.htm"
+
+    msg = EmailMessage()
+    msg.set_content(msg_content)
+    msg['Subject'] = subject
+    msg['From'] = 'admin@agestudy.nl'
+    msg['To'] = recipient_adress.lower()
+    msg.add_header('reply-to', 'agestudy@fsw.leidenuniv.nl')
+
+    if not reset_password:
+        asparagus_cid = make_msgid()
+        msg.add_alternative(render_template(html_template, participation_id=participation_id).format(asparagus_cid=asparagus_cid[1:-1]), subtype='html')
+
+    try:
+        email_r  = open("email.txt", "r")
+        email = email_r.read().strip('\n')
+        pasw_r  = open("pass.txt", "r")
+        pasw = pasw_r.read().strip('\n')
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL("mail.privateemail.com", 465, context=context) as server:
+            server.login(email, pasw)
+            server.send_message(msg)
+    except:
+        app.logger.info('%s tried to send the following email: %s. There was an error')
+
+@app.route("/verify", methods=["GET", "POST"])
+def verify():
+    language_set()
+    if request.method == "POST":
+        token = request.form.get("token").strip(' ')
+
+        select = "SELECT * FROM RESET_PASSWORD WHERE RESET_ID=(%s)"
+
+        if "reset_id" in session:
+            rows = db.execute(select, (session["reset_id"],), 1)
+        else:
+            flash("Invalid token. Please request a new one")
+            return redirect("/forgot_password")
+
+        if rows:
+            expiry_time = rows[0]["expiry_time"]
+            if expiry_time > datetime.now():
+                # the token has not expired yet
+                hash = rows[0]["hash"]
+                # check if the token is the correct one
+                # If it is then redirect user to reset page
+                if check_password_hash(hash,token):
+                    print("correct token")
+                    return redirect("/reset")
+                # If it is not then let them request a new one again
+                else:
+                    flash("incorrect token")
+                    return redirect("/forgot_password")
+            else:
+                #the token has expired
+                flash("Token has expired. Please request a new one")
+                return redirect("/forgot_password")
+        else:
+            #the token has expired
+            flash("Invalid token. Please request a new one")
+            return redirect("/forgot_password")
+    else:
+        return render_template("verify.html", verify_csv=verify_csv[session["language"]], layout=layout[session["language"]])
+
+
+@app.route("/reset", methods=["GET", "POST"])
+def reset():
+    language_set()
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+        password = request.form.get("password")
+        confirmation = request.form.get("confirmation")
+
+        select = "SELECT * FROM RESET_PASSWORD WHERE RESET_ID=(%s)"
+        if "reset_id" in session:
+            password_reset_rows = db.execute(select, (session["reset_id"],), 1)
+        else:
+            flash("Incorrect route, try again")
+            return redirect("/forgot_password")
+
+        if password_reset_rows:
+            user_id=password_reset_rows[0][0]
+            print(user_id)
+        else:
+            flash("Invalid token. Please request a new one")
+            return redirect("/forgot_password")
+
+        # check if the new password is properly implemented
+        if check_password(password, confirmation):
+            # encrypt the users' password
+            hash = generate_password_hash(password)
+            update = "UPDATE SESSION_INFO SET pas_hash = (%s) WHERE USER_ID = (%s)"
+            param = (hash,user_id)
+            db.execute(update, param, 0)
+            flash("Password changed!")
+            # Redirect user to home page
+            return redirect("/login")
+        else:
+            app.logger.warning('%s In /reset password did not match with confirmation password', user_id)
+            flash("Passwords dont match")
+            return redirect("/forgot_password")
+    else:
+        return render_template("reset.html", account_csv=account_csv[session["language"]], register_csv=register_csv[session["language"]], layout=layout[session["language"]])
+
+@app.route("/reset_link", methods=["GET"])
+def reset_link():
+    language_set()
+    token = request.args["token"]
+    select = "SELECT * FROM RESET_PASSWORD WHERE RESET_ID=(%s)"
+    if "reset_id" in session:
+        rows = db.execute(select, (session["reset_id"],), 1)
+    else:
+        flash("Invalid token. Please request a new one")
+        return redirect("/forgot_password")
+
+    if rows:
+        expiry_time = rows[0]["expiry_time"]
+        if expiry_time > datetime.now():
+            # the token has not expired yet
+            hash = rows[0]["hash"]
+            # check if the token is the correct one
+            # If it is then redirect user to reset page
+            if check_password_hash(hash,token):
+                print("correct token")
+                return redirect("/reset")
+            # If it is not then let them request a new one again
+            else:
+                flash("incorrect token")
+                return redirect("/forgot_password")
+        else:
+            #the token has expired
+            flash("Token has expired. Please request a new one")
+            return redirect("/forgot_password")
+    else:
+        #the token has expired
+        flash("Invalid token. Please request a new one")
+        return redirect("/forgot_password")
+
+    return redirect("/login")
 
 ################################################################################
 ################################ LOGOUT #####################################
@@ -590,8 +902,7 @@ def pc():
     """
     if request.form.get("pc"):
         session["pc"] = 1
-        print(session["pc"])
-    print("hey")
+
 
 ################################################################################
 ################################ ACCOUNT #####################################
@@ -684,8 +995,8 @@ def eeg():
         rows = db.execute(select, (id,), 1)
 
         # send_email with the users info to our server to contact them about participating
-        message = 'Subject: EEG \n\n The following participant wants to participate in the EEG study' + '\n username: ' + str(rows[0]['user_name']) + "\n email: " + str(rows[0]['email']) + "\n user_id: " + str(rows[0]['user_id']) + "\n user_type: " + str(str(rows[0]['user_type']))
-        email_sent = send_email(message, rows[0]['user_name'])
+        message = 'Subject: EEG \n\n The following participant wants to participate in the EEG study' + '\n username: ' + str(rows[0]['user_name']) + "\n email: " + str(rows[0]['email']) + "\n user_id: " + str(rows[0]['user_id']) + "\n user_type: " + str(str(rows[0]['user_type'])) + "\n language" + session["language"]
+        email_sent = send_email(message, rows[0]['user_name'], "agestudy@fsw.leidenuniv.nl")
         # render a thank you page
         if email_sent:
             return render_template("sent_email.html", sent_email_csv=sent_email_csv[session["language"]], layout=layout[session["language"]])
@@ -732,19 +1043,19 @@ def home():
         task = {"img":"/static/images/TaskIcons/phone_survey.png", "alt":"Phone survey", "title":tasks[session["language"]]['phone_survey_title'],  "text" : tasks[session["language"]]['phone_survey_description'], "link" : "/phone_survey", "button_text": tasks[session["language"]]['phone_survey_button']}
     # Second recomendation is to do the sf-36
     elif 4 not in completed_tasks or should_show_task(4):
-        task = {"img":"/static/images/TaskIcons/SF-36.png", "alt":"sf_36", "title":tasks[session["language"]]['sf_36_title'],  "text" : tasks[session["language"]]['sf_36_description'], "link" : "/sf_36", "button_text": tasks[session["language"]]['sf_36_button']}
+        task = {"img":"/static/images/TaskIcons/SF-36.png", "alt":"Health survey", "title":tasks[session["language"]]['sf_36_title'],  "text" : tasks[session["language"]]['sf_36_description'], "link" : "/sf_36", "button_text": tasks[session["language"]]['sf_36_button']}
     # Third recomendation is to do corsi task
     elif  1 not in completed_tasks or should_show_task(1):
-        task = {"img":"/static/images/TaskIcons/corsi.png", "alt":"corsi",  "title" : tasks[session["language"]]['corsi_title'], "text" : tasks[session["language"]]['corsi_description'], "link" : "/corsi", "button_text": tasks[session["language"]]['corsi_button']}
+        task = {"img":"/static/images/TaskIcons/corsi.png", "alt":"Pattern Memory",  "title" : tasks[session["language"]]['corsi_title'], "text" : tasks[session["language"]]['corsi_description'], "link" : "/rt?task=corsi", "button_text": tasks[session["language"]]['corsi_button']}
     # Fourth recomendation is to do n_back task
     elif 2 not in completed_tasks or should_show_task(2):
-        task = {"img":"/static/images/TaskIcons/N-back.png", "alt":"N-back", "title" : tasks[session["language"]]['n_back_title'], "text" : tasks[session["language"]]['n_back_description'], "link" : "/n_back", "button_text": tasks[session["language"]]['n_back_button']}
+        task = {"img":"/static/images/TaskIcons/N-back.png", "alt":"Letter Memory", "title" : tasks[session["language"]]['n_back_title'], "text" : tasks[session["language"]]['n_back_description'], "link" : "/rt?task=n_back", "button_text": tasks[session["language"]]['n_back_button']}
     # Fifth recomendation is to do task switching task
     elif 3 not in completed_tasks or should_show_task(3):
         if session["language"] == "english":
-            task = {"img":"/static/images/TaskIcons/TSwitch_EN.png", "alt":"task switching", "title" : tasks[session["language"]]['task_switching_title'], "text" : tasks[session["language"]]['task_switching_description'], "link" : "/task_switching", "button_text": tasks[session["language"]]['task_switching_button']}
+            task = {"img":"/static/images/TaskIcons/TSwitch_EN.png", "alt":"Task Switching", "title" : tasks[session["language"]]['task_switching_title'], "text" : tasks[session["language"]]['task_switching_description'], "link" : "/rt?task=task_switching", "button_text": tasks[session["language"]]['task_switching_button']}
         else:
-            task = {"img":"/static/images/TaskIcons/TSwitch_NL.png", "alt":"task switching", "title" : tasks[session["language"]]['task_switching_title'], "text" : tasks[session["language"]]['task_switching_description'], "link" : "/task_switching", "button_text": tasks[session["language"]]['task_switching_button']}
+            task = {"img":"/static/images/TaskIcons/TSwitch_NL.png", "alt":"Task Switching", "title" : tasks[session["language"]]['task_switching_title'], "text" : tasks[session["language"]]['task_switching_description'], "link" : "/rt?task=task_switching", "button_text": tasks[session["language"]]['task_switching_button']}
     # If all tasks have been completed and are locked then give no recommendation dont show the div
     else:
         recomendation = False
@@ -778,8 +1089,8 @@ def payment():
         rows = db.execute(select, (id,), 1)
         # send_email with the users info to our email to contact them about participating
         # email contains username, email, usertype, user_id and the ammount to be collect
-        message = 'Subject: Payment collection \n\n The following participant wants to collect their payment for the study' + '\n username: ' + str(rows[0]['user_name']) + "\n First name: " + first_name + "\n Last name: " + last_name + "\n IBAN: " + IBAN + "\n Address: " + address +  "\n email: " + str(rows[0]['email']) + "\n user_id: " + str(rows[0]['user_id']) + "\n user_type: " + str(rows[0]['user_type']) + "\n ammount to collect: " + str(money_earned)
-        email_sent = send_email(message, rows[0]['user_name'])
+        message = 'Subject: Payment collection \n\n The following participant wants to collect their payment for the study' + '\n username: ' + str(rows[0]['user_name']) + "\n First name: " + first_name + "\n Last name: " + last_name + "\n IBAN: " + IBAN + "\n Address: " + address +  "\n email: " + str(rows[0]['email']) + "\n user_id: " + str(rows[0]['user_id']) + "\n user_type: " + str(rows[0]['user_type']) + "\n ammount to collect: " + str(money_earned) + "\n language" + session["language"]
+        email_sent = send_email(message, rows[0]['user_name'], "agestudy@fsw.leidenuniv.nl")
 
         if email_sent:
             # render a thank you page
@@ -814,7 +1125,7 @@ def about_app():
 def contact():
     language_set()
     return render_template("contact.html", contact_csv=contact_csv[session["language"]], layout=layout[session["language"]])
-port = int(os.getenv("PORT"))
+#port = int(os.getenv("PORT"))
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=port)
+#if __name__ == '__main__':
+#    app.run(host='0.0.0.0', port=port)

@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Youtube
+{% endblock %} {% block main %}
+<h1>{{ youtube_csv["h11"] }}</h1>
+<iframe width="560" height="315" src={{ youtube_link}} frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<br>
+<a href={{ task_link }} class='btn btn-primary'> {{ youtube_csv["button"] }}</a>
+{% endblock %}

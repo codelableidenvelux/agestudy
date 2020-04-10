@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Verify
+{% endblock %}
+
+{% block main %}
+<p>{{ verify_csv['p1'] }}</p>
+<form class = "verify" action="/verify" method="post">
+  <div class="form-group">
+      <input class="form-control" name="token" placeholder="{{ verify_csv['placeholder'] }}" type="text"/>
+  </div>
+    <button class="btn btn-primary" type="submit">{{ verify_csv['button']  }}</button>
+</form>
+
+{% endblock %}

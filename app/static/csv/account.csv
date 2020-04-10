@@ -7,3 +7,4 @@ placeholder3,Retype new password,Type hier opnieuw het nieuwe wachtwoord
 button2,Change password,Verander wachtwoord
 message_number,  A number,Een getal
 message_length,Password length: Minimum 5 characters,Wachtwoord lengte: Minimaal 5 karakters
+p1,Type in a new password to reset it.,Voer een nieuw wachtwoord in om het te resetten.

@@ -12,7 +12,6 @@ Home
 
 <link href="/static/css/home.css" rel="stylesheet"/>
 <script src="/static/js/index.js"></script>
-<script type='text/javascript' src='https://platform-api.sharethis.com/js/sharethis.js#property=5e77d5f9fac6be0012fa5ea6&product=sticky-share-buttons&cms=website' async='async'></script>
 <!-- Define a macro that will contain the card, the inputs are
 the image of the task and its alt, the title and description of the task,
 the route to the task and the text in the button. -->
@@ -43,7 +42,7 @@ if its false the div is not show there are no recomendations-->
     {{ home_csv["check_1"] }}
   </label>
   <br>
- <p>{{ home_csv["p0"] }}</p>
+ <p style="color:red;">{{ home_csv["p0"] }}</p>
 </div>
 </form>
 {{ card(img, alt, title, text, link, button_text) }}
