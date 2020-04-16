@@ -10,13 +10,13 @@ corsi_button,Start,Start
 n_back_title,Letter Memory,Letter Geheugen
 n_back_description,Recall the last letters you saw,Onthoud en vermeld de laatste letters die u hebt gezien
 n_back_button,Start,Start
-task_switching_title,Task Switching,Task Switching
+task_switching_title,Task Switching,Wisseltaak
 task_switching_description,Do two things at once,Doe twee dingen tegelijk
 task_switching_button,Start,Start
 sf_36_title,Health Survey,Gezondheidsvragenlijst
 sf_36_description,Tell us about you,Vertel ons over u
 sf_36_button,Start,Start
-phone_survey_title,Phone Survey,Phone survey
+phone_survey_title,Phone Survey,Telefoon enquête
 phone_survey_description,Tell us about your phone usage,Vertel ons over uw telefoongebruik
 phone_survey_button,Start,Start
 eeg_title,Brain Measurements (Optional),Breinmeting (Optioneel)

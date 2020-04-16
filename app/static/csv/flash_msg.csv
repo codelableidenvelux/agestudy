@@ -1,0 +1,14 @@
+tag,english,dutch,
+missing_fieds,Fill in all fields,Vul alle velden in
+used_email,Email already in use,Email al in gebruik
+unmatched_pas,Passwords did not match,Wachtwoorden kwamen niet overeen
+email_needed,Must provide email address,E-mailadres opgeven verplicht
+pas_needed,Must provide password,Wachtwoord opgeven verplicht
+invalid_username,Invalid email and/or password,Ongeldige email en/of wachtwoord
+incorrect_pas,Password incorrect,Wachtwoord onjuist
+change_pas,Password changed!,Wachtwoord gewijzigd!
+incorrect_fields,One or more fields filled incorrectly,Een of meer velden verkeerd ingevuld
+robot,Please click on the I am not a robot checkbox,Klik op het vakje "Ik ben geen robot"
+invalid_token,Invalid verifcation code. Please request a new one.,Ongelidge verificatie code. Vraag een nieuwe aan alstublieft.
+expired_token,Verification code has expired. Please request a new one., Verificatiecode is verlopen. Vraag een nieuwe aan alstublieft.
+incorrect_route,Incorrect route. Try again,Onjuiste route. Probeer het opnieuw

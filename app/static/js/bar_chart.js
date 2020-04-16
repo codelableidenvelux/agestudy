@@ -4,6 +4,7 @@
 // on ready get the price chose the max value on the price log
 // Source: https://bl.ocks.org/hrecht/f84012ee860cb4da66331f18d588eee3
 $(document).ready(function() {
+if (document.getElementById("barChart")){
   var price = d3.select("#price").attr("value")
   if (price < 10){
     maxVal = 26
@@ -30,7 +31,9 @@ $(document).ready(function() {
     "color": "#ff7632"}
   ]
   // make the barchart by calling the barchart function
+
   barChart(data)
+}
 });
 
 function barChart(data){

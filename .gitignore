@@ -1,4 +1,9 @@
-app/db/key.txt
+app/db/key.json
+app/db/decoded_crt.txt
 app/secret_key.txt
+app/secret_recaptcha.txt
 app/email.txt
 app/pass.txt
+app/credential_postgressql.txt
+app/CSR.csr
+app/as.key

@@ -35,19 +35,24 @@ Tasks
           <p><img class=" img-fluid" src="/static/images/TaskIcons/TSwitch_EN.png" alt="card image"></p>
           {% endif %}
             <h4 class="card-title">{{ tasks["task_switching_title"] }}</h4>
-            <p class="card-text">{{ tasks["task_switching_description"] }}<br><br></p>
-            {% if show_task_switching %}
-            <div id="task_switching_button" name="task_switching_button">
-              <ul class="list-inline">
-                <li class="list-inline-item">
-                  <a href="/rt?task=task_switching" class="btn btn-primary stretched-link">{{ tasks["task_switching_button"] }}</a>
-                </li>
-              </ul>
-            </div>
-            {% else %}
-            <br><br>
-            <p>{{ tasks["p_done"] }}</p>
-            {% endif %}
+            <p class="card-text">{{ tasks["task_switching_description"] }}</p>
+          </div>
+          <div class="card-footer bg-transparent text-center">
+          {% if show_task_switching %}
+          <div id="task_switching_button" name="task_switching_button">
+            <ul class="list-inline">
+              <li class="list-inline-item">
+                <a href="/rt?task=task_switching" class="btn btn-primary stretched-link">{{ tasks["task_switching_button"] }}</a>
+              </li>
+            </ul>
+          </div>
+          {% else %}
+          <ul class="list-inline">
+            <li class="list-inline-item">
+              <p class='btn btn-secondary stretched-link'>{{ tasks["p_done"] }}</p>
+            </li>
+          </ul>
+          {% endif %}
           </div>
         </div>
       </div>
@@ -60,18 +65,23 @@ Tasks
             <p><img class=" img-fluid" src="/static/images/TaskIcons/corsi.png" alt="card image"></p>
             <h4 class="card-title">{{ tasks["corsi_title"] }}</h4>
             <p class="card-text">{{ tasks["corsi_description"] }}</p>
-            {% if show_corsi %}
-            <div id="corsi_button" name="corsi_button">
-              <ul class="list-inline">
-                <li class="list-inline-item">
-                  <a href="/rt?task=corsi" name="corsi" id="corsi" class="btn btn-primary btn-sm stretched-link" >{{ tasks["corsi_button"] }}</a>
-                </li>
-              </ul>
-            </div>
-            {% else %}
-            <br><br>
-            <p>{{ tasks["p_done"] }}</p>
-            {% endif %}
+          </div>
+          <div class="card-footer bg-transparent text-center">
+          {% if show_corsi %}
+          <div id="corsi_button" name="corsi_button">
+            <ul class="list-inline">
+              <li class="list-inline-item">
+                <a href="/rt?task=corsi" name="corsi" id="corsi" class="btn btn-primary stretched-link" >{{ tasks["corsi_button"] }}</a>
+              </li>
+            </ul>
+          </div>
+          {% else %}
+          <ul class="list-inline">
+            <li class="list-inline-item">
+              <p class='btn btn-secondary stretched-link'>{{ tasks["p_done"] }}</p>
+            </li>
+          </ul>
+          {% endif %}
           </div>
         </div>
       </div>
@@ -87,18 +97,23 @@ Tasks
                   <p><img class=" img-fluid" src="/static/images/TaskIcons/N-back.png" alt="card image"></p>
                   <h4 class="card-title">{{ tasks["n_back_title"] }}</h4>
                   <p class="card-text">{{ tasks["n_back_description"] }}</p>
-                  {% if show_n_back %}
-                  <div id="n_back_button" name="n_back_button">
-                    <ul class="list-inline">
-                      <li class="list-inline-item">
-                        <a href="/rt?task=n_back" class="btn btn-primary stretched-link">{{ tasks["n_back_button"] }}</a>
-                      </li>
-                    </ul>
-                  </div>
-                  {% else %}
-                  <br><br>
-                  <p>{{ tasks["p_done"] }}</p>
-                  {% endif %}
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                {% if show_n_back %}
+                <div id="n_back_button" name="n_back_button">
+                  <ul class="list-inline">
+                    <li class="list-inline-item">
+                      <a href="/rt?task=n_back" class="btn btn-primary stretched-link">{{ tasks["n_back_button"] }}</a>
+                    </li>
+                  </ul>
+                </div>
+                {% else %}
+                <ul class="list-inline">
+                  <li class="list-inline-item">
+                    <p class='btn btn-secondary stretched-link'>{{ tasks["p_done"] }}</p>
+                  </li>
+                </ul>
+                {% endif %}
                 </div>
               </div>
             </div>
@@ -112,18 +127,23 @@ Tasks
             <p><img class=" img-fluid" src="/static/images/TaskIcons/SF-36.png" alt="card image"></p>
             <h4 class="card-title">{{ tasks["sf_36_title"] }}</h4>
             <p class="card-text">{{ tasks["sf_36_description"] }}</p>
-            {% if show_sf_36 %}
-            <div id="sf_36_button" name="sf_36_button">
-              <ul class="list-inline">
-                <li class="list-inline-item">
-                  <a href="/sf_36" target="_blank" class="btn btn-primary stretched-link">{{ tasks["sf_36_button"] }}</a>
-                </li>
-              </ul>
-            </div>
-            {% else %}
-            <br><br>
-            <p>{{ tasks["p_done"] }}</p>
-            {% endif %}
+          </div>
+          <div class="card-footer bg-transparent text-center">
+          {% if show_sf_36 %}
+          <div id="sf_36_button" name="sf_36_button">
+            <ul class="list-inline">
+              <li class="list-inline-item">
+                <a href="/sf_36" class="btn btn-primary stretched-link">{{ tasks["sf_36_button"] }}</a>
+              </li>
+            </ul>
+          </div>
+          {% else %}
+          <ul class="list-inline">
+            <li class="list-inline-item">
+              <p class='btn btn-secondary stretched-link'>{{ tasks["p_done"] }}</p>
+            </li>
+          </ul>
+          {% endif %}
           </div>
         </div>
       </div>
@@ -135,18 +155,23 @@ Tasks
             <p><img class=" img-fluid" src="/static/images/TaskIcons/phone_survey.png" alt="card image"></p>
             <h4 class="card-title">{{ tasks["phone_survey_title"] }}</h4>
             <p class="card-text">{{ tasks["phone_survey_description"] }}</p>
-            {% if show_phone_survey %}
-            <div id="phone_survey_button" name="phone_survey_button">
-              <ul class="list-inline">
-                <li class="list-inline-item">
-                  <a href="/phone_survey" target="_blank" class="btn btn-primary stretched-link">{{ tasks["phone_survey_button"] }}</a>
-                </li>
-              </ul>
-            </div>
-            {% else %}
-            <br><br>
-            <p>{{ tasks["p_done"] }}</p>
-            {% endif %}
+          </div>
+          <div class="card-footer bg-transparent text-center">
+          {% if show_phone_survey %}
+          <div id="phone_survey_button" name="phone_survey_button">
+            <ul class="list-inline">
+              <li class="list-inline-item">
+                <a href="/phone_survey" class="btn btn-primary stretched-link">{{ tasks["phone_survey_button"] }}</a>
+              </li>
+            </ul>
+          </div>
+          {% else %}
+          <ul class="list-inline">
+            <li class="list-inline-item">
+              <p class='btn btn-secondary stretched-link'>{{ tasks["p_done"] }}</p>
+            </li>
+          </ul>
+          {% endif %}
           </div>
         </div>
       </div>
@@ -158,15 +183,17 @@ Tasks
           <div class="card-body text-center">
             <p><img class=" img-fluid" src="/static/images/TaskIcons/EEG.png" alt="card image"></p>
             <h4 class="card-title">{{ tasks["eeg_title"] }}</h4>
-            <p class="card-text">{{ tasks["eeg_description"] }} <br><br></p>
-            <div id="eeg_button" name="eeg_button">
-              <ul class="list-inline">
-                <li class="list-inline-item">
-                  <a href="/eeg" class="btn btn-primary stretched-link">{{ tasks["eeg_botton"] }}</a>
-                </li>
-              </ul>
-            </div>
+            <p class="card-text">{{ tasks["eeg_description"] }} </p>
           </div>
+          <div class="card-footer bg-transparent text-center">
+        <div id="eeg_button" name="eeg_button">
+          <ul class="list-inline">
+            <li class="list-inline-item">
+              <a href="/eeg" class="btn btn-primary stretched-link">{{ tasks["eeg_botton"] }}</a>
+            </li>
+          </ul>
+        </div>
+        </div>
         </div>
       </div>
       <!-- eeg-->

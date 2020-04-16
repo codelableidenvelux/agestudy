@@ -45,8 +45,12 @@ class Db():
             cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
             try:
                 cur.execute(sql, value)
-                if fetch:
+                if fetch == 1:
                     result = cur.fetchall()
+                    return result
+                elif fetch == 2:
+                    result = cur.fetchall()
+                    conn.commit()
                     return result
                 else:
                     conn.commit()

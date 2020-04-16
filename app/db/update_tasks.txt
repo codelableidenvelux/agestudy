@@ -2,9 +2,10 @@ update = """
   UPDATE TASKS
   SET task_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=mGJpj',
   dutch_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=LDWBB',
-  youtube_link='https://www.youtube.com/embed/c7OuoPpu2OQ',
+  youtube_link='https://www.youtube.com/embed/_06xlOeKdGI',
+  youtube_link_nl='https://www.youtube.com/embed/icqGT0dcsW8',
   frequency=0,
-  price=1.00
+  price=0.25
   WHERE task_name ='rt'
 """
 
@@ -12,9 +13,10 @@ update = """
   UPDATE TASKS
   SET task_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=UdGC9',
   dutch_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=qTtLL',
-  youtube_link='https://www.youtube.com/embed/c7OuoPpu2OQ',
+  youtube_link='https://www.youtube.com/embed/_06xlOeKdGI',
+  youtube_link_nl='https://www.youtube.com/embed/icqGT0dcsW8',
   frequency=0,
-  price=1.00
+  price=0.25
   WHERE task_name ='rt_long'
 """
 
@@ -22,7 +24,8 @@ update = """
   UPDATE TASKS
   SET task_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=MRcZW',
   dutch_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=8nxHt',
-  youtube_link='https://www.youtube.com/embed/c7OuoPpu2OQ'
+  youtube_link='https://www.youtube.com/embed/fzdBw2lKKjs',
+  youtube_link_nl='https://www.youtube.com/embed/LFv8MF7pBMU'
   WHERE task_name ='corsi'
 """
 
@@ -30,7 +33,8 @@ update = """
   UPDATE TASKS
   SET task_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=rN9ba',
   dutch_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=q7ZCu',
-  youtube_link='https://www.youtube.com/embed/c7OuoPpu2OQ'
+  youtube_link='https://www.youtube.com/embed/k3ZuX2J1Hn0',
+  youtube_link_nl='https://www.youtube.com/embed/a0QApszIxjM'
   WHERE task_name ='n_back'
 """
 
@@ -38,15 +42,24 @@ update = """
   UPDATE TASKS
   SET task_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=6dAhY',
   dutch_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=bFdDQ',
-  youtube_link='https://www.youtube.com/embed/c7OuoPpu2OQ'
+  youtube_link='https://www.youtube.com/embed/3DDweXsXfPc',
+  youtube_link_nl='https://www.youtube.com/embed/W6FFiyaNZ3U'
   WHERE task_name ='task_switching'
 """
 
 update = """
   UPDATE TASKS
   SET task_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=Cm2yU',
-  dutch_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=L6OqH'
+  dutch_link='https://www.psytoolkit.org/cgi-bin/psy2.7.0/survey?s=L6OqH',
+  frequency=1.2,
+  price=2.00
   WHERE task_name ='sf_36'
+"""
+
+update = """
+  UPDATE TASKS
+  SET price=1.75
+  WHERE task_name ='corsi'
 """
 
 update = """

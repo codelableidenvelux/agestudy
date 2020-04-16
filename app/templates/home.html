@@ -22,7 +22,7 @@ the route to the task and the text in the button. -->
     <h5 class="card-title" id="title">{{ title }}</h5>
     <p class="card-text">{{ text }}</p>
     <br>
-    <a href="{{link}}" target="_blank" class="btn btn-primary" onclick="onClickPC()" id="button_task">{{ button_text }}</a>
+    <a href="{{link}}" class="btn btn-primary" onclick="onClickPC()" id="button_task">{{ button_text }}</a>
   </div>
 </div>
 {%- endmacro %}
@@ -59,7 +59,7 @@ if its false the div is not show there are no recomendations-->
 <div class="d-none d-sm-block">
 <div class="price" id="price" value="{{price}}" name="price"></div>
 <h1>{{home_csv["js_title"] }}</h1>
-<div  id=barChart></div>
+<div id=barChart></div>
 <a id="collection" href="/payment" class="btn btn-primary">{{ home_csv["button2"] }}</a>
 </div>
 {% endif %}
@@ -67,5 +67,7 @@ if its false the div is not show there are no recomendations-->
 <br><br>
 <p><b>{{ home_csv["p3"] }}</b></p>
 <a href="/about_app#working_app" class="btn btn-danger"> {{ home_csv["button_app"] }}</a>
+<br><br>
+<p><b>{{ home_csv["p4"] }}, {{ home_csv["p5"] }} </b></p>
 
 {% endblock %}
