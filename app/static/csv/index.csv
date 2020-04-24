@@ -25,3 +25,5 @@ eeg_botton,More info,Meer info
 check_1,I am comfortably sitting on a chair. I am on a computer with a keyboard.,Ik zit comfortabel op een stoel. Ik zit op een computer met een toetsenbord.
 p0,Confirm this by checking the box to activate the tests.,Bevestig dit door het vakje aan te vinken om de onlinetests te activeren.
 p_done,Completed, Voltooid
+p_unavailable,Unavailable,Niet Beschikbaar
+p_unavailable_explanation,This survey will be available 3 weeks after registration, Deze enquête is 3 weken na registratie beschikbaar

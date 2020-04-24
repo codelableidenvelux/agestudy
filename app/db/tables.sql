@@ -8,7 +8,8 @@ CREATE TABLE SESSION_INFO (
   user_type INT NOT NULL,
   birthyear DATE NOT NULL,
   pas_hash VARCHAR(255) NOT NULL,
-  consent INT
+  consent INT,
+  time_sign_up TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 

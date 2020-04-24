@@ -1,4 +1,5 @@
 window.onload = function(){
+  $('[data-toggle="popover"]').popover();
   if (document.getElementById("check_form")){
     if (document.getElementById("title").textContent != "Phone survey" &&  document.getElementById("title").textContent != "SF-36"){
       document.getElementById("check_form").style.display = "block"
@@ -14,7 +15,9 @@ window.onload = function(){
     else{
       display_none()
     }
-}
+};
+
+
 
 // Onclick of the checkboxes check if all the minimum requirements are met (if all boxes checked), if they are then dissplay the register form
 function onClickPC(){

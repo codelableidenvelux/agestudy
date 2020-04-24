@@ -58,9 +58,10 @@ update = """
 
 update = """
   UPDATE TASKS
-  SET price=1.75
-  WHERE task_name ='corsi'
+  SET youtube_link='https://www.youtube.com/embed/K-gUiCjsZt8'
+  WHERE task_name ='n_back'
 """
+
 
 update = """
   UPDATE TASKS

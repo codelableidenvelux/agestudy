@@ -157,7 +157,7 @@ Tasks
             <p class="card-text">{{ tasks["phone_survey_description"] }}</p>
           </div>
           <div class="card-footer bg-transparent text-center">
-          {% if show_phone_survey %}
+          {% if show_phone_survey and phone_survey_available%}
           <div id="phone_survey_button" name="phone_survey_button">
             <ul class="list-inline">
               <li class="list-inline-item">
@@ -165,6 +165,13 @@ Tasks
               </li>
             </ul>
           </div>
+          {% elif show_phone_survey and not phone_survey_available%}
+          <ul class="list-inline">
+            <li class="list-inline-item">
+              <p class='btn btn-secondary'>{{ tasks["p_unavailable"] }}</p>
+              <input type="button" class="btn btn-primary"  value="?" data-toggle="popover" data-placement="right" data-content="{{ tasks['p_unavailable_explanation'] }}">
+            </li>
+          </ul>
           {% else %}
           <ul class="list-inline">
             <li class="list-inline-item">

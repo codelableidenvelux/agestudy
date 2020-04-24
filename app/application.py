@@ -478,8 +478,14 @@ def index():
         show_task_switching = should_show_task(3)
         show_sf_36 = should_show_task(4)
         show_phone_survey = should_show_task(5)
+
+        # check if 3 weeks has gone by after sign up. If its true then the survey is available to do
+        select = "SELECT time_sign_up FROM SESSION_INFO WHERE user_id = (%s)"
+        time_sign_up = db.execute(select, (session["user_id"],), 1)
+        three_weeks_after_sign_up = time_sign_up[0][0] + timedelta(weeks=3)
+        phone_survey_available = three_weeks_after_sign_up < datetime.now()
         calculate_money()
-        return render_template("index.html", layout=layout[session["language"]], tasks=tasks[session["language"]], show_corsi=show_corsi, show_n_back=show_n_back, show_task_switching=show_task_switching, show_sf_36=show_sf_36, show_phone_survey=show_phone_survey)
+        return render_template("index.html", layout=layout[session["language"]], phone_survey_available=phone_survey_available, tasks=tasks[session["language"]], show_corsi=show_corsi, show_n_back=show_n_back, show_task_switching=show_task_switching, show_sf_36=show_sf_36, show_phone_survey=show_phone_survey)
 
 ################################################################################
 ################################ REGISTER #####################################
@@ -1073,9 +1079,13 @@ def home():
     for i in rows:
         completed_tasks.append(i["task_id"])
 
-    tasks[session["language"]]['corsi_title']
+    select = "SELECT time_sign_up FROM SESSION_INFO WHERE user_id = (%s)"
+    time_sign_up = db.execute(select, (session["user_id"],), 1)
+    three_weeks_after_sign_up = time_sign_up[0][0] + timedelta(weeks=3)
+    phone_survey_available = three_weeks_after_sign_up < datetime.now()
+
     # First recomendation is to do the phone survey
-    if 5 not in completed_tasks or should_show_task(5):
+    if (5 not in completed_tasks or should_show_task(5)) and phone_survey_available:
         task = {"img":"/static/images/TaskIcons/phone_survey.png", "alt":"Phone survey", "title":tasks[session["language"]]['phone_survey_title'],  "text" : tasks[session["language"]]['phone_survey_description'], "link" : "/phone_survey", "button_text": tasks[session["language"]]['phone_survey_button']}
     # Second recomendation is to do the sf-36
     elif 4 not in completed_tasks or should_show_task(4):

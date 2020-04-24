@@ -26,16 +26,16 @@ Register
     <label class="form-check-label" for="have_smartphone">{{ register_csv.loc['have_smartphone'] }}</label>
   </div>
   <div class="form-check">
-    <input type="checkbox" class="form-check-input" id="app_installed" name="app_installed" value="" required>
-    <label class="form-check-label" for="app_installed">{{ register_csv.loc['app_installed'] }}</label>
+    <input type="checkbox" class="form-check-input" id="mental_health" name="mental_health" value="" required>
+    <label class="form-check-label" for="mental_health">{{ register_csv.loc['mental_health'] }}</label>
   </div>
   <div class="form-check">
     <input type="checkbox" class="form-check-input" id="read_participant" name="read_participant" value="" required>
     <label class="form-check-label" for="read_participant">{{ register_csv.loc['read_participant'] }}<a href="/for_participant" target="_blank">{{ register_csv.loc['participant_info'] }}</a></label>
   </div>
   <div class="form-check">
-    <input type="checkbox" class="form-check-input" id="mental_health" name="mental_health" value="" required>
-    <label class="form-check-label" for="mental_health">{{ register_csv.loc['mental_health'] }}</label>
+    <input type="checkbox" class="form-check-input" id="app_installed" name="app_installed" value="" required>
+    <label class="form-check-label" for="app_installed">{{ register_csv.loc['app_installed'] }}</label>
     <div class="invalid-feedback d-block">
       <a href="/about_app" target="_blank" class="btn btn-secondary btn-sm">{{ register_csv.loc['button1'] }}</a>
     </div>
