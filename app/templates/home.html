@@ -22,7 +22,7 @@ the route to the task and the text in the button. -->
     <h5 class="card-title" id="title">{{ title }}</h5>
     <p class="card-text">{{ text }}</p>
     <br>
-    <a href="{{link}}" class="btn btn-primary" onclick="onClickPC()" id="button_task">{{ button_text }}</a>
+    <a href="{{link}}" class="btn btn-primary {{btn_class}}" onclick="onClickPC()" id="button_task">{{ button_text }}</a>
   </div>
 </div>
 {%- endmacro %}

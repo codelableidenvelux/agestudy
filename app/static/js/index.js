@@ -1,7 +1,7 @@
 window.onload = function(){
   $('[data-toggle="popover"]').popover();
   if (document.getElementById("check_form")){
-    if (document.getElementById("title").textContent != "Phone survey" &&  document.getElementById("title").textContent != "SF-36"){
+    if ($('#button_task').not('.survey').length === 1){
       document.getElementById("check_form").style.display = "block"
     }
     else{
@@ -42,9 +42,7 @@ function display_block(){
   if (document.getElementById("n_back_button")){
     document.getElementById("n_back_button").style.display = "block";
   };
-  if (document.getElementById("button_task") && document.getElementById("title").textContent != "Phone survey" &&  document.getElementById("title").textContent != "SF-36" ){
-    document.getElementById("button_task").style.display = "block";
-  };
+  $('#button_task').not('.survey').show()
 }
 
 function display_none(){
@@ -57,7 +55,5 @@ function display_none(){
   if (document.getElementById("n_back_button")){
     document.getElementById("n_back_button").style.display = "none";
   };
-  if (document.getElementById("button_task") && document.getElementById("title").textContent != "Phone survey" &&  document.getElementById("title").textContent != "SF-36"){
-    document.getElementById("button_task").style.display = "none";
-  };
+  $('#button_task').not('.survey').hide()
 }

@@ -1086,27 +1086,27 @@ def home():
 
     # First recomendation is to do the phone survey
     if (5 not in completed_tasks or should_show_task(5)) and phone_survey_available:
-        task = {"img":"/static/images/TaskIcons/phone_survey.png", "alt":"Phone survey", "title":tasks[session["language"]]['phone_survey_title'],  "text" : tasks[session["language"]]['phone_survey_description'], "link" : "/phone_survey", "button_text": tasks[session["language"]]['phone_survey_button']}
+        task = {"img":"/static/images/TaskIcons/phone_survey.png", "alt":"Phone survey", "btn_class": "survey", "title":tasks[session["language"]]['phone_survey_title'],  "text" : tasks[session["language"]]['phone_survey_description'], "link" : "/phone_survey", "button_text": tasks[session["language"]]['phone_survey_button']}
     # Second recomendation is to do the sf-36
     elif 4 not in completed_tasks or should_show_task(4):
-        task = {"img":"/static/images/TaskIcons/SF-36.png", "alt":"Health survey", "title":tasks[session["language"]]['sf_36_title'],  "text" : tasks[session["language"]]['sf_36_description'], "link" : "/sf_36", "button_text": tasks[session["language"]]['sf_36_button']}
+        task = {"img":"/static/images/TaskIcons/SF-36.png", "alt":"Health survey", "btn_class": "survey", "title":tasks[session["language"]]['sf_36_title'],  "text" : tasks[session["language"]]['sf_36_description'], "link" : "/sf_36", "button_text": tasks[session["language"]]['sf_36_button']}
     # Third recomendation is to do corsi task
     elif  1 not in completed_tasks or should_show_task(1):
-        task = {"img":"/static/images/TaskIcons/corsi.png", "alt":"Pattern Memory",  "title" : tasks[session["language"]]['corsi_title'], "text" : tasks[session["language"]]['corsi_description'], "link" : "/rt?task=corsi", "button_text": tasks[session["language"]]['corsi_button']}
+        task = {"img":"/static/images/TaskIcons/corsi.png", "alt":"Pattern Memory", "btn_class":"", "title" : tasks[session["language"]]['corsi_title'], "text" : tasks[session["language"]]['corsi_description'], "link" : "/rt?task=corsi", "button_text": tasks[session["language"]]['corsi_button']}
     # Fourth recomendation is to do n_back task
     elif 2 not in completed_tasks or should_show_task(2):
-        task = {"img":"/static/images/TaskIcons/N-back.png", "alt":"Letter Memory", "title" : tasks[session["language"]]['n_back_title'], "text" : tasks[session["language"]]['n_back_description'], "link" : "/rt?task=n_back", "button_text": tasks[session["language"]]['n_back_button']}
+        task = {"img":"/static/images/TaskIcons/N-back.png", "alt":"Letter Memory",  "btn_class":"", "title" : tasks[session["language"]]['n_back_title'], "text" : tasks[session["language"]]['n_back_description'], "link" : "/rt?task=n_back", "button_text": tasks[session["language"]]['n_back_button']}
     # Fifth recomendation is to do task switching task
     elif 3 not in completed_tasks or should_show_task(3):
         if session["language"] == "english":
-            task = {"img":"/static/images/TaskIcons/TSwitch_EN.png", "alt":"Task Switching", "title" : tasks[session["language"]]['task_switching_title'], "text" : tasks[session["language"]]['task_switching_description'], "link" : "/rt?task=task_switching", "button_text": tasks[session["language"]]['task_switching_button']}
+            task = {"img":"/static/images/TaskIcons/TSwitch_EN.png", "alt":"Task Switching",  "btn_class":"", "title" : tasks[session["language"]]['task_switching_title'], "text" : tasks[session["language"]]['task_switching_description'], "link" : "/rt?task=task_switching", "button_text": tasks[session["language"]]['task_switching_button']}
         else:
-            task = {"img":"/static/images/TaskIcons/TSwitch_NL.png", "alt":"Task Switching", "title" : tasks[session["language"]]['task_switching_title'], "text" : tasks[session["language"]]['task_switching_description'], "link" : "/rt?task=task_switching", "button_text": tasks[session["language"]]['task_switching_button']}
+            task = {"img":"/static/images/TaskIcons/TSwitch_NL.png", "alt":"Task Switching", "btn_class":"", "title" : tasks[session["language"]]['task_switching_title'], "text" : tasks[session["language"]]['task_switching_description'], "link" : "/rt?task=task_switching", "button_text": tasks[session["language"]]['task_switching_button']}
     # If all tasks have been completed and are locked then give no recommendation dont show the div
     else:
         recomendation = False
-        task = {"img":"", "alt":"", "title":"",  "text" : "", "link" : "", "button_text": ""}
-    return render_template("home.html", price=price, user_type=user_type, recomendation=recomendation, layout=layout[session["language"]], home_csv=home_csv[session["language"]], img=task["img"], alt=task["alt"], title=task["title"], text=task["text"], link=task["link"], button_text=task["button_text"])
+        task = {"img":"", "alt":"", "title":"", "btn_class":"",  "text" : "", "link" : "", "button_text": ""}
+    return render_template("home.html", price=price, user_type=user_type, recomendation=recomendation, layout=layout[session["language"]], home_csv=home_csv[session["language"]], btn_class=task["btn_class"], img=task["img"], alt=task["alt"], title=task["title"], text=task["text"], link=task["link"], button_text=task["button_text"])
 
 
 @app.route("/payment", methods=["POST", "GET"])
