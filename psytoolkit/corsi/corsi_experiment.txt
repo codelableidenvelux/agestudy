@@ -10,13 +10,15 @@ bitmaps
   ticked
   correct
   wrong
-  instructions
   ready1
   ready2
   ready3
   corsi_instruction_1
-  corsi_instruction_2
-
+corsi_instruction_2
+corsi_instruction_3
+corsi_instruction_4
+readytest
+  Redirect_end2
 
 fonts
   arial 30
@@ -92,8 +94,6 @@ task corsi
     show bitmap yellow @35 @36
     part delay
   fi
-  # go!
-  sound gosignal
   mouse show  # now show cursor again
   delay 100   # not really necessary, but gives a bit of time between sound and people's response
   # read in sequence
@@ -184,16 +184,22 @@ task corsi
   if $SeqCorrect == 0
     set &ErrorCount increase
   fi
+  set $time_since_start time-since-start
   ## save data
-  save &corsispan $currentcount $SeqCorrect TABLEROW
+  save &corsispan $currentcount $SeqCorrect RT $time_since_start $b1 $b2 $b3 $b4 $b5 $b6 $b7 $b8 $b9 TABLEROW
   ## if two errors in a row or if all are correctly clicked, end of task
-  if &ErrorCount == 10 || &Count == 10
+  if &ErrorCount == 2 || &Count == 10
     end tasklist
   fi
 
+
+task end_experiment
+show bitmap Redirect_end2
+delay 4000
+
+
 block test
-  message corsi_instruction_1
-  message corsi_instruction_2
+  pager corsi_instruction_1 corsi_instruction_2 corsi_instruction_3 corsi_instruction_4 readytest
   bitmap ready3
   delay 1000
   bitmap ready2
@@ -203,7 +209,8 @@ block test
   tasklist
     corsi 100 all_before_repeat
   end
-  feedback
-    text 0 400 &corsispan ; prefix "Your Corsi span is " ; postfix " items."
-    text 0 500 "Press space bar to continue"
-  end
+
+block end_experiment
+tasklist
+end_experiment 1
+end

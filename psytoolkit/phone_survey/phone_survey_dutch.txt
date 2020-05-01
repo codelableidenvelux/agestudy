@@ -1,30 +1,10 @@
 # check the large survey-library for ready-to-run examples you can
 # cut and paste here
 
-l: participantid
-t: textline
-q: Wat is uw deelnemer ID?
-- {require}
-
 l: some_message0
 t: info
-q: Beste participant, <br>
-Bedankt voor uw bijdrage. Uw data wordt vertrouwelijk en alleen voor wetenschappelijke doeleinden gebruikt. Het invullen van deze vragenlijst duurt niet langer dan vijf minuten.
-
-
-l: q2
-t: check
-q: Gender
-- Man
-- Vrouw
-- Anders
-
-l: age
-t: range
-q: Geboortemaand en -jaar:
-- {min=1,max=12,by=1} Month
-- {min=1919,max=2019,by=1} Year
-
+q: Beste deelnemer, <br>
+Bedankt voor uw bijdrage aan dit onderzoek. Uw data worden vertrouwelijk en alleen voor wetenschappelijke doeleinden gebruikt. Het invullen van deze vragenlijst zal niet langer dan 10 minuten duren.
 
 l: occupation
 t: textline
@@ -33,8 +13,9 @@ q: Wat is uw beroep?
 
 l: occupation2
 t: textline
-q: Sinds wanneer?
-- {require}
+q: Sinds welk jaar en welke maand beoefent u dit beroep?
+- {min=1900, max=2024, by=1} jaar
+- {min=1, max=12, by=1} maand
 
 l: q3
 t: radio
@@ -45,7 +26,7 @@ q: U bent:
 
 l: q4
 t: radio
-q: Beoefent u een bepaalde hobby waarbij u bijzonder of intensief uw vingers gebruikt (bijv. piano spelen)?
+q: Beoefent u een bepaalde hobby waarbij u op bijzondere wijze of intensieve wijze uw vingers gebruikt (bijv. piano spelen of gamen)?
 - Ja
 - Nee
 
@@ -55,18 +36,18 @@ t: jump
 
 l: q5
 t: textline
-q: Wat voor hobby?
+q: Welke hobby is dit?
 - {require}
 
 l: q5b
 t: textline
-q: Sinds wanneer?
+q: Sinds wanneer beoefent u deze hobby?
 - {require}
 
 l: q6
-t: range
+t: textline
 q: Hoe vaak (aantal uren per week)?
-- {min=1, max=168} Hours
+- {min=1, max=168} Uren
 
 
 l: q7
@@ -81,26 +62,22 @@ t: jump
 
 l: q8
 t: textline
-q: Wanneer en zijn uw vingers/handen nog steeds verzwakt?
+q: Wanneer was dit en zijn uw vingers/handen nog steeds verzwakt?
 - {require}
 
-l: some_message
-t: info
-q: Informatie over uw mobiele telefoon
-
 l: q9
-t: range
-q: Hoe lang (in jaren) bezit of bezat u een <b> gewone mobiele telefoon </b>?
+t: textline
+q: Hoe lang (in jaren) bezit of bezat u een <b> gewone mobiele telefoon </b> (niet een smartphone)?
 - {min=0, max=100, by=1} jaren
 
 l: q10
-t: range
+t: textline
 q: Hoe lang (in jaren) bezit of bezat u een <b> smartphone </b>?
-- {min=0, max=100, by=1} jaren
+- {min=0, max=28, by=1} jaren
 
 l: q11
 t: radio
-q: Gebruikt u de browser op uw smartphone (bijvoorbeeld Chrome) voor sociale media zoals Facebook?
+q: Gebruikt u de browser op uw smartphone (bijvoorbeeld Chrome of Opera) voor sociale netwerk websites zoals Facebook, Twitter of Tinder?
 - Nooit
 - Minder dan 30% van de tijd
 - Tussen de 30% en 80% van de tijd
@@ -113,24 +90,24 @@ t: jump
 
 l: q12
 t: textline
-q: Naam/namen van de browsers die u bedoelt bij antwoord
+q: Wat zijn de namen van de internet browsers die u bedoelt bij de vorige vraag?
 - {require}
 
 l: q13
-t: range
-q: Hoeveel minuten per dag gebruikt u gemiddeld uw telefoon?
+t: textline
+q: Hoe lang gebruikt u gemiddeld uw telefoon <b>per dag</b>?
 - {min=0,max=24,by=1} Uren
 - {min=0,max=60,by=1} Minuten
 
 l: q14
-t: range
-q: Hoeveel minuten per dag gebruikte u gemiddeld uw telefoon vorige week?
+t: textline
+q: Hoe lang gebruikte u gemiddeld uw telefoon <b>per dag vorige week </b>?
 - {min=0,max=24,by=1} Uren
 - {min=0,max=60,by=1} Minuten
 
 l: q15
-t: range
-q: Hoeveel minuten per dag gebruikte u uw telefoon gisteren ongeveer?
+t: textline
+q: Hoeveel tijd heeft u gisteren uw telefoon gebruikt?
 - {min=0,max=24,by=1} Uren
 - {min=0,max=60,by=1} Minuten
 
@@ -141,130 +118,117 @@ scale: agree
 - Ja, met de rechterhand
 
 l: q16
-q: Gebruikt u een van de volgende apparaten? Zo ja, met welke hand meestal?
+q: Gebruikt u een van de volgende apparaten? Zo ja, met welke hand bedient u ze meestal?
 t: scale agree
-- Track pad op uw notebook/PC
+- Touch pad op uw notebook laptop/PC
 - Muis
 - Wii
 - Gamepad/joystick
 - Tablet
+- Smart watch/ fit bit/ Apple watch
+- Gewone horloge
 
 l: q17
 t: radio
 q: Gebruikt u een stylus op uw telefoon?
 - Nooit
-- Soms
-- Vaak
+- Minder dan 30% van de tijd
+- Tussen de 30% en 80% van de tijd
+- Meer dan 80% van de tijd
 - Altijd
 
-l: some_text
-t: info
-q: Als u een smartphone gebruikt, hoe vaak gebruikt u uw telefoon op de volgende manieren? Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
 
-l: picture1
-i: picture_1.png
-t: range
-q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
-- {min=1,max=18,by=1} Nummer tussen 1 and 18
+l: rank_pictures
+t: rank
+q: Als u een smartphone gebruikt, hoe vaak gebruikt u uw telefoon op de volgende manieren? Als u sommige van deze posities nooit hebt gebruikt, probeer u voor te stellen welke u het meest waarschijnlijk zou gebruiken. Rangschik de situaties van meest frequent (bovenaan) tot minst frequent (onderaan).
+- {image=picture_1.jpg}
+- {image=picture_2.jpg}
+- {image=picture_3.jpg}
+- {image=picture_4.jpg}
+- {image=picture_5.jpg}
+- {image=picture_6.jpg}
+- {image=picture_7.jpg}
+- {image=picture_8.jpg}
 
-l: picture2
-i: picture_2.png
-t: range
-q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
-- {min=1,max=18,by=1} Nummer tussen 1 and 18
+scale: handedness
+- Links
+- Geen voorkeur
+- Rechts
 
-l: picture3
-i: picture_3.png
-t: range
-q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
-- {min=1,max=18,by=1} Nummer tussen 1 and 18
+l: handedness_question_2
+q: Welke hand gebruikt u het liefst bij:
+t: scale handedness
+- Schrijven
+- Tekenen
+- Gooien
+- Knippen met schaar
+- Tanden poetsen
+- Snijden met mes (zonder een vork te gebruiken)
+- Een lepel gebruiken
+- Een bezem gebruiken (bovenste hand)
+- Een lucifer aansteken
+- Een doos openen (deksel vasthouden)
+- Een computermuis gebruiken
+- Een sleutel gebruiken om de deur te openen
+- Een hamer gebruiken
+- Haar kammen of borstelen
+- Een glas vasthouden om te drinken
 
-l: picture4
-i: picture_4.png
-t: range
-q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
-- {min=1,max=18,by=1} Nummer tussen 1 and 18
+scale: handedness_2
+- Ja
+- Nee
 
-l: picture5
-i: picture_5.png
-t: range
-q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
-- {min=1,max=18,by=1} Nummer tussen 1 and 18
+l: handedness_question
+q: Gebaseerd op uw antwoorden op de vorige vraag, gebruikt u de andere hand wel eens bij de volgende activiteiten?
+t: scale handedness_2
+- Schrijven
+- Tekenen
+- Gooien
+- Knippen met schaar
+- Tanden poetsen
+- Snijden met mes (zonder een vork te gebruiken)
+- Een lepel gebruiken
+- Een bezem gebruiken (bovenste hand)
+- Een lucifer aansteken
+- Een doos openen (deksel vasthouden)
+- Een computermuis gebruiken
+- Een sleutel gebruiken om de deur te openen
+- Een hamer gebruiken
+- Haar kammen of borstelen
+- Een glas vasthouden om te drinken
 
-l: picture6
-i: picture_6.png
-t: range
-q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
-- {min=1,max=18,by=1} Nummer tussen 1 and 18
+scale: problems
+- geen problemen ervaren
+- een paar problemen ervaren
+- meer dan een paar problemen ervaren
+- een groot aantal problemen ervaren
 
-l: picture7
-i: picture_7.png
-t: range
-q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
-- {min=1,max=18,by=1} Nummer tussen 1 and 18
+l: webexec
+t: scale problems
+o: width 50%
+q: Beoordeel de mate waarin u problemen heeft op de volgende gebieden door de juiste optie te kiezen.<br>
+- Vindt u het moeilijk om uw aandacht op een bepaalde taak te houden?
+- Heeft u problemen om u te concentreren op een taak?
+- Heeft u moeite om meer dan één taak tegelijk uit te voeren?
+- Heeft u de neiging om uw gedachtengang te "verliezen"?
+- Heeft u moeite met het afronden van iets dat u bent begonnen?
+- Bent u geneigd om te handelen op basis van "impulsen"?
 
-l: picture8
-i: picture_8.png
-t: range
-q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
-- {min=1,max=18,by=1} Nummer tussen 1 and 18
+l: ishihare9
+i: 480px-Ishihara_9.png
+q: What ziet u in deze illustratie?
+t: radio
+- 74
+- 21
+- Geen nummer
+- Een ander nummer
 
-l: picture9
-i: picture_9.png
-t: range
-q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
-- {min=1,max=18,by=1} Nummer tussen 1 and 18
-
-l: picture10
-i: picture_10.png
-t: range
-q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
-- {min=1,max=18,by=1} Nummer tussen 1 and 18
-
-l: picture11
-i: picture_11.png
-t: range
-q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
-- {min=1,max=18,by=1} Nummer tussen 1 and 18
-
-l: picture12
-i: picture_12.png
-t: range
-q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
-- {min=1,max=18,by=1} Nummer tussen 1 and 18
-
-l: picture13
-i: picture_13.png
-t: range
-q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
-- {min=1,max=18,by=1} Number between 1 and 18
-
-l: picture14
-i: picture_14.png
-t: range
-q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
-- {min=1,max=18,by=1} Number between 1 and 18
-
-l: picture15
-i: picture_15.png
-t: range
-q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
-- {min=1,max=18,by=1} Number between 1 and 18
-
-l: picture16
-i: picture_16.png
-t: range
-q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
-- {min=1,max=18,by=1} Number between 1 and 18
-
-l: picture17
-i: picture_17.png
-t: range
-q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
-- {min=1,max=18,by=1} Number between 1 and 18
-
-l: picture18
-i: picture_18.png
-t: range
-q: Rangschik de situaties van meest frequent (nummer 1) tot minst frequent (nummer 18).
-- {min=1,max=18,by=1} Nummer tussen 1 and 18
+l: ishihare23
+i: 480px-Ishihara_23.png
+q: What ziet u in deze illustratie?
+t: radio
+- 2
+- Geen nummer
+- 42
+- 4
+- Een ander nummer

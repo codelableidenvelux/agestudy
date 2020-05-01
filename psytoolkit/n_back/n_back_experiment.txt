@@ -21,13 +21,16 @@ bitmaps
   letterR
   letterS
   letterT
-  instruction1
-  instruction2
+  Nback_instructions_1
+  Nback_instructions_2
+  Nback_instructions_3
+  Nback_instructions_4
+
 
 ## in this task, all conditions are chosen randomly
 
 task nback
-  keys m n
+  keys j f
   set &trialcount increase
   set $currentletter random 1 15 ## choose randomw letter, might be overridden
   ############################################################################
@@ -74,23 +77,11 @@ task nback
   set &nback2 &nback1
   set &nback1 $currentletter
   ### save the data
-  save STATUS KEY RT $memory &trialcount &nback1 &nback2 &nback3
+  save STATUS KEY RT $memory &trialcount $currentletter &nback1 &nback2 &nback3
 
 block training
   set &trialcount 0 # make sure you use this again if you have another block
-  pager instruction1 instruction2
+  pager Nback_instructions_1 Nback_instructions_2 Nback_instructions_3 Nback_instructions_4
   tasklist
     nback 20
-  end
-  feedback
-    text align left
-    set &Total1 count ; select c4 == 1 ## number of trials where there was a 3back item
-    set &Total2 count ; select c4 > 1 ## number of trials where there was NOT a 3back item
-    set &ErrorCount1 count ; select c4 == 1 && c1 != 1 ## number of errors in 3-back=true trials
-    set &ErrorCount2 count ; select c4 > 1 && c1 != 1 ## numebr of errors in 3-back=false trials
-    set &ErrorPerc1 expression  &ErrorCount1 / &Total1  * 100.0
-    set &ErrorPerc2 expression  &ErrorCount2 / &Total2  * 100.0
-    text -200 -200 &ErrorPerc1 ; prefix "Error count in missing 3-back items:" ; postfix " %"
-    text -200    0 &ErrorPerc2 ; prefix "Wrongly reporting there was an 3-back item" ; postfix " %"
-    text -200  200 "Press space to continue and show data (below)"
   end

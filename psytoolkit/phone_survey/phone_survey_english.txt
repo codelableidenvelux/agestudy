@@ -1,40 +1,22 @@
 # check the large survey-library for ready-to-run examples you can
 # cut and paste here
 
-l: participantid
-t: textline
-q: What is your participant ID
-- {require}
-
 l: some_message0
 t: info
 q: Dear participant, <br>
-Thank you for your contribution. Your data will be used confidentially and for scientific purposes only. Filling out this survey should take no more than 5 minutes.
-
-
-l: q2
-t: check
-q: Gender
-- Male
-- Female
-- Other
-
-l: age
-t: range
-q: Month and Year of birth:
-- {min=1,max=12,by=1} Month
-- {min=1919,max=2019,by=1} Year
+Thank you for your contribution. Your data will be used confidentially and for scientific purposes only. Filling out this survey should take no more than 10 minutes.
 
 
 l: occupation
 t: textline
-q: What is your professional activity?
+q: What is your current occupation?
 - {require}
 
 l: occupation2
 t: textline
-q: Since when?
-- {require}
+q: Since which year and month have you been performing this profession?
+- {min=1900, max=2024, by=1} year
+- {min=1, max=12, by=1} month
 
 l: q3
 t: radio
@@ -45,7 +27,7 @@ q: You are a:
 
 l: q4
 t: radio
-q: Do you practise a specific art requiring a particular or intensive use of the fingers (e.g. piano)?
+q: Do you practice a specific hobby which requires a particular or intensive use of the fingers (e.g. piano or video games)?
 - Yes
 - No
 
@@ -53,20 +35,25 @@ l: jump1
 t: jump
 - if $q4 == 2 then goto q7
 
+l: q5a
+t: textline
+q: What is this hobby
+- {require}
+
 l: q5
 t: textline
-q: Since when do you practice your art?
+q: Since when do you practice this hobby?
 - {require}
 
 l: q6
 t: range
-q: How often (hours per week)
+q: How often (hours per week)?
 - {min=1, max=168} Hours
 
 
 l: q7
 t: radio
-q: Have you ever severely injured your hands, your fingers?
+q: Have you ever severely injured your hands and/or, your fingers?
 - Yes
 - No
 
@@ -76,26 +63,22 @@ t: jump
 
 l: q8
 t: textline
-q: When and are you still impaired?
+q: When was this and are your fingers/hands still impaired?
 - {require}
 
-l: some_message
-t: info
-q: Information about your mobile phone
-
 l: q9
-t: range
-q: How long (in years) have (did) you owned a <b> standard mobile phone </b>?
+t: textline
+q: How many years did you use a normal mobile phone (not a smartphone) </b>?
 - {min=0, max=100, by=1} years
 
 l: q10
-t: range
-q: How long (in years) have (did) you owned a <b> smartphone </b>?
-- {min=0, max=100, by=1} years
+t: textline
+q: How many years have you used a smartphone</b>?
+- {min=0, max=28, by=1} years
 
 l: q11
 t: radio
-q: Do you use the internet browser on your phone (for example Chrome or Opera) for checking Facebook or Twitter or Tinder or any other social networking site?
+q: Do you use the internet browser on your phone (for example Chrome or Opera) for checking social networking sites like Facebook, Twitter, or Tinder?
 - Never
 - Less than 30% of the time on the browser
 - Between 30% and 80% of the time on the browser
@@ -112,21 +95,21 @@ q: Name/s of the internet browser you are referring to in the previous question
 - {require}
 
 l: q13
-t: range
-q: For how much time per day do you use your phone?
+t: textline
+q: How much time <b> per day </b> do you use your phone?
 - {min=0,max=24,by=1} Hours
 - {min=0,max=60,by=1} Minutes
 
 
 l: q14
-t: range
-q: For how much time did you spend per day on your phone last week?
+t: textline
+q: How much time did you spend <b> per day </b> on your phone last week?
 - {min=0,max=24,by=1} Hours
 - {min=0,max=60,by=1} Minutes
 
 l: q15
-t: range
-q: For how much time did you spend using your phone yesterday?
+t: textline
+q: How much time did you spend using your phone <b>yesterday</b>?
 - {min=0,max=24,by=1} Hours
 - {min=0,max=60,by=1} Minutes
 
@@ -136,13 +119,15 @@ scale: agree
 - Yes, with the right hand
 
 l: q16
-q: Do you use any of these devices? If yes, with which hand usually?
+q: Do you use any of these devices? If yes, with which hand do you operate these devices usually?
 t: scale agree
-- Track pad on the notebook/PC
+- Touch pad on the laptop/PC
 - Mouse
 - Wii
 - Gamepad/joystick
 - Tablet
+- Smart watch/ fit bit/ Apple watch
+- Regular watch
 
 l: q17
 t: radio
@@ -153,114 +138,97 @@ q: Do you use a stylus on your phone?
 - More than 80% of the time on the browser
 - Always
 
-l: some_text
-t: info
-q: If you are a smartphone user, how often do you use your phone in the following ways? Rank the situations from the most frequent (assign number 1) to the most rare (assign number 18).
+l: rank_pictures
+t: rank
+q: If you are a smartphone user, how often do you use your phone in the following ways? If you've never used some of these positions, try to imagine which you would be more likely to use. Rank the situation from the most frequent (at the top) to the most rare (at the bottom).
+- {image=picture_1.jpg}
+- {image=picture_2.jpg}
+- {image=picture_3.jpg}
+- {image=picture_4.jpg}
+- {image=picture_5.jpg}
+- {image=picture_6.jpg}
+- {image=picture_7.jpg}
+- {image=picture_8.jpg}
 
-l: picture1
-i: picture_1.png
-t: range
-q: Rank the situations from the most frequent (assign number 1) to the most rare (assign number 18)
-- {min=1,max=18,by=1} Number between 1 and 18
+scale: handedness
+- Left
+- No Preference
+- Right
 
-l: picture2
-i: picture_2.png
-t: range
-q: Rank the situations from the most frequent (assign number 1) to the most rare (assign number 18)
-- {min=1,max=18,by=1} Number between 1 and 18
+l: handedness_question_2
+q: Which hand do you prefer to use when:
+t: scale handedness
+- Writing
+- Drawing
+- Throwing
+- Using Scissors
+- Using a Toothbrush
+- Using a Knife (without a fork)
+- Using a Spoon
+- Using a broom (upper hand)
+- Striking a Match
+- Opening a Box (holding the lid)
+- Holding a Computer Mouse
+- Using a Key to Unlock a Door
+- Holding a Hammer
+- Holding a Brush or Comb
+- Holding a Cup while Drinking
 
-l: picture3
-i: picture_3.png
-t: range
-q: Rank the situations from the most frequent (assign number 1) to the most rare (assign number 18)
-- {min=1,max=18,by=1} Number between 1 and 18
+scale: handedness_2
+- Yes
+- No
 
-l: picture4
-i: picture_4.png
-t: range
-q: Rank the situations from the most frequent (assign number 1) to the most rare (assign number 18)
-- {min=1,max=18,by=1} Number between 1 and 18
+l: handedness_question
+q: Based on your answers from the previous question, do you ever use the other hand when doing the following activities?
+t: scale handedness_2
+- Writing
+- Drawing
+- Throwing
+- Using Scissors
+- Using a Toothbrush
+- Using a Knife (without a fork)
+- Using a Spoon
+- Using a broom (upper hand)
+- Striking a Match
+- Opening a Box (holding the lid)
+- Holding a Computer Mouse
+- Using a Key to Unlock a Door
+- Holding a Hammer
+- Holding a Brush or Comb
+- Holding a Cup while Drinking
 
-l: picture5
-i: picture_5.png
-t: range
-q: Rank the situations from the most frequent (assign number 1) to the most rare (assign number 18)
-- {min=1,max=18,by=1} Number between 1 and 18
+scale: problems
+- no problems experienced
+- a few problems experienced
+- more than a few problems experienced
+- a great many problems experienced
 
-l: picture6
-i: picture_6.png
-t: range
-q: Rank the situations from the most frequent (assign number 1) to the most rare (assign number 18)
-- {min=1,max=18,by=1} Number between 1 and 18
+l: webexec
+t: scale problems
+o: width 50%
+q: Please rate the extent to which you have problems in the following areas by picking the appropriate option.<br>
+- Do you find it difficult to keep your attention on a particular task?
+- Do you find yourself having problems concentrating on a task?
+- Do you have difficulty carrying out more than one task at a time?
+- Do you tend to “lose” your train of thoughts?
+- Do you have difficulty seeing through something that you have started?
+- Do you find yourself acting on “impulse”?
 
-l: picture7
-i: picture_7.png
-t: range
-q: Rank the situations from the most frequent (assign number 1) to the most rare (assign number 18)
-- {min=1,max=18,by=1} Number between 1 and 18
+l: ishihare9
+i: 480px-Ishihara_9.png
+q: What do you see in this image?
+t: radio
+- 74
+- 21
+- No number
+- Other number
 
-l: picture8
-i: picture_8.png
-t: range
-q: Rank the situations from the most frequent (assign number 1) to the most rare (assign number 18)
-- {min=1,max=18,by=1} Number between 1 and 18
-
-l: picture9
-i: picture_9.png
-t: range
-q: Rank the situations from the most frequent (assign number 1) to the most rare (assign number 18)
-- {min=1,max=18,by=1} Number between 1 and 18
-
-l: picture10
-i: picture_10.png
-t: range
-q: Rank the situations from the most frequent (assign number 1) to the most rare (assign number 18)
-- {min=1,max=18,by=1} Number between 1 and 18
-
-l: picture11
-i: picture_11.png
-t: range
-q: Rank the situations from the most frequent (assign number 1) to the most rare (assign number 18)
-- {min=1,max=18,by=1} Number between 1 and 18
-
-l: picture12
-i: picture_12.png
-t: range
-q: Rank the situations from the most frequent (assign number 1) to the most rare (assign number 18)
-- {min=1,max=18,by=1} Number between 1 and 18
-
-l: picture13
-i: picture_13.png
-t: range
-q: Rank the situations from the most frequent (assign number 1) to the most rare (assign number 18)
-- {min=1,max=18,by=1} Number between 1 and 18
-
-l: picture14
-i: picture_14.png
-t: range
-q: Rank the situations from the most frequent (assign number 1) to the most rare (assign number 18)
-- {min=1,max=18,by=1} Number between 1 and 18
-
-l: picture15
-i: picture_15.png
-t: range
-q: Rank the situations from the most frequent (assign number 1) to the most rare (assign number 18)
-- {min=1,max=18,by=1} Number between 1 and 18
-
-l: picture16
-i: picture_16.png
-t: range
-q: Rank the situations from the most frequent (assign number 1) to the most rare (assign number 18)
-- {min=1,max=18,by=1} Number between 1 and 18
-
-l: picture17
-i: picture_17.png
-t: range
-q: Rank the situations from the most frequent (assign number 1) to the most rare (assign number 18)
-- {min=1,max=18,by=1} Number between 1 and 18
-
-l: picture18
-i: picture_18.png
-t: range
-q: Rank the situations from the most frequent (assign number 1) to the most rare (assign number 18)
-- {min=1,max=18,by=1} Number between 1 and 18
+l: ishihare23
+i: 480px-Ishihara_23.png
+q: What do you see in this image?
+t: radio
+- 2
+- 42
+- No number
+- Other number
+- 4

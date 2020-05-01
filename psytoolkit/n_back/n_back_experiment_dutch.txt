@@ -1,0 +1,88 @@
+options
+  startbutton text Klik om te beginnen
+  bitmapdir stimuli
+  set &maxrt 2000
+
+fonts
+  arial 18
+
+bitmaps
+  letterA ## 15 letters
+  letterB
+  letterC
+  letterD
+  letterE
+  letterH
+  letterI
+  letterK
+  letterL
+  letterM
+  letterO
+  letterP
+  letterR
+  letterS
+  letterT
+  Nback_instructions_1
+  Nback_instructions_2
+  Nback_instructions_3
+  Nback_instructions_4
+
+
+## in this task, all conditions are chosen randomly
+
+task nback
+  keys j f
+  set &trialcount increase
+  set $currentletter random 1 15 ## choose randomw letter, might be overridden
+  ############################################################################
+  ## is this condition a yes condition?
+  set $memory random 1 5 ## random number for choosing condition
+  ## if a 3back trial
+  if $memory == 1 && &trialcount > 3
+    set $currentletter &nback3
+    set $requiredresponse 1 ## the m key needs to be pressed later, m=easy for memory
+  fi
+  ## if a NON 3back trial
+  if $memory != 1 || &trialcount <= 3 ## chose a letter but not that of 3 trials ago
+    set $currentletter random 1 15
+    while $currentletter == &nback3 ## choose anything but NOT that of 3 back
+      set $currentletter random 1 15
+    while-end
+    set $requiredresponse 2 ## the n key needs to be pressed later # (n=easy for "no")
+  fi
+  ############################################################################
+  draw off
+    show bitmap $currentletter ## stimulus 1
+    show rectangle 0 -60 100 20  40 40 40  ## grey border above letter, stimulus 2
+    show rectangle 0 60 100 20   40 40 40  ## grey border below letter, stimulus 3
+  draw on
+  readkey $requiredresponse &maxrt
+  set $extrawait expression &maxrt - RT ## how much time is left between max RT and now?
+  ### was response correct?
+  set $score 0 ## this is the default, assume error
+  set $feedbackcol1 255
+  set $feedbackcol2 0
+  if STATUS == 1 ## if it was a 3back and correct key pressed
+    set $feedbackcol1 0
+    set $feedbackcol2 255
+  fi
+  ## now draw the two bars above and below letter in feedback color
+  show rectangle 0 -60 100 20   $feedbackcol1 $feedbackcol2 40 # stimulus 4
+  show rectangle 0  60 100 20   $feedbackcol1 $feedbackcol2 40 # stimulus 5
+  delay $extrawait ## wait until letter has been on screen total of 2000 ms
+  clear 1 4 5
+  delay 500 ## keep the feedback on for half a second more
+  clear 2 3 4 5 ## then delete all stimuli from screen
+  ### now save the letter for next trial
+  set &nback3 &nback2
+  set &nback2 &nback1
+  set &nback1 $currentletter
+  ### save the data
+  save STATUS KEY RT $memory &trialcount $currentletter &nback1 &nback2 &nback3
+
+block training
+  set &trialcount 0 # make sure you use this again if you have another block
+  pager Nback_instructions_1 Nback_instructions_2 Nback_instructions_3 Nback_instructions_4
+  tasklist
+    nback 20
+  end

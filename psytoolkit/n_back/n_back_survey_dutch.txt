@@ -1,0 +1,20 @@
+# check the large survey-library for ready-to-run examples you can
+# cut and paste here
+
+l: examplequestion1
+t: experiment
+- 2_Back_NL
+
+
+scale: agree
+- Ja
+- Nee
+
+l: my_question
+q: Beantwoord de volgende vragen alstublieft:
+t: scale agree
+- Was u moe tijdens de taak?
+- Heeft u drugs/alcohol ingenomen voordat u de taak begon?
+- Was u afgeleid tijdens de taak?
+- Was u alleen in de kamer?
+- Heeft u de taak begrepen?

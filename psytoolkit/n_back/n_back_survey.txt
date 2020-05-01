@@ -1,12 +1,19 @@
 # check the large survey-library for ready-to-run examples you can
 # cut and paste here
 
-l: participantID
-t: textline
-q: Fill in your participant ID
-- {require}
-
-
 l: examplequestion1
 t: experiment
-- n-back
+- 2_Back_EN
+
+scale: agree
+- Yes
+- No
+
+l: my_question
+q: Please answer the following questions:
+t: scale agree
+- Were you tired during the task?
+- Did you take drugs/alcohol prior to the task?
+- Were you distracted during the task?
+- Were you alone in the room?
+- Did you understand the task?

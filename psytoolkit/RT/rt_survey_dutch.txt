@@ -1,0 +1,6 @@
+# check the large survey-library for ready-to-run examples you can
+# cut and paste here
+
+l: examplequestion1
+t: experiment
+- R_TIME_NL

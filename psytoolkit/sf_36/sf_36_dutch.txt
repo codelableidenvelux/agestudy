@@ -1,11 +1,6 @@
 # check the large survey-library for ready-to-run examples you can
 # cut and paste here
 
-l: participantID
-t: textline
-q: Vul in uw deelnemer ID
-- {require}
-
 l: q1
 t: radio
 q: Hoe zou u over het algemeen uw gezondheid noemen?
@@ -17,7 +12,7 @@ q: Hoe zou u over het algemeen uw gezondheid noemen?
 
 l: q2
 t: radio
-q: Hoe beoordeelt u nu uw gezondheid over het algemeen, vergeleken met een jaar geleden?
+q: Hoe beoordeelt u <b>nu</b> uw gezondheid over het algemeen, <b>vergeleken met een jaar geleden</b>?
 - 1 Veel beter nu dan een jaar geleden
 - 2 Wat beter nu dan een jaar geleden
 - 3 Ongeveer hetzelfde nu als een jaar geleden
@@ -49,7 +44,7 @@ scale: agree2
 
 l: q13q16
 t: scale agree2
-q: Heeft u in de <b> afgelopen 4 weken </b>, een van de volgende problemen bij uw werk of andere dagelijkse bezigheden gehad, <b>ten gevolge van uw lichamelijke gezondheid</b>?
+q: Heeft u in de <b> afgelopen 4 weken, </b> een van de volgende problemen bij uw werk of andere dagelijkse bezigheden gehad, <b>ten gevolge van uw lichamelijke gezondheid</b>?
 - U besteedde <b> minder tijd </b> aan werk of andere bezigheden
 - U heeft <b> minder bereikt </b> dan u zou willen
 - U was beperkt in het <b> soort </b> werk of andere bezigheden
@@ -61,7 +56,7 @@ scale: agree3
 
 l: q17
 t: scale agree3
-q: Heeft u in de <b> afgelopen 4 weken </b>, een van de volgende problemen ondervonden bij uw werk of andere dagelijkse bezigheden <b> ten gevolge van emotionele problemen </b>(zoals depressieve of angstige gevoelens)?
+q: Heeft u in de <b> afgelopen 4 weken, </b> een van de volgende problemen ondervonden bij uw werk of andere dagelijkse bezigheden <b> ten gevolge van emotionele problemen </b>(zoals depressieve of angstige gevoelens)?
 - U besteedde <b> minder tijd </b> aan werk of andere bezigheden
 - U heeft <b> minder bereikt </b> dan u zou willen
 - U deed uw werk of andere bezigheden niet zo <b> zorgvuldig </b> als gewoonlijk
@@ -134,7 +129,7 @@ scale: agree5
 
 l: q33q36
 t: scale agree5
-q: Hoe JUIST of ONJUIST is elk van de volgende uitspraken voor u?
+q: Hoe JUIST of ONJUIST is <b>elk</b> van de volgende uitspraken voor u?
 - Ik lijk wat gemakkelijker ziek te worden
 - Ik ben even gezond als andere mensen
 - Ik verwacht dat mijn gezondheid achteruit zal gaan

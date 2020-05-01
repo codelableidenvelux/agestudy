@@ -1,211 +1,240 @@
-# A slightly modified version of the alternate runs task switching
-# paradigm: Rogers and Monsell, Journal of Experimental Psychology:
-# General, 124, 207-231 (2003).
-
-# grid position 1 is top left, and then clockwise
-# task 1 is in top quadrants
-# task 2 in bottom quadrants
-
-#### this code does not use a table, but the conditions are calculated
-#### with helper variables. The code looks a bit more complicated, but
-#### the reason is that neither letters nor numbers should repeat
-#### themselves in consecutive trials. This seems the most efficient
-#### way of coding it.
-
 options
   bitmapdir stimuli
-  escape
-  set &dummy 0
-
-##
-# G K M R  A E I U
-# 3 5 7 9  2 4 6 8
-# L L L L  R R R R
-
-bitmaps
-  ############### stimuli used in tasks
-  pg
-  pk
-  pm
-  pr
-  pa
-  pe
-  pi
-  pu
-  p3
-  p5
-  p7
-  p9
-  p2
-  p4
-  p6
-  p8
-  ## other stimuli
-  grid
-  task1
-  task2
-  ready
-  instructions1
-  instructions2
-  instructions3
-  instructions4
-  instructions5
-  readyletters
-  readynumbers
-  readylettersnumbers
-  thankyou
+  set &CurrentTask 0
+  set &previousTask 0
+  set &cue_display_time 400
+  set &cue_delay 500
+  set &intertrialinterval 500
+  set &maxrt 5000
 
 fonts
   arial 18
 
+bitmaps
+  fixpoint
+  Errorslow
+  Errorkey
+  circle_blue
+  circle_yellow
+  rectangle_blue
+  rectangle_yellow
+  colorcue
+  shapecue
+  Break1
+  Break2
+  Break3
+  Break4
+  readypractice
+  readytest
+  Redirect_end2
+  TS_Error
+  TS_instruction_1
+  TS_instruction_2
+  TS_instruction_3
+  TS_instruction_4
+  TS_instruction_5
+  TS_instruction_6
+  ready1
+  ready2
+  ready3
+  readytest2
+  TS_remember1
+  TS_remember2
+  TS_remember3
+  TS_reminderShape
+  TS_reminderColor
+
+
 ######################################################################
-# TASK SWITCHING BASED ON ROGERS/MONSELL 1995
+# task switching conditions
+######################################################################
 
-# letters 1-8 and numbers 1-8.
-# G K M R  A E I U     bitmaps 1-8
-# 3 5 7 9  2 4 6 8     bitmaps 9-16 (i.e. 1-8 +8)
-# L L L L  R R R R     response
+table colortasktable
+  "color congruent   1 left " colorcue circle_yellow     1
+  "color incongruent 2 left " colorcue rectangle_yellow  1
+  "color incongruent 2 right" colorcue circle_blue       2
+  "color congruent   1 right" colorcue rectangle_blue    2
 
-task lettersnumbers
-  keys z m
-  ## instead of table, determine stimulus/response here #########
-  set $letter random 1 8 # select a random letter
-  set $number random 1 8 # select a random number
-  # keep selecting until letter and number are different from previous trial
-  while $letter == &previousletter || $number == &previousnumber
-    set $letter random 1 8
-    set $number random 1 8
-  while-end
-  set &previousletter $letter # keep for the next trial
-  set &previousnumber $number # keep for the next trial
-  set $numberbitmap expression $number + 8 # number bitmaps run from 9-16
-  # associate responses for both possible tasks #################
-  set $lettertaskresponse 1   # left button
-  if $letter > 4
-    set $lettertaskresponse 2 # right button
+table shapetasktable
+  "shape congruent   1 left " shapecue circle_yellow     1
+  "shape incongruent 2 right" shapecue rectangle_yellow  2
+  "shape incongruent 2 left " shapecue circle_blue       1
+  "shape congruent   1 right" shapecue rectangle_blue    2
+
+######################################################################
+# task switching tasks
+######################################################################
+
+## both tasks are exactly the same except for the tables which load the stimuli
+## this "part" codes everything else
+
+part rest_of_task
+  keys d k #b n were the original but switched to d l
+  # -- for later data analysis --------
+  set &CurrentTask 2
+  if &CurrentTask == &previousTask
+    set $taskSwitch 1
   fi
-  set $numbertaskresponse 1   # left button
-  if $number > 4
-    set $numbertaskresponse 2 # right button
+  if &CurrentTask != &previousTask
+    set $taskSwitch 2
   fi
-  ###############################################################
-  show bitmap grid
-  delay 150 # ITI (RS = 150)
-  # which quadrant is being used? this goes clockwise
-  # top left is 1, up to four
-  set &pos increase 1
-  if &pos > 4
-    set &pos 1
-  fi
-  ########## you can also do just one task then you use only 2 quadrants
-  if &justtask == 1
-    if &pos > 2
-      set &pos increase -2
-    fi
-  fi
-  if &justtask == 2
-    if &pos < 3
-      set &pos increase 2
-    fi
-  fi
-  # determine position 1 and 2 of stimuli (letter is left or number)
-  if &pos == 1           # letter task
-    set $xpos1 -50
-    set $xpos2 -25
-    set $ypos  -33
-    set $key $lettertaskresponse
-    set $tasktype 1
-  fi
-  if &pos == 2           # letter task
-    set $xpos1 25
-    set $xpos2 50
-    set $ypos  -33
-    set $key $lettertaskresponse
-    set $tasktype 1
-  fi
-  if &pos == 3           # number task
-    set $xpos1 25
-    set $xpos2 50
-    set $ypos  33
-    set $key $numbertaskresponse
-    set $tasktype 2
-  fi
-  if &pos == 4           # number task
-    set $xpos1 -50
-    set $xpos2 -25
-    set $ypos  33
-    set $key $numbertaskresponse
-    set $tasktype 2
-  fi
-  # set up screen
-  draw off
-    show bitmap $letter $xpos1 $ypos
-    show bitmap $numberbitmap $xpos2 $ypos
-  draw on
-  readkey $key 5000
-  if STATUS != CORRECT
-    if $tasktype == 1
-      show bitmap task1 210 -50
-    fi
-    if $tasktype == 2
-      show bitmap task2 210 40
-    fi
-    delay 3000
+  set &previousTask &CurrentTask
+  #------------------------------------
+  show bitmap fixpoint
+  delay 150
+  clear -1
+  delay 500
+  show bitmap @2
+  delay &cue_display_time
+  clear -1
+  delay &cue_delay
+  show bitmap @3
+  readkey @4 &maxrt ## responde withint 2s
+  clear -1
+  if STATUS == WRONG
+    show bitmap Errorkey
+    delay 500
     clear -1
   fi
-  clear 2 3
-  # code if this trial was a task switch or task repeat trial
-  if &previoustask == $tasktype
-    set &taskswitch 0
+  if STATUS == TIMEOUT
+    show bitmap Errorslow
+    delay 500
+    clear -1
   fi
-  if &previoustask != $tasktype
-    set &taskswitch 1
-  fi
-  set &previoustask $tasktype
-  # save data
-  save BLOCKNAME &pos $tasktype $letter $number &justtask &taskswitch STATUS RT TT
+  delay &intertrialinterval
+  save BLOCKNUMBER BLOCKNAME @1 RT STATUS $taskSwitch
+
+task color
+  table colortasktable
+  part rest_of_task
+
+task shape
+  table shapetasktable
+  part rest_of_task
+
+task end_experiment
+  show bitmap Redirect_end2
+  delay 4000
+
+
+# -------------------------------------------------------
+#      B L O C K S
+# -------------------------------------------------------
 
 ######################################################################
-#			   BLOCKS START HERE                         #
+#                            B L O C K S
 ######################################################################
 
-block letters
-  pager instructions1 instructions2 instructions3 instructions4 instructions5
-  set &previoustask -1
-  set &taskswitch 0 # 1 if a trial is a task switch trial
-  set &justtask 1 # this makes that only the letter task is being selected
-  bitmap readyletters
-  wait_for_key
-  tasklist
-    lettersnumbers 40
-  end
+## First the pure blocks (will repeat pure blocks again in the end)
 
-block numbers
-  set &justtask 2 # this makes that only the number task is being selected
-  bitmap readynumbers
-  wait_for_key
+block trainingColor
+  pager TS_instruction_1 TS_instruction_2 TS_instruction_3 readypractice
   tasklist
-    lettersnumbers 40
+    color 8
   end
+end
 
-block mixed
-  set &justtask 0 # this makes that both tasks are in alternative run sequence
-  bitmap readylettersnumbers
-  wait_for_key
+block realColor1
+  pager TS_remember1 readytest
+  bitmap ready3
+  delay 1000
+  bitmap ready2
+  delay 1000
+  bitmap ready1
+  delay 1000
   tasklist
-    lettersnumbers 40
+    color 20
   end
-  feedback
-    text align left
-    set &RTpure      mean c9 ; select c8 == 1 && c6 != 0 && c7 == 0
-    set &RTmixRepeat mean c9 ; select c8 == 1 && c6 == 0 && c7 == 0
-    set &RTmixSwitch mean c9 ; select c8 == 1 && c6 == 0 && c7 == 1
-    set &RTMixCost    expression &RTmixRepeat - &RTpure
-    set &RTSwitchCost expression &RTmixSwitch - &RTmixRepeat
-    text -200 -150 "Response times (RT in ms):"
-    text -200 -50  &RTpure       ; prefix "RTs in single-task blocks: " ; postfix " ms"
-    text -200   0  &RTmixRepeat  ; prefix "RTs in mixed block, task-repeat trials: " ; postfix "ms"
-    text -200  50  &RTmixSwitch  ; prefix "RTs in mixed block, task-switch trials: " ; postfix "ms"
-    text -200 100  &RTSwitchCost ; prefix "Task switch cost in RTs: " ; postfix "ms"
-    text -200 150  "Press space bar to continue"
+end
+
+block trainingShape
+  pager TS_instruction_4 TS_instruction_5 readypractice
+  tasklist
+    shape 8
+  end
+end
+
+block realShape1
+  pager TS_remember2 readytest
+  bitmap ready3
+  delay 1000
+  bitmap ready2
+  delay 1000
+  bitmap ready1
+  delay 1000
+  tasklist
+    shape 20
+  end
+end
+
+## now the mixed blocks
+
+block trainingMixed
+  pager TS_instruction_6 readypractice
+  tasklist
+    color 8
+    shape 8
+  end
+end
+
+block realMixed1
+  pager Break4 TS_remember3 readytest
+  bitmap ready3
+  delay 1000
+  bitmap ready2
+  delay 1000
+  bitmap ready1
+  delay 1000
+  tasklist
+    color 25
+    shape 25
+  end
+end
+
+
+block realMixed2
+  pager Break2 TS_remember3 readytest2
+  bitmap ready3
+  delay 1000
+  bitmap ready2
+  delay 1000
+  bitmap ready1
+  delay 1000
+  tasklist
+    color 25
+    shape 25
+  end
+end
+
+## now the pure blocks in the end blocks
+
+block realShape2
+  pager Break2 TS_reminderShape TS_remember2 readytest2
+  bitmap ready3
+  delay 1000
+  bitmap ready2
+  delay 1000
+  bitmap ready1
+  delay 1000
+  tasklist
+    shape 20
+  end
+end
+
+block realColor2
+  pager Break3 TS_reminderColor TS_remember1 readytest2
+  bitmap ready3
+  delay 1000
+  bitmap ready2
+  delay 1000
+  bitmap ready1
+  delay 1000
+  tasklist
+    color 20
+  end
+end
+
+block end_experiment
+  tasklist
+    end_experiment 1
   end

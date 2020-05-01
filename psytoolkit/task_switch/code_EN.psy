@@ -1,0 +1,241 @@
+options
+  bitmapdir stimuli
+  set &CurrentTask 0
+  set &previousTask 0
+  set &cue_display_time 400
+  set &cue_delay 500
+  set &intertrialinterval 500
+  set &maxrt 5000
+
+fonts
+  arial 18
+
+bitmaps
+  fixpoint
+  Errorslow
+  Errorkey
+  circle_blue
+  circle_yellow
+  rectangle_blue
+  rectangle_yellow
+  colorcue
+  shapecue
+  Break1
+  Break2
+  Break3
+  Break4
+  readypractice
+  readytest
+  Redirect_end2
+  TS_Error
+  TS_instruction_1
+  TS_instruction_2
+  TS_instruction_3
+  TS_instruction_4
+  TS_instruction_5
+  TS_instruction_6
+  ready1
+  ready2
+  ready3
+  readytest2
+  TS_remember1
+  TS_remember2
+  TS_remember3
+  TS_reminderShape
+  TS_reminderColor
+
+
+######################################################################
+# task switching conditions
+######################################################################
+
+table colortasktable
+  "color congruent   1 left " colorcue circle_yellow     1
+  "color incongruent 2 left " colorcue rectangle_yellow  1
+  "color incongruent 2 right" colorcue circle_blue       2
+  "color congruent   1 right" colorcue rectangle_blue    2
+
+table shapetasktable
+  "shape congruent   1 left " shapecue circle_yellow     1
+  "shape incongruent 2 right" shapecue rectangle_yellow  2
+  "shape incongruent 2 left " shapecue circle_blue       1
+  "shape congruent   1 right" shapecue rectangle_blue    2
+
+######################################################################
+# task switching tasks
+######################################################################
+
+## both tasks are exactly the same except for the tables which load the stimuli
+## this "part" codes everything else
+
+part rest_of_task
+  keys d k #b n were the original but switched to d l
+  # -- for later data analysis --------
+  set &CurrentTask 2
+  if &CurrentTask == &previousTask
+    set $taskSwitch 1
+  fi
+  if &CurrentTask != &previousTask
+    set $taskSwitch 2
+  fi
+  set &previousTask &CurrentTask
+  #------------------------------------
+  show bitmap fixpoint
+  delay 150
+  clear -1
+  delay 500
+  show bitmap @2
+  delay &cue_display_time
+  clear -1
+  delay &cue_delay
+  show bitmap @3
+  readkey @4 &maxrt ## responde withint 2s
+  clear -1
+  if STATUS == WRONG
+    show bitmap Errorkey
+    delay 500
+    clear -1
+  fi
+  if STATUS == TIMEOUT
+    show bitmap Errorslow
+    delay 500
+    clear -1
+  fi
+  delay &intertrialinterval
+  save BLOCKNUMBER BLOCKNAME @1 RT STATUS $taskSwitch
+
+task color
+  table colortasktable
+  part rest_of_task
+
+task shape
+  table shapetasktable
+  part rest_of_task
+
+task end_experiment
+  show bitmap Redirect_end2
+  delay 4000
+
+
+# -------------------------------------------------------
+#      B L O C K S
+# -------------------------------------------------------
+
+######################################################################
+#                            B L O C K S
+######################################################################
+
+## First the pure blocks (will repeat pure blocks again in the end)
+
+block trainingColor
+  pager TS_instruction_1 TS_instruction_2 TS_instruction_3 readypractice
+  tasklist
+    color 8
+  end
+end
+
+block realColor1
+  pager TS_remember1 readytest
+  bitmap ready3
+  delay 1000
+  bitmap ready2
+  delay 1000
+  bitmap ready1
+  delay 1000
+  tasklist
+    color 20
+  end
+end
+
+block trainingShape
+  pager TS_instruction_4 TS_instruction_5 readypractice
+  tasklist
+    shape 8
+  end
+end
+
+block realShape1
+  pager TS_remember2 readytest
+  bitmap ready3
+  delay 1000
+  bitmap ready2
+  delay 1000
+  bitmap ready1
+  delay 1000
+  tasklist
+    shape 20
+  end
+end
+
+## now the mixed blocks
+
+block trainingMixed
+  pager TS_instruction_6 readypractice
+  tasklist
+    color 8
+    shape 8
+  end
+end
+
+block realMixed1
+  pager Break4 TS_remember3 readytest
+  bitmap ready3
+  delay 1000
+  bitmap ready2
+  delay 1000
+  bitmap ready1
+  delay 1000
+  tasklist
+    color 25
+    shape 25
+  end
+end
+
+
+block realMixed2
+  pager Break2 TS_remember3 readytest2
+  bitmap ready3
+  delay 1000
+  bitmap ready2
+  delay 1000
+  bitmap ready1
+  delay 1000
+  tasklist
+    color 25
+    shape 25
+  end
+end
+
+## now the pure blocks in the end blocks
+
+block realShape2
+  pager Break2 TS_reminderShape TS_remember2 readytest2
+  bitmap ready3
+  delay 1000
+  bitmap ready2
+  delay 1000
+  bitmap ready1
+  delay 1000
+  tasklist
+    shape 20
+  end
+end
+
+block realColor2
+  pager Break3 TS_reminderColor TS_remember1 readytest2
+  bitmap ready3
+  delay 1000
+  bitmap ready2
+  delay 1000
+  bitmap ready1
+  delay 1000
+  tasklist
+    color 20
+  end
+end
+
+block end_experiment
+  tasklist
+    end_experiment 1
+  end
+

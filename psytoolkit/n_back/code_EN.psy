@@ -1,0 +1,239 @@
+## for ageing project Leiden 2020-2023
+
+options
+  bitmapdir stimuli
+  set &maxrt 760 # stimulus presentation
+  set &iti 2000  # intertrial interval
+  # set &maxrt 20 # stimulus presentation
+  # set &iti 20  # intertrial interval
+  set &choosechance 3 # 1 in "choosechance" are matching. The higher the number, the fewer matches
+
+fonts
+  arial 18
+
+bitmaps
+  letterA ## 15 letters
+  letterB
+  letterC
+  letterD
+  letterE
+  letterH
+  letterI
+  letterK
+  letterL
+  letterM
+  letterO
+  letterP
+  letterR
+  letterS
+  letterT
+  overlay
+  error_feedback
+  correct_feedback
+  grey_feedback
+  Nback_instruction_1
+  Nback_instruction_2
+  Nback_instruction_3
+  Nback_instruction_4
+  Nback_instruction_5
+  Nback_instruction_7
+  readytest
+  Redirect_end2
+  readypractice
+  Break2
+  Break3
+  ready1
+  ready2
+  ready3
+  readytest2
+  Nback_remember
+
+part myfeedback
+  feedback
+    text align left
+    set &Total1 count ; select c3 == 1 && c1 == BLOCKNUMBER ## number of trials where there was a 2back item
+    set &Total2 count ; select c3 == 0 && c1 == BLOCKNUMBER ## number of trials where there was NOT a 3back item
+    set &Matches count     ; select c5 == 1 && c1 == BLOCKNUMBER ## number of matches
+    set &Misses count      ; select c6 == 1 && c1 == BLOCKNUMBER ## number of misses
+    set &FalseAlarms count ; select c7 == 1 && c1 == BLOCKNUMBER ## number of false alarms
+    set &MatchesPerc      expression &Matches     / &Total1 * 100.0
+    set &MissesPerc       expression &Misses      / &Total1 * 100.0
+    set &FalseAlarmsPerc  expression &FalseAlarms / &Total2 * 100.0
+    text -250 -200 "There were 25 trials in total in this block"
+    text -250 -150 &Total1 ; prefix "Total trials that had a match:"
+    text -250 -100 &Total2 ; prefix "Total trials that had no match:"
+    text -250 -50  &Matches ; prefix "Number of correctly matched items:"
+    text -250 -0   &Misses ; prefix "Number of missed items:"
+    text -250  50  &FalseAlarms ; prefix "Number of false alarms:"
+    text -250 100  &MatchesPerc ; prefix "Percentage correct matches:" ; postfix " %"
+    text -250 150  &MissesPerc  ; prefix "Percentage missed items:" ; postfix " %"
+    text -250 200  &FalseAlarmsPerc ; prefix "Percentage false alarms:" ; postfix " %"
+    text -250 250 "Press button Q to continue"
+    wait_for_key q
+  end
+
+part check_response
+  if $requiredresponse == 0 and STATUS == TIMEOUT
+    set $score 1  ## so far so good
+  fi
+  if $requiredresponse == 0 and STATUS != TIMEOUT
+    set $score 0  ## wrongly pressed during letter presentation.
+    set $false_alarm 1
+    show bitmap error_feedback  ## red rectangle below and over letter
+  fi
+  if $requiredresponse == 1 and STATUS != TIMEOUT
+    set $score 1  ## wrongly pressed during letter presentation.
+    set $match 1
+    show bitmap correct_feedback  ## green rectangle below and over letter
+  fi
+
+part nback_part1
+  keys k
+  set &trialcount increase
+  set $currentletter random 1 15 ## choose random letter out of the 15 options
+  ############################################################################
+  ## is this condition a yes condition?
+  set $memory random 1 &choosechance ## random number for choosing condition
+  ## if a 2back trial
+  if $memory == 1 and &trialcount > 2
+    set $currentletter &nback2
+    set $requiredresponse 1 ## the m key needs to be pressed later, m=stands for Memory
+    set $typeoftrial 1
+  fi
+  ## if a NON n-back trial
+  if $memory != 1 or &trialcount <= 2 ## chose a letter but not that of 3 trials ago
+    set $currentletter random 1 15
+    while $currentletter == &nback2 ## choose anything but NOT that of 3 back
+      set $currentletter random 1 15
+    while-end
+    set $requiredresponse 0 ## no key should be pressed
+    set $typeoftrial 0
+  fi
+  ############################################################################
+  draw off
+    show bitmap $currentletter ## stimulus 1
+    show bitmap grey_feedback  ## stimulus 2
+
+part nback_part2
+  ## following 2 if-blocks only for learning
+  if &trialcount > 1
+    show bitmap &nback1 -100 0  # show 1-back left of stimulus
+    show bitmap overlay -100 0  # greyed out
+  fi
+  if &trialcount > 2
+    show bitmap &nback2 -200 0  # show 2-back left of stimulus
+    show bitmap overlay -200 0  # greyed out
+  fi
+
+part nback_part3
+draw on
+readkey 1 &maxrt
+set $extrawait expression &maxrt - RT ## how much time is left between max RT and now?
+##############################################################
+## determine whether error was made during letter presentation
+## people can only make mistake if pressing now when they should not
+##############################################################
+set $score 0 ## this is the default, assume error
+part check_response
+set $my_rt RT
+###########
+## now wait remaining time if needed
+###########
+delay $extrawait ## wait until letter has been on screen total of 760 ms, note this only happens if people already pressed
+clear 1 ## clear the letter from screen
+###########
+## now show nothing but allow response during ITI
+###########
+if STATUS == TIMEOUT ## means people did not respond yet
+  readkey 1 &iti
+  set $my_rt expression RT + &maxrt
+fi
+part check_response
+## if you pressed, then some time will be left; during that time, no need to further check keys anymore
+set $extrawait expression &iti - RT ## how much time is left between iti RT and now?
+## now check if people missed
+if $requiredresponse == 1 and $score == 0
+  set $miss 1
+fi
+delay $extrawait
+### now save the letter for next trial
+set &nback2 &nback1
+set &nback1 $currentletter
+### save the data
+save BLOCKNUMBER &trialcount $typeoftrial $score $match $miss $false_alarm $my_rt $memory $currentletter &nback1 &nback2
+
+######################################################################
+## note that the use of parts is slightly more efficient
+## basically, nback_part2 is only for the "learning" mode
+
+task nback_learning
+  part nback_part1
+  part nback_part2
+  part nback_part3
+
+task nback_normal
+  part nback_part1
+  part nback_part3
+
+
+task end_experiment
+  show bitmap Redirect_end2
+  delay 4000
+
+block training
+  set &trialcount 0 # make sure you use this again if you have another block
+  set &choosechance 2
+  pager Nback_instruction_1 Nback_instruction_2 Nback_instruction_3 Nback_instruction_4 Nback_instruction_5 readypractice
+  tasklist
+    nback_learning 15
+  end
+  #part myfeedback
+
+block nback_real1
+  set &trialcount 0 # make sure you use this again if you have another block
+  set &choosechance 3
+  pager Nback_instruction_7 readytest
+  bitmap ready3
+  delay 1000
+  bitmap ready2
+  delay 1000
+  bitmap ready1
+  delay 1000
+  tasklist
+    nback_normal 30
+  end
+
+
+block nback_real2
+  set &trialcount 0 # make sure you use this again if you have another block
+  set &choosechance 3
+  pager Break2 Nback_remember readytest2
+  bitmap ready3
+  delay 1000
+  bitmap ready2
+  delay 1000
+  bitmap ready1
+  delay 1000
+  tasklist
+    nback_normal 30
+  end
+
+
+block nback_real3
+  set &trialcount 0 # make sure you use this again if you have another block
+  set &choosechance 3
+  pager Break3 Nback_remember readytest2
+  bitmap ready3
+  delay 1000
+  bitmap ready2
+  delay 1000
+  bitmap ready1
+  delay 1000
+  tasklist
+    nback_normal 30
+  end
+
+block end_experiment
+  tasklist
+    end_experiment 1
+  end

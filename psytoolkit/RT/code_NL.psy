@@ -1,0 +1,140 @@
+options
+  startbutton text Klik om te beginnen
+  bitmapdir stimuli
+  set &dummy 0
+  set &maxResponseTime 3000
+  set &minInterval 1000
+  set &maxInterval 3000
+
+fonts
+  arial 18
+
+bitmaps
+  readypractice
+  Redirect_task2
+  RT_instruction_1
+  RT_instruction_2
+  RT_instruction_3
+  RT_instruction_4
+  RT_instruction_5
+  RT_instruction_6
+  RT_instruction_7
+  Error
+  Errorkey
+  Errorslow
+  box_empty
+  box_cross
+  ready1
+  ready2
+  ready3
+  RT_readywarmup1
+  RT_readywarmup2
+
+
+table dl_choice
+  4 -150 1
+  4 -50  2
+  4  50  3
+  4 150  4
+
+task dl_task_simple
+  keys k
+  set $num_choices 1
+  draw off
+    show background 0 0 100
+    show bitmap box_empty
+  draw on
+  set $randomdelay random &minInterval &maxInterval
+  delay $randomdelay
+  show bitmap box_cross
+  readkey 1 &maxResponseTime
+  clear 3
+  save BLOCKNAME &training $num_choices $randomdelay &dummy RT STATUS
+
+task dl_task_choice
+  table dl_choice
+  keys s d k l
+  draw off
+    show background 0 0 100
+    show bitmap box_empty -150 0
+    show bitmap box_empty -50 0
+    show bitmap box_empty  50 0
+    show bitmap box_empty  150 0
+  draw on
+  set $randomdelay random &minInterval &maxInterval
+  delay $randomdelay
+  show bitmap box_cross  @2 0
+  readkey @3 &maxResponseTime
+  clear 6
+  if &training == 1 && STATUS != CORRECT ## only during training give feedback
+    if STATUS == WRONG
+      show bitmap Errorkey
+    fi
+    if STATUS == TIMEOUT
+      show bitmap Errorslow
+    fi
+    delay 700
+    clear -1
+    show bitmap Error
+    delay 2000
+    clear -1
+  fi
+  save BLOCKNAME &training @1 $randomdelay @2 RT STATUS
+
+
+task end_experiment
+  show bitmap Redirect_task2
+  delay 4000
+
+######################################################################
+## blocks start here
+
+block dlsimple_training
+  set &training 1
+  pager RT_instruction_1 RT_instruction_2 readypractice
+  tasklist
+    dl_task_simple 8
+  end
+  delay 1000
+
+block dlsimple_real
+  set &training 1  ## we leave feedback on
+  pager RT_instruction_6 RT_readywarmup1
+  bitmap ready3
+  delay 1000
+  bitmap ready2
+  delay 1000
+  bitmap ready1
+  delay 1000
+  tasklist
+    dl_task_simple 25
+  end
+  delay 1000
+
+block dlchoice_training
+  set &training 1
+  pager RT_instruction_3 RT_instruction_4 RT_instruction_5 readypractice
+  tasklist
+    dl_task_choice 8 no_repeat
+  end
+  delay 1000
+
+block dlchoice_real
+  set &training 1
+  pager RT_instruction_7 RT_readywarmup2
+  bitmap ready3
+  delay 1000
+  bitmap ready2
+  delay 1000
+  bitmap ready1
+  delay 1000
+  tasklist
+    dl_task_choice 50 no_repeat
+  end
+end
+
+block end_experiment
+  tasklist
+    end_experiment 1
+  end
+
