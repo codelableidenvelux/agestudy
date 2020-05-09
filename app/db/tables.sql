@@ -8,6 +8,7 @@ CREATE TABLE SESSION_INFO (
   user_type INT NOT NULL,
   birthyear DATE NOT NULL,
   pas_hash VARCHAR(255) NOT NULL,
+  participation_id VARCHAR(255),
   consent INT,
   time_sign_up TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -39,6 +40,7 @@ CREATE TABLE TASK_COMPLETED(
   task_id INT NOT NULL,
   collect INT NOT NULL,
   date_collected TIMESTAMP,
+  next_collection TIMESTAMP,
   FOREIGN KEY (user_id)
     REFERENCES SESSION_INFO(user_id)
     ON UPDATE NO ACTION

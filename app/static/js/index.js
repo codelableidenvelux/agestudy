@@ -17,6 +17,10 @@ window.onload = function(){
     }
 };
 
+function show_p_id(){
+    $("#show_p_id_button").toggle();
+}
+
 
 
 // Onclick of the checkboxes check if all the minimum requirements are met (if all boxes checked), if they are then dissplay the register form

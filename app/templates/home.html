@@ -12,6 +12,7 @@ Home
 
 <link href="/static/css/home.css" rel="stylesheet"/>
 <script src="/static/js/index.js"></script>
+
 <!-- Define a macro that will contain the card, the inputs are
 the image of the task and its alt, the title and description of the task,
 the route to the task and the text in the button. -->
@@ -60,7 +61,11 @@ if its false the div is not show there are no recomendations-->
 <div class="price" id="price" value="{{price}}" name="price"></div>
 <h1>{{home_csv["js_title"] }}</h1>
 <div id=barChart></div>
+{%if can_collect_payment %}
 <a id="collection" href="/payment" class="btn btn-primary">{{ home_csv["button2"] }}</a>
+{% endif %}
+<button class="btn btn-secondary">{{ home_csv["button2"] }}</button>
+<input type="button" class="btn btn-primary"  value="?" data-toggle="popover" data-placement="right" data-content="{{ home_csv['payment_info'] }}">
 </div>
 {% endif %}
 
@@ -69,5 +74,11 @@ if its false the div is not show there are no recomendations-->
 <a href="/about_app#working_app" class="btn btn-danger"> {{ home_csv["button_app"] }}</a>
 <br><br>
 <p><b>{{ home_csv["p4"] }}, {{ home_csv["p5"] }} </b></p>
+<br><br>
+
+{% if not session.show_p_id and session.participation_id %}
+<button class="btn btn-primary" onclick="show_p_id()">Click to see participation id</button>
+<p id="show_p_id_button"> {{ session.participation_id }}</p>
+{% endif %}
 
 {% endblock %}

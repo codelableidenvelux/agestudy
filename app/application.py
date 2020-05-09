@@ -517,7 +517,7 @@ def register():
         data = r.json()
         if not data["success"]:
             flash(flash_msg_csv[session["language"]]["robot"])
-            return render_template("register.html",   consent_csv=consent_csv[session["language"]], register_csv=register_csv[session["language"]], layout=layout[session["language"]])
+            return render_template("register.html", consent_csv=consent_csv[session["language"]], register_csv=register_csv[session["language"]], layout=layout[session["language"]])
 
 
         # set to lowercase
@@ -562,18 +562,6 @@ def register():
                 flash(flash_msg_csv[session["language"]]["used_email"])
                 return render_template("register.html",   consent_csv=consent_csv[session["language"]], register_csv=register_csv[session["language"]], layout=layout[session["language"]])
 
-            # add user to the database
-            param = (username, email, gender, collect_possible, for_money, user_type, birthdate, hash)
-            insert = "INSERT INTO session_info (user_name, email, gender, collect_possible, for_money, user_type, birthyear, pas_hash) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-            result = db.execute(insert, param, 0)
-
-            select = "SELECT * FROM SESSION_INFO WHERE user_name = %s"
-            rows = db.execute(select, (username,), 1)
-            # Remember which user has logged in
-            session['user_id'] = rows[0][0]
-            #session['language'] = rows[0]['USER_ID']
-            # Redirect user to home page
-
             # send_email
             # select and delete a participation_id from the table with id's
             delete = """DELETE FROM participation_id WHERE p_id = ANY(SELECT * FROM participation_id order by p_id desc limit 1) RETURNING *"""
@@ -581,6 +569,8 @@ def register():
             participation_id_r = db.execute(delete, ("",), 2)
             # select the id from the list of lists
             participation_id = participation_id_r[0][0]
+            session["particiaption_id"] = participation_id
+            session["show_p_id"] = True
 
             # check if we have enough ID's left
             select = "SELECT * FROM PARTICIPATION_ID"
@@ -591,16 +581,29 @@ def register():
                 message = "Subject: (IMPORTANT) New Participation ID's Needed \n\n There are less than 200 participation_ids left."
                 send_email(message, username, "agestudy@fsw.leidenuniv.nl")
 
+            # add user to the database
+            param = (username, email, gender, collect_possible, for_money, user_type, birthdate, hash, participation_id)
+            insert = "INSERT INTO session_info (user_name, email, gender, collect_possible, for_money, user_type, birthyear, pas_hash, participation_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            result = db.execute(insert, param, 0)
+
+            select = "SELECT * FROM SESSION_INFO WHERE user_name = %s"
+            rows = db.execute(select, (username,), 1)
+            # Remember which user has logged in
+            session['user_id'] = rows[0][0]
+            #session['language'] = rows[0]['USER_ID']
+
+            # send welcome email to paricipant and to agestudy with participants info
             message = 'Subject: New Participant \n\n username: ' + username + "\npsytoolkit_id: " + generate_id(session['user_id']) + "\n email: " + email + "\n user_id: " + str(rows[0][0]) + "\n user_type: " + str(user_type) + "\n language: " + session["language"] + "\n participation_id: " + participation_id + "\n Birthdate: " + birthdate
             send_email(message, username, "agestudy@fsw.leidenuniv.nl")
             subject_en='Welcome from Leiden University to Agestudy.nl (Important info, save the email)'
             subject_nl='Welkom van de Universiteit Leiden bij Agestudy.nl (Belangrijke info, bewaar deze e-mail)'
             send_direct_email(subject_en, subject_nl, email, subject_en, False, participation_id)
 
+            # Redirect user to home page
             return redirect("/home")
         else:
             # the passwords did not match
-            flash(flash_msg_csv[session["language"]]["used_email"])
+            flash(flash_msg_csv[session["language"]]["unmatched_pas"])
             return render_template("register.html", consent_csv=consent_csv[session["language"]], register_csv=register_csv[session["language"]], layout=layout[session["language"]])
 
     # User reached route via GET (as by clicking a link or via redirect)
@@ -691,16 +694,14 @@ def login():
         # Remember which user has logged in
         session['user_id'] = rows[0]['user_id']
         session['consent'] = rows[0]['consent']
+        session['participation_id'] = rows[0]['participation_id']
+        session['show_p_id'] = True
+        select = "SELECT time_sign_up FROM SESSION_INFO WHERE user_id = (%s)"
+        time_sign_up = db.execute(select, (session["user_id"],), 1)
+        month_after_sign_up = time_sign_up[0][0] + timedelta(weeks=4)
+        if month_after_sign_up < datetime.now():
+            session['show_p_id'] = False
 
-        ####################### TODO REMOVEE #######################
-        #participation_id = '138THISISADUMMYIDDONOTPASTEINTOAPPNUM1'
-        #message = 'Subject: New Participant \n\n username: ' + username + "\npsytoolkit_id: " + generate_id(session['user_id']) + "\n email: " + email + "\n user_id: " + str(rows[0][0]) + "\n user_type: " + str(user_type) + "\n language: " + session["language"] + "\n participation_id: " + participation_id
-        #message = 'Subject: New Participant \n\n participation_id: ' + participation_id
-        #send_email(message, username, "agestudy@fsw.leidenuniv.nl")
-        #subject_en='Welcome from Leiden University to Agestudy.nl (Important info, save the email)'
-        #subject_nl='Welcome from Leiden University to Agestudy.nl (Important info, save the email)'
-        #username = 'a.ghosh@fsw.leidenuniv.nl'
-        #send_direct_email(subject_en, subject_nl, username, 'false', False, participation_id)
 
         # Redirect user to home page
         return redirect("/home")
@@ -1084,6 +1085,13 @@ def home():
     three_weeks_after_sign_up = time_sign_up[0][0] + timedelta(weeks=3)
     phone_survey_available = three_weeks_after_sign_up < datetime.now()
 
+    one_year_after_sign_up = time_sign_up[0][0] + timedelta(weeks=52)
+    select = "SELECT next_collection from TASK_COMPLETED WHERE user_id = (%s)"
+    next_collection = db.execute(select, (session["user_id"],), 1)
+    can_collect_payment = False
+    if one_year_after_sign_up < datetime.now() and next_collection[0][0] and next_collection[0][0] < datetime.now():
+        can_collect_payment = True
+
     # First recomendation is to do the phone survey
     if (5 not in completed_tasks or should_show_task(5)) and phone_survey_available:
         task = {"img":"/static/images/TaskIcons/phone_survey.png", "alt":"Phone survey", "btn_class": "survey", "title":tasks[session["language"]]['phone_survey_title'],  "text" : tasks[session["language"]]['phone_survey_description'], "link" : "/phone_survey", "button_text": tasks[session["language"]]['phone_survey_button']}
@@ -1106,7 +1114,7 @@ def home():
     else:
         recomendation = False
         task = {"img":"", "alt":"", "title":"", "btn_class":"",  "text" : "", "link" : "", "button_text": ""}
-    return render_template("home.html", price=price, user_type=user_type, recomendation=recomendation, layout=layout[session["language"]], home_csv=home_csv[session["language"]], btn_class=task["btn_class"], img=task["img"], alt=task["alt"], title=task["title"], text=task["text"], link=task["link"], button_text=task["button_text"])
+    return render_template("home.html", price=price, can_collect_payment=can_collect_payment, user_type=user_type, recomendation=recomendation, layout=layout[session["language"]], home_csv=home_csv[session["language"]], btn_class=task["btn_class"], img=task["img"], alt=task["alt"], title=task["title"], text=task["text"], link=task["link"], button_text=task["button_text"])
 
 
 @app.route("/payment", methods=["POST", "GET"])
@@ -1127,8 +1135,9 @@ def payment():
         # update the collection to 0 which means that the user has/will collect the money_earned
         # otherwise collect is 1
         date_collected = datetime.now()
-        update = f"UPDATE TASK_COMPLETED SET COLLECT=0, DATE_COLLECTED = (%s) WHERE USER_ID = (%s)"
-        db.execute(update, (date_collected, id), 0)
+        next_collection = datetime.now() + timedelta(weeks = 52)
+        update = f"UPDATE TASK_COMPLETED SET COLLECT=0, DATE_COLLECTED = (%s), next_collection = (%s) WHERE USER_ID = (%s)"
+        db.execute(update, (date_collected, id, next_collection), 0)
 
         # select the user info
         select = f"SELECT * FROM SESSION_INFO WHERE USER_ID = (%s)"
@@ -1172,7 +1181,7 @@ def contact():
     language_set()
     return render_template("contact.html", contact_csv=contact_csv[session["language"]], layout=layout[session["language"]])
 
-port = int(os.getenv("PORT"))
+#port = int(os.getenv("PORT"))
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=port)
+#if __name__ == '__main__':
+#    app.run(host='0.0.0.0', port=port)
