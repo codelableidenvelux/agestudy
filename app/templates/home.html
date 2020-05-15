@@ -77,7 +77,7 @@ if its false the div is not show there are no recomendations-->
 <br><br>
 
 {% if not session.show_p_id and session.participation_id %}
-<button class="btn btn-primary" onclick="show_p_id()">Click to see participation id</button>
+<button class="btn btn-primary" onclick="show_p_id()">{{ home_csv["click_show_p_id"] }}</button>
 <p id="show_p_id_button"> {{ session.participation_id }}</p>
 {% endif %}
 

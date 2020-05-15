@@ -13,8 +13,9 @@ list11,Register,Registreren
 list12,Log In,Inloggen
 list13,More Information, Meer Informatie
 info1,Your participation ID is:,Uw deelname-ID is:
-info2,please copy and paste this into the QuantActions TapCounter App, Kopieer en plak dit in de QuantActions TapCounter App
+info2,Please copy and paste this into the QuantActions TapCounter App, Kopieer en plak dit in de QuantActions TapCounter App
 info3,by launching the App, wanneer de App is geopend
 info4,click on the plus sign, klik op het plus teken
 info5,then Participate, dan Participate
 info6,and Paste, en Paste
+copy,Copy participation ID, Kopieer deelname-ID

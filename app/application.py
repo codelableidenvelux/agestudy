@@ -569,7 +569,7 @@ def register():
             participation_id_r = db.execute(delete, ("",), 2)
             # select the id from the list of lists
             participation_id = participation_id_r[0][0]
-            session["particiaption_id"] = participation_id
+            session["participation_id"] = participation_id
             session["show_p_id"] = True
 
             # check if we have enough ID's left
@@ -590,7 +590,7 @@ def register():
             rows = db.execute(select, (username,), 1)
             # Remember which user has logged in
             session['user_id'] = rows[0][0]
-            #session['language'] = rows[0]['USER_ID']
+
 
             # send welcome email to paricipant and to agestudy with participants info
             message = 'Subject: New Participant \n\n username: ' + username + "\npsytoolkit_id: " + generate_id(session['user_id']) + "\n email: " + email + "\n user_id: " + str(rows[0][0]) + "\n user_type: " + str(user_type) + "\n language: " + session["language"] + "\n participation_id: " + participation_id + "\n Birthdate: " + birthdate
@@ -1181,7 +1181,7 @@ def contact():
     language_set()
     return render_template("contact.html", contact_csv=contact_csv[session["language"]], layout=layout[session["language"]])
 
-#port = int(os.getenv("PORT"))
+port = int(os.getenv("PORT"))
 
-#if __name__ == '__main__':
-#    app.run(host='0.0.0.0', port=port)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=port)
