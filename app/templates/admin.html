@@ -1,0 +1,105 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Admin
+{% endblock %}
+
+{% block main %}
+<link href="/static/css/admin.css" rel="stylesheet"/>
+
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="/static/js/topojson.js"></script>
+<script src="/static/js/d3-tip.js"></script>
+
+<!-- JS script for charts -->
+<script src="../static/js/admin_main.js"></script>
+<script src="../static/js/stacked_barchart.js"></script>
+<script src="../static/js/streamgraph.js"></script>
+<script src="../static/js/sign_up_linechart.js"></script>
+<script src="../static/js/linechart.js"></script>
+<script src="../static/js/boxplot.js"></script>
+<script src="../static/js/gender_barchart.js"></script>
+<script src="../static/js/bullet.js"></script>
+<script src="../static/js/bullet_chart.js"></script>
+
+<div class="row basic_stats_row">
+  <h1 class="num_p">Number of participants: </h1>
+</div>
+<div class="row basic_stats_row">
+  <h1 class="num_active_p">Number of active participants: </h1>
+</div>
+<div class="row basic_stats_row">
+  <p>** Active participants complete 1 task every month</p>
+</div>
+
+<div class="row bullet_chart_box">
+  <h1 class="col-12">Money distrubution</h1>
+  <div class="col-10">
+    <div class="bullet_chart"></div>
+  </div>
+  <div class="col-2">
+    <div class="legend_bullet_chart"></div>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-4 year_box">
+    <h1>Age statistics</h1>
+    <p class="average_age">Average age: </p>
+    <div class="year"></div>
+    <div class="boxplot"></div>
+  </div>
+
+
+  <div class="col-4 gender_box">
+    <h1>Gender</h1>
+    <p class="gender_mode"> </p>
+    <div class="gender_barchart"></div>
+    <p>** Data contains missing values </p>
+  </div>
+
+  <div class="col-4 user_type_box">
+    <h1>User type</h1>
+    <p class="user_type_mode"> </p>
+    <div class="user_type_barchart"></div>
+  </div>
+</div>
+
+<div class="row task_frequency">
+  <div class="col-6">
+    <h1>Task completion</h1>
+  </div>
+  <div class="col-6">
+    <h1>Sign up distribution</h1>
+  </div>
+
+  <div class=col-6>
+    <div class="stacked_barchart"></div>
+  </div>
+  <div class="col-6">
+    <div class="sign_up_linechart"></div>
+  </div>
+</div>
+
+<div class="row time_series">
+  <div class="col-12">
+    <button class="btn btn-secondary" id='b1_line' value='See Linechart' onclick="toggle_charts('linechart')">Linegraph</button>
+    <button class="btn btn-secondary" id='b2_stream' value='See Streamgraph' onclick="toggle_charts('streamgraph')">Streamgraph</button>
+  </div>
+
+  <div class="col-10">
+    <div class="streamgraph"></div>
+    <div>
+      <div class="linechart"></div>
+      <select id="selectbox">
+        <option value="_1">Fahrenheit</option>
+        <option value="_2">Celsius</option>
+      </select>
+    </div>
+  </div>
+  <div class="col-2">
+    <div class="legend"></div>
+  </div>
+</div>
+{% endblock %}

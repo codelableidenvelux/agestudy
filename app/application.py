@@ -49,6 +49,7 @@ verify_csv = read_csv("static/csv/verify.csv")
 reset_password_email = read_csv("static/csv/reset_password_email.csv")
 youtube_csv = read_csv("static/csv/youtube.csv")
 flash_msg_csv = read_csv("static/csv/flash_msg.csv")
+admin_csv = read_csv("static/csv/admin.csv")
 
 # See which language was chosen and update the language
 def language_set():
@@ -593,7 +594,7 @@ def register():
 
 
             # send welcome email to paricipant and to agestudy with participants info
-            message = 'Subject: New Participant \n\n username: ' + username + "\npsytoolkit_id: " + generate_id(session['user_id']) + "\n email: " + email + "\n user_id: " + str(rows[0][0]) + "\n user_type: " + str(user_type) + "\n language: " + session["language"] + "\n participation_id: " + participation_id + "\n Birthdate: " + birthdate
+            message = 'Subject: New Participant \n\n username: ' + username + "\npsytoolkit_id: " + generate_id(session['user_id']) + "\n email: " + email + "\n user_id: " + str(rows[0][0]) + "\n user_type: " + str(user_type) + "\n gender: " + str(gender_r) + "\n language: " + session["language"] + "\n participation_id: " + participation_id + "\n Birthdate: " + birthdate
             send_email(message, username, "agestudy@fsw.leidenuniv.nl")
             subject_en='Welcome from Leiden University to Agestudy.nl (Important info, save the email)'
             subject_nl='Welkom van de Universiteit Leiden bij Agestudy.nl (Belangrijke info, bewaar deze e-mail)'
@@ -694,6 +695,7 @@ def login():
         # Remember which user has logged in
         session['user_id'] = rows[0]['user_id']
         session['consent'] = rows[0]['consent']
+        session['admin'] = rows[0]['admin']
         session['participation_id'] = rows[0]['participation_id']
         session['show_p_id'] = True
         select = "SELECT time_sign_up FROM SESSION_INFO WHERE user_id = (%s)"
@@ -1155,6 +1157,124 @@ def payment():
     else:
         return render_template("payment.html", payment=payment_csv[session["language"]], layout=layout[session["language"]])
 
+@app.route("/admin", methods=["POST", "GET"])
+@login_required
+@language_check
+def admin():
+    """
+    This function controls the admin page, a page which gives an overview of the database.
+    It also allows changes of the database
+    """
+    if session["admin"] != 1:
+        return redirect("/home")
+
+    return render_template("admin.html", admin_csv=admin_csv[session["language"]], layout=layout[session["language"]])
+
+@app.route("/get_data", methods=["GET"])
+@language_check
+def get_data():
+    select = "SELECT * FROM SESSION_INFO"
+    all_participants = db.execute(select, (""), 1)
+    df_all_p = pd.DataFrame(all_participants)
+    df_all_p = df_all_p.rename(columns={0: "user_id", 1: "user_name", 2:"email", 3:"gender", 4:"collect_possible",
+    5:"for_money", 6:"user_type", 7:"birthyear", 8: "pas_hash", 9: "consent", 10:"time_sign_up",
+    11:"participation_id", 12:"admin"})
+
+    # num of participants
+    num_p = len(df_all_p)
+    # average age participants
+    # change the birthyear type to integer
+    df_all_p["date"] = pd.to_datetime(df_all_p.birthyear).values.astype(int)
+    # get the mean birthyear
+    average_year = pd.to_datetime(df_all_p["date"].mean())
+    df_all_p["year"] = df_all_p["birthyear"].apply(lambda x: x.year)
+    # age quantiles
+    year_summary = df_all_p["year"].describe()
+    q1 = year_summary.loc['25%']
+    q3 = year_summary.loc['75%']
+    iqr = q3 - q1
+    lower_bound = q1 -(1.5 * iqr)
+    outliers = list(df_all_p[df_all_p["year"] < lower_bound].groupby(by=["year"]).groups.keys())
+    quantiles_summary = {"q1": q1, "median": year_summary.loc['50%'], "q3": q3,
+                        "lower_bound": lower_bound, "min": year_summary.loc['min'],
+                        "max": year_summary.loc['max'], "outliers": outliers}
+
+    # user_type statistics
+    count_user_type1 = df_all_p.groupby(by="user_type").size().loc[1]
+    count_user_type2 = df_all_p.groupby(by="user_type").size().loc[2]
+    user_type_mode = df_all_p["user_type"].mode()[0]
+    user_type = [{"user_type":"paid", "value": int(count_user_type1)}, {"user_type":"unpaid", "value": int(count_user_type2)}]
+
+    # gender statistics
+    male = df_all_p.groupby(by="gender").size().loc[1]
+    female = df_all_p.groupby(by="gender").size().loc[2]
+    gender_mode = df_all_p[df_all_p["gender"] != 999]["gender"].mode()[0]
+    gender = [{"gender":"male", "value": int(male)},{"gender": "female", "value":int(female)}]
+
+    # basic stats
+    basic_stats = {"num_p": int(num_p), "average_year": str(average_year), "quantiles_summary": quantiles_summary,
+                    "user_type": user_type, "user_type_mode": int(user_type_mode),
+                    "gender":gender, "gender_mode": int(gender_mode)}
+    # basic stats contains basic information
+    select = "SELECT * FROM TRACKED_TASK"
+    tracked_task = db.execute(select, ("", ), 1)
+    tracked_task_df = pd.DataFrame(tracked_task)
+    tracked_task_df = tracked_task_df.rename(columns={0:"time_exec", 1:"user_id", 2:"task_id",3:"status"})
+    merged = df_all_p.merge(tracked_task_df, on='user_id')
+    merged["month"] = merged["time_exec"].apply(lambda x: x.month)
+
+    tasks = task_frequency(merged)
+    total_money_dict = total_money(merged)
+    projected_money_dict = projected_money(num_p)
+
+    bullet_data = [
+  {
+    "title":"Commited payment",
+    "subtitle":"euros",
+    "ranges":[total_money_dict["rt"],total_money_dict["survey"],total_money_dict["total"]],
+    "measures":[total_money_dict["tasks"]],
+    "markers":[0]
+  },
+  {
+    "title":"Projected payment",
+    "subtitle":"euros",
+    "ranges":[projected_money_dict["rt"],projected_money_dict["survey"],projected_money_dict["total"]],
+    "measures":[projected_money_dict["tasks"]],
+    "markers":[0]
+  }
+]
+
+    merged["time_sign_up"] = pd.to_datetime(merged["time_sign_up"])
+    by_id_month = merged.groupby(by = ["user_id", "month"])
+    active = get_num_active_participants(by_id_month)
+    basic_stats["num_active_p"] = active
+
+    merged["year_exec"] = merged["time_exec"].apply(lambda x: x.year)
+    merged["day_exec"] = merged["time_exec"].apply(lambda x: x.day)
+    merged["time_exec_ymd"] = merged.apply(lambda row: str(row.year_exec) + "-" + str(row.month) + "-" + str(row.day_exec), axis=1)
+    streamgraph_df = merged[['time_exec_ymd','task_id', 'status']]
+    streamgraph_df = streamgraph_df[streamgraph_df['status'] == 1]
+    streamgraph_pivot = streamgraph_df.pivot_table(index='time_exec_ymd', columns='task_id',
+                        aggfunc=len, fill_value=0)
+    flattened_streamgraph = pd.DataFrame(streamgraph_pivot.to_records())
+    flattened_streamgraph = flattened_streamgraph.rename(columns={"('status', 1)": "corsi", "('status', 2)":"n_back", "('status', 3)":"t_switch",
+                          "('status', 4)":"sf_36", "('status', 5)":"phone_survey", "('status', 8)":"rt" })
+    #flattened_streamgraph = flattened_streamgraph.set_index('time_exec_ymd')
+    streamgraph_data = flattened_streamgraph.to_json(orient="records")
+
+    merged["time_sign_up"] = pd.to_datetime(merged["time_sign_up"])
+    merged["year_sign_up"] = merged["time_sign_up"].apply(lambda x: x.year)
+    merged["day_sign_up"] = merged["time_sign_up"].apply(lambda x: x.day)
+    merged["month_sign_up"] = merged["time_sign_up"].apply(lambda x: x.month)
+    merged["time_sign_up_ymd"] = merged.apply(lambda row: str(row.year_sign_up) + "-" + str(row.month_sign_up) + "-" + str(row.day_sign_up), axis=1)
+    sign_up_df = merged[['status','time_sign_up_ymd']]
+    sign_up_data = sign_up_df.groupby(by="time_sign_up_ymd").count()
+    flattened_sign_up = pd.DataFrame(sign_up_data.to_records())
+    sign_up = flattened_sign_up.to_json(orient="records")
+
+    data = {"basic_stats": basic_stats, "tasks": tasks, "bullet": bullet_data, "streamgraph_data": streamgraph_data, "sign_up": sign_up }
+    data_json = json.dumps(data)
+    return data_json
 
 
 @app.route("/about_study", methods=["GET"])
@@ -1181,7 +1301,7 @@ def contact():
     language_set()
     return render_template("contact.html", contact_csv=contact_csv[session["language"]], layout=layout[session["language"]])
 
-port = int(os.getenv("PORT"))
+#port = int(os.getenv("PORT"))
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=port)
+#if __name__ == '__main__':
+#    app.run(host='0.0.0.0', port=port)

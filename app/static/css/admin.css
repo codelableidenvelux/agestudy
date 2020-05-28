@@ -1,0 +1,63 @@
+
+.y-axis line {
+	opacity:.2;
+}
+.y-axis path {
+	display:none;
+}
+.line {
+	fill: none;
+	stroke-width: 1.5px;
+	opacity:.75;
+}
+.overlay {
+	fill: none;
+	pointer-events: all;
+}
+
+.hoverCircle {
+	opacity: .75;
+}
+
+.year_box{
+	background-color: #DCDCDC;
+}
+
+.bullet_chart_box{
+	background-color: #DCDCDC;
+}
+
+.gender_box{
+	background-color: #DCDCDC;
+}
+
+.user_type_box{
+	background-color: #DCDCDC;
+}
+
+.time_series{
+	background-color: #DCDCDC;
+}
+
+.task_frequency{
+	background-color: #DCDCDC;
+}
+#selectbox{
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: #fc8d62;
+  stroke-width: 3px;
+}
+
+.bullet { font: 10px sans-serif; }
+.bullet .marker { stroke: #000; stroke-width: 2px; }
+.bullet .tick line { stroke: #666; stroke-width: .5px; }
+.bullet .range.s0 { fill: #ccc; }
+.bullet .range.s1 { fill: #fc8d62; }
+.bullet .range.s2 { fill: #98AFC7; }
+.bullet .measure.s0 { fill: steelblue; }
+.bullet .title { font-size: 14px; font-weight: bold; }
+.bullet .subtitle { fill: #999; }

@@ -10,7 +10,8 @@ CREATE TABLE SESSION_INFO (
   pas_hash VARCHAR(255) NOT NULL,
   participation_id VARCHAR(255),
   consent INT,
-  time_sign_up TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  time_sign_up TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  admin INT
 );
 
 
