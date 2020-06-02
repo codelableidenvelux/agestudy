@@ -1,5 +1,6 @@
 # Task switching
 Monsell, S. (2003). Task switching. Trends in Cognitive Sciences, 7, 134-140.
+Wasylyshyn et al (2011) Aging and task switching: A meta analysis, Psychology and aging 26(1) 15-20 
 
 # Settings
 - Do not to show a welcome screen at all
