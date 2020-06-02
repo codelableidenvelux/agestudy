@@ -15,13 +15,13 @@ All other settings are default.
 Space seperated
 1. BLOCKNUMBER (as in 1 2 3 etc)
 2. BLOCKNAME (as in training, realColor, realshape, realmixed)
-3-6. Image shown according to the #Table below
+3. Image shown according to the Table below, occupyin till col. 6
 7. RT in ms
 8. Key status (1== correct, 2 == incorrect, 3 == too slow)
 9. Start of exp marker 
 
 
-# Table 
+Table 
 table colortasktable
   "color congruent   1 left " colorcue circle_yellow     1
   "color incongruent 2 left " colorcue rectangle_yellow  1
