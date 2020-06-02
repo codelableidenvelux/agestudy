@@ -12,9 +12,24 @@ Monsell, S. (2003). Task switching. Trends in Cognitive Sciences, 7, 134-140.
 All other settings are default.
 
 # Data
-1. BLOCKNUMBER
-2. BLOCKNAME
-3. @1
-4. RT
-5. STATUS
-6. $taskSwitch
+Space seperated
+1. BLOCKNUMBER (as in 1 2 3 etc)
+2. BLOCKNAME (as in training, realColor, realshape, realmixed)
+3-6. Image shown according to the #Table below
+7. RT in ms
+8. Key status (1== correct, 2 == incorrect, 3 == too slow)
+9. Start of exp marker 
+
+
+# Table 
+table colortasktable
+  "color congruent   1 left " colorcue circle_yellow     1
+  "color incongruent 2 left " colorcue rectangle_yellow  1
+  "color incongruent 2 right" colorcue circle_blue       2
+  "color congruent   1 right" colorcue rectangle_blue    2
+
+table shapetasktable
+  "shape congruent   1 left " shapecue circle_yellow     1
+  "shape incongruent 2 right" shapecue rectangle_yellow  2
+  "shape incongruent 2 left " shapecue circle_blue       1
+  "shape congruent   1 right" shapecue rectangle_blue    2
