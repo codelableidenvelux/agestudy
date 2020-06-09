@@ -10,6 +10,9 @@ import string
 import requests
 import uuid
 import json
+from email.message import EmailMessage
+from email.headerregistry import Address
+from email.utils import make_msgid
 
 app = Flask(__name__)
 key  = open("secret_key.txt", "r")
@@ -701,10 +704,11 @@ def login():
         select = "SELECT time_sign_up FROM SESSION_INFO WHERE user_id = (%s)"
         time_sign_up = db.execute(select, (session["user_id"],), 1)
         month_after_sign_up = time_sign_up[0][0] + timedelta(weeks=4)
-        if month_after_sign_up < datetime.now():
+        select_msg = f"SELECT * FROM BB_BOARD WHERE time_insert= (SELECT MAX(time_insert) FROM BB_BOARD WHERE USER_ID = (%s));"
+        bb_board_selection = db.execute(select_msg, (rows[0]['user_id'],), 1)
+
+        if month_after_sign_up < datetime.now() or bb_board_selection and bb_board_selection[0]["show_msg"]:
             session['show_p_id'] = False
-
-
         # Redirect user to home page
         return redirect("/home")
 
@@ -725,9 +729,47 @@ def check_password(password, new_password):
     number = len(re.findall(r"[0-9]", password))
     return len(password) >= 5 and number > 0
 
-from email.message import EmailMessage
-from email.headerregistry import Address
-from email.utils import make_msgid
+
+@app.route("/bb_board", methods=["GET", "POST"])
+def bb_board():
+    if request.method == "POST":
+        # get the participation id and user id from the form
+        participation_id =  request.form.get("participation_id_bb_board")
+        user_id_bb_board = request.form.get("user_id_bb_board")
+        # if the participation id was inserted then select the user id
+        # set the variable user_id to be inserted in the db
+        if participation_id:
+            select = "SELECT user_id FROM SESSION_INFO WHERE participation_id=(%s)"
+            user_id_selected = db.execute(select, (participation_id,), 1)
+            user_id = user_id_selected[0][0]
+        else:
+            user_id = user_id_bb_board
+
+        # If the user request to remove a message then set the show_msg variable to 0
+        if request.form['msg'] == 'remove_msg':
+            print("remove")
+            update = "UPDATE BB_BOARD SET show_msg = 0 WHERE user_id = (%s)"
+            db.execute(update, (user_id,), 0)
+        # Else user requested to send a message to the user
+        else:
+            # Get the message and the message title
+            bb_msg =  request.form.get("bb_msg")
+            bb_msg_title =  request.form.get("bb_msg_title")
+
+            # Insert the message in the database
+            if user_id:
+                insert = "INSERT INTO BB_BOARD(user_id, msg, msg_title, participation_id, show_msg) VALUES (%s, %s, %s, %s, %s);"
+                inserted = db.execute(insert, (user_id, bb_msg, bb_msg_title, participation_id, 1), 0)
+                # select the newest message inserted and if its the same as the message
+                # That was sent via the form then the insertion was successful and flash that message
+                select_msg = f"SELECT * FROM BB_BOARD WHERE time_insert= (SELECT MAX(time_insert) FROM BB_BOARD WHERE USER_ID = (%s));"
+                bb_board_selection = db.execute(select_msg, (user_id,), 1)
+                if bb_board_selection[0]["msg"] == bb_msg:
+                    flash("Message saved")
+                else:
+                    flash("Message failed try again")
+        return redirect("/admin")
+
 
 @app.route("/forgot_password", methods=["GET", "POST"])
 def forgot_password():
@@ -1094,6 +1136,17 @@ def home():
     if one_year_after_sign_up < datetime.now() and next_collection[0][0] and next_collection[0][0] < datetime.now():
         can_collect_payment = True
 
+    select_msg = f"SELECT * FROM BB_BOARD WHERE time_insert= (SELECT MAX(time_insert) FROM BB_BOARD WHERE USER_ID = (%s));"
+    bb_board_selection = db.execute(select_msg, (id,), 1)
+    bb_msg=""
+    bb_msg_title=""
+    if bb_board_selection and bb_board_selection[0]["show_msg"]:
+        bb_msg = bb_board_selection[0]["msg"]
+        bb_msg_title = bb_board_selection[0]["msg_title"]
+        bb_no_msg = False
+    else:
+        bb_no_msg = True
+
     # First recomendation is to do the phone survey
     if (5 not in completed_tasks or should_show_task(5)) and phone_survey_available:
         task = {"img":"/static/images/TaskIcons/phone_survey.png", "alt":"Phone survey", "btn_class": "survey", "title":tasks[session["language"]]['phone_survey_title'],  "text" : tasks[session["language"]]['phone_survey_description'], "link" : "/phone_survey", "button_text": tasks[session["language"]]['phone_survey_button']}
@@ -1116,7 +1169,7 @@ def home():
     else:
         recomendation = False
         task = {"img":"", "alt":"", "title":"", "btn_class":"",  "text" : "", "link" : "", "button_text": ""}
-    return render_template("home.html", price=price, can_collect_payment=can_collect_payment, user_type=user_type, recomendation=recomendation, layout=layout[session["language"]], home_csv=home_csv[session["language"]], btn_class=task["btn_class"], img=task["img"], alt=task["alt"], title=task["title"], text=task["text"], link=task["link"], button_text=task["button_text"])
+    return render_template("home.html", bb_no_msg=bb_no_msg, bb_msg_title=bb_msg_title, bb_msg=bb_msg, price=price, can_collect_payment=can_collect_payment, user_type=user_type, recomendation=recomendation, layout=layout[session["language"]], home_csv=home_csv[session["language"]], btn_class=task["btn_class"], img=task["img"], alt=task["alt"], title=task["title"], text=task["text"], link=task["link"], button_text=task["button_text"])
 
 
 @app.route("/payment", methods=["POST", "GET"])
@@ -1169,6 +1222,62 @@ def admin():
         return redirect("/home")
 
     return render_template("admin.html", admin_csv=admin_csv[session["language"]], layout=layout[session["language"]])
+
+@app.route("/select_user", methods=["GET"])
+@language_check
+def select_user():
+    username = request.args.get('username').lower()
+    user_id = request.args.get('user_id').lower()
+    participation_id = request.args.get('participation_id').lower()
+
+    if username:
+        # get the user information
+        select = """SELECT "user_id", "email", "gender",
+                           "birthyear", "user_type",
+                           "participation_id", "time_sign_up",
+                           "admin"
+                   FROM SESSION_INFO WHERE user_name  = (%s)"""
+        rows = db.execute(select, (username,), 1)
+    if user_id:
+        select = """SELECT "user_id", "email", "gender",
+                           "birthyear", "user_type",
+                           "participation_id", "time_sign_up",
+                           "admin"
+                   FROM SESSION_INFO WHERE user_id  = (%s)"""
+        rows = db.execute(select, (user_id,), 1)
+    if participation_id:
+        select = """SELECT "user_id", "email", "gender",
+                           "birthyear", "user_type",
+                           "participation_id", "time_sign_up",
+                           "admin"
+                   FROM SESSION_INFO WHERE participation_id  = (%s)"""
+        rows = db.execute(select, (participation_id,), 1)
+    user = {}
+    if rows:
+        user = {'user_id':rows[0]["user_id"], 'email':rows[0]["email"], 'gender':rows[0]["gender"],
+                'birthdate':rows[0]["birthyear"], 'user_type': rows[0]["user_type"],
+                'participation_id': rows[0]["participation_id"],
+                'time_sign_up': rows[0]['time_sign_up'], 'admin': rows[0]['admin'],
+                'psytoolkit_id': generate_id(rows[0]["user_id"])}
+    return jsonify(user)
+
+@app.route("/query_data", methods=["GET"])
+@language_check
+def query_data():
+    # gender
+    gender_r = request.args.get('gender').lower()
+    gender = preprocess_gender(gender_r)
+    select = """SELECT "user_id", "email", "gender",
+                       "birthyear", "user_type",
+                       "participation_id", "time_sign_up",
+                       "admin"
+               FROM SESSION_INFO WHERE gender = (%s)"""
+    rows = db.execute(select, (gender,), 1)
+
+    #User type
+    user_type = request.args.get('user_type')
+    print(user_type)
+    return jsonify(rows)
 
 @app.route("/get_data", methods=["GET"])
 @language_check
@@ -1223,6 +1332,7 @@ def get_data():
     merged = df_all_p.merge(tracked_task_df, on='user_id')
     merged["month"] = merged["time_exec"].apply(lambda x: x.month)
 
+
     tasks = task_frequency(merged)
     total_money_dict = total_money(merged)
     projected_money_dict = projected_money(num_p)
@@ -1276,6 +1386,38 @@ def get_data():
     data_json = json.dumps(data)
     return data_json
 
+@app.route("/inactive_users", methods=["GET"])
+@language_check
+def inactive_users():
+    select = "SELECT * FROM SESSION_INFO"
+    all_participants = db.execute(select, (""), 1)
+    df_all_p = pd.DataFrame(all_participants)
+    df_all_p = df_all_p.rename(columns={0: "user_id", 1: "user_name", 2:"email", 3:"gender", 4:"collect_possible",
+    5:"for_money", 6:"user_type", 7:"birthyear", 8: "pas_hash", 9: "consent", 10:"time_sign_up",
+    11:"participation_id", 12:"admin"})
+
+    # basic stats contains basic information
+    select = "SELECT * FROM TASK_COMPLETED"
+    task_completed = db.execute(select, ("", ), 1)
+    task_completed_df = pd.DataFrame(task_completed)
+    task_completed_df = task_completed_df.rename(columns={0:"time_exec", 1:"user_id", 2:"task_id",3:"status"})
+
+    sign_up_1_month_ago = datetime.now() - timedelta(weeks = 4)
+    # participants who have been signed up for over a month
+    p_signed_up_1_month_ago = set(df_all_p[df_all_p["time_sign_up"] < sign_up_1_month_ago]["user_id"].unique())
+    # participants who have performed tasks (not including surveys)
+    p_who_performed_tasks = set(task_completed_df["user_id"].unique())
+
+    # participants who signed up more than a month ago and hasnt performed any tasks
+    non_active_users = p_signed_up_1_month_ago - p_who_performed_tasks
+    print(non_active_users)
+    # participants_id of these non_active_users
+    inactive_users_p_id = df_all_p[df_all_p['user_id'].isin(non_active_users)]["participation_id"]
+    inactive_users_df = df_all_p[df_all_p['user_id'].isin(non_active_users)]
+    inactive_users = inactive_users_df[["user_id", "participation_id"]]
+    inactive_users_list = inactive_users.to_json(orient="records")
+    print(inactive_users_list)
+    return inactive_users_list
 
 @app.route("/about_study", methods=["GET"])
 @language_check

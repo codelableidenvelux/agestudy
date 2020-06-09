@@ -15,3 +15,6 @@ INSERT INTO tasks(task_link, dutch_link, task_name, frequency, price) VALUES ('h
 """
 
 INSERT INTO TASK_COMPLETED (user_id, task_id) VALUES (1, 0)
+add an admin
+update = "UPDATE SESSION_INFO SET admin = (%s) WHERE user_id=113;"
+alter = "ALTER TABLE session_info ADD COLUMN credits_participant INT;"

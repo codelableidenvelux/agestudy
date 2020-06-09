@@ -11,9 +11,9 @@ CREATE TABLE SESSION_INFO (
   participation_id VARCHAR(255),
   consent INT,
   time_sign_up TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  admin INT
+  admin INT,
+  credits_participant INT
 );
-
 
 
 CREATE TABLE TASKS (
@@ -32,6 +32,20 @@ CREATE TABLE RESET_PASSWORD(
   expiry_time TIMESTAMP NOT NULL,
   hash VARCHAR(255) NOT NULL
   reset_id VARCHAR(255) NOT NULL UNIQUE
+);
+
+
+CREATE TABLE BB_BOARD(
+  time_insert TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  user_id INT NOT NULL,
+  msg VARCHAR(500) NOT NULL,
+  msg_title VARCHAR(500)
+  participation_id VARCHAR(255),
+  show_msg INT,
+  FOREIGN KEY (user_id)
+    REFERENCES SESSION_INFO(user_id)
+    ON UPDATE NO ACTION
+    ON DELETE CASCADE
 );
 
 

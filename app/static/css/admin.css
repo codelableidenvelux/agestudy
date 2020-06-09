@@ -1,3 +1,13 @@
+.preview{
+	/* scroll horizontally as needed */
+	overflow-x: auto;
+
+	/* center contents */
+	text-align: center;
+}
+.length_text{
+	font-size: 20px;
+}
 
 .y-axis line {
 	opacity:.2;
@@ -40,6 +50,10 @@
 }
 
 .task_frequency{
+	background-color: #DCDCDC;
+}
+
+.db_print_box{
 	background-color: #DCDCDC;
 }
 #selectbox{

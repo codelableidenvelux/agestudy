@@ -84,8 +84,8 @@ Admin
 
 <div class="row time_series">
   <div class="col-12">
-    <button class="btn btn-secondary" id='b1_line' value='See Linechart' onclick="toggle_charts('linechart')">Linegraph</button>
-    <button class="btn btn-secondary" id='b2_stream' value='See Streamgraph' onclick="toggle_charts('streamgraph')">Streamgraph</button>
+    <button class="btn btn-secondary" id="b1_line" value="See Linechart" onclick="toggle_charts("linechart")">Linegraph</button>
+    <button class="btn btn-secondary" id="b2_stream" value="See Streamgraph" onclick="toggle_charts("streamgraph")">Streamgraph</button>
   </div>
 
   <div class="col-10">
@@ -102,4 +102,132 @@ Admin
     <div class="legend"></div>
   </div>
 </div>
+
+<section id="#select_user">
+<div class="row">
+  <div class="col-12">
+    <h1>Select user from database </h1>
+    <div class="form-group">
+      <div>
+        <!-- Userame -->
+        <label class="control-label" for="username">Search by email </label>
+        <input class="form-control" id="username" name="username" placeholder="Email" type="text" required />
+      </div>
+      <div>
+        <!-- user_id -->
+        <label class="control-label" for="user_id">Search by user_id </label>
+        <input class="form-control" id="user_id" name="user_id" placeholder="User id" type="text"/>
+      </div>
+      <div>
+        <!-- Participation_id -->
+        <label class="control-label" for="participation_id">Search by participation_id </label>
+        <input class="form-control" id="participation_id" name="participation_id" placeholder="Participation id" type="text"/>
+      </div>
+      <button class="btn btn-primary" onclick="select_user_ajax()">Search</button>
+    </div>
+    <div class="db_print_box">
+      <p class="user"></p>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="#select_by_gender_age">
+<div class="rows">
+  <div class="col-12">
+    <h1>Query DB</h1>
+    <button class='btn btn-secondary' onclick="clear_selection()">Clear selection</button>
+  </div>
+  <div>
+    <!-- Gender -->
+    <div class="form-drop">
+      <label class="control-label" for="gender">Query DB by gender</label>
+      <select class="form-control custom-select custom-select-lg mb-3" id="gender" name="gender">
+        <option selected disabled value="">Gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="db_print_box">
+      <p class="gender_p selection"></p>
+    </div>
+  </div>
+  <div>
+    <!-- user_type -->
+    <div class="form-drop">
+      <label class="control-label" for="user_type">Query DB by user_type</label>
+      <select class="form-control custom-select custom-select-lg mb-3" id="user_type" name="user_type">
+        <option selected disabled value="">User type</option>
+        <option value="1">Paid</option>
+        <option value="2">Unpaid</option>
+      </select>
+    </div>
+    <div class="db_print_box">
+      <p class="user_type_p selection"></p>
+    </div>
+  </div>
+  <button class="btn btn-primary" onclick="query_data_ajax()">Query DB</button>
+</div>
+</section>
+
+<section id="#inactive_users">
+<div>
+  <h1>Get inactive users by user id and participation id</h1>
+  <p>Inactive users have been signed up for over a month and have not completed any surveys or tasks </p>
+  <br>
+  <button class="btn btn-primary" onclick="inactive_users_ajax()">Get inactive users</button>
+  <br>
+  <p class="inactive_users_p selection"></p>
+</div>
+</section>
+
+<section id="#send_msg">
+<div>
+  <form action="/bb_board" method="post">
+  <h1>Send message to a user</h1>
+  <h3>Select user</h3>
+  <div>
+    <!-- Participation_id -->
+    <label class="control-label" for="participation_id_bb_board">Select by participation_id </label>
+    <input class="form-control" id="participation_id_bb_board" name="participation_id_bb_board" placeholder="Participation id" type="text"/>
+  </div>
+  <div>
+    <!-- user_id -->
+    <label class="control-label" for="user_id_bb_board">Select by user_id </label>
+    <input class="form-control" id="user_id_bb_board" name="user_id_bb_board" placeholder="User id" type="text"/>
+  </div>
+  <h3>Type message</h3>
+  <div>
+    <!-- Bulletin board title -->
+    <label class="control-label" for="bb_msg_title">Insert Title </label>
+    <input class="form-control" maxlength="500" id="bb_msg_title" name="bb_msg_title" placeholder="Insert Title" onkeyup="preview_bb_msg()" type="text"/>
+  </div>
+  <div>
+    <!-- Bulletin board message -->
+    <label class="control-label" for="bb_msg">Insert Message </label>
+    <input class="form-control" maxlength="500" id="bb_msg" name="bb_msg" placeholder="Insert Message" onkeyup="preview_bb_msg()" type="text"/>
+  </div>
+  <p>Message should not be very long</p>
+  <br>
+  <h3>Preview</h3>
+  <div class="card preview">
+    <div class="card-header">
+      My Messages
+    </div>
+    <div class="card-body">
+      <h3 class="card-title bb_board_title"></h3>
+      <p class="card-text bb_board_msg"></p>
+    </div>
+  </div>
+  <p class="length_text">0/500<p>
+  <br>
+  <button class="btn btn-primary" name="msg" value="send_msg" type="submit">Send message</button>
+  <button class="btn btn-primary" name="msg" value="remove_msg" type="submit">Remove message</button>
+  </form>
+</div>
+</section>
+
+
+
 {% endblock %}

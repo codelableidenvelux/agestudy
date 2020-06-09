@@ -6,6 +6,9 @@ body
     text-align: center;
 }
 
+.bb_board{
+  border-style: solid;
+}
 /* Text on axis and label font size */
 .axis
 {

@@ -28,7 +28,28 @@ the route to the task and the text in the button. -->
 </div>
 {%- endmacro %}
 
-<h1>{{ home_csv["h11"] }}</h1>
+<div class="card">
+  <div class="card-header">
+  {{ home_csv['title_bb_board'] }}
+  </div>
+  <div class="card-body">
+    {% if session.user_id and session.show_p_id and session.participation_id %}
+    <p>{{ layout["info1"] }}</p>
+    <p class="p_id_p"> <input class="js-copytextarea p_id" readonly value={{ session.participation_id }} /></p>
+    <p>{{ layout["info2"] }}</p>, <p>{{ layout["info3"] }}</p>
+    <p>{{ layout["info4"] }}<object type="image/svg+xml" data="../static/images/plus.svg" width="30" height="30"></object></p>,
+    <p>{{ layout["info5"] }}<object type="image/svg+xml" data="../static/images/participate.svg" width="30" height="30"></object></p>
+    <p>{{ layout["info6"] }} </p>
+    {% elif bb_no_msg %}
+    <h3 class="card-title">{{ home_csv["title_card"] }}</h3>
+    <p class="card-text bb_board_msg">{{ home_csv["msg_card"] }}</p>
+    {% else %}
+    <h3 class="card-title">{{ bb_msg_title }}</h3>
+    <p class="card-text bb_board_msg">{{ bb_msg }}</p>
+    {% endif %}
+  </div>
+</div>
+<br>
 
 <!-- if they have unlocked or uncompleted tasks then show them this div
 if its false the div is not show there are no recomendations-->
