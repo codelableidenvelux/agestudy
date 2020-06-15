@@ -7,6 +7,7 @@ from helpers import *
 import re
 from datetime import datetime, timedelta
 import string
+import random
 import requests
 import uuid
 import json
@@ -53,6 +54,8 @@ reset_password_email = read_csv("static/csv/reset_password_email.csv")
 youtube_csv = read_csv("static/csv/youtube.csv")
 flash_msg_csv = read_csv("static/csv/flash_msg.csv")
 admin_csv = read_csv("static/csv/admin.csv")
+rec_system_csv = read_csv("static/csv/rec_system.csv")
+rec_system_success_csv = read_csv("static/csv/rec_system_success.csv")
 
 # See which language was chosen and update the language
 def language_set():
@@ -216,7 +219,7 @@ def rt():
     # If one of them has been done then redirect the user to the video of the selected task directly
     # They should not do the rt or rt_long again
     #if rt_done or rt_long_done:
-    if rt_done:
+    if rt_done or task == "task_switching":
         # select the youtube link to the video
         select = f'SELECT {youtube_link_select} FROM TASKS WHERE task_name=(%s)'
         youtube_link = db.execute(select,(task,), 1)
@@ -403,6 +406,41 @@ def should_show_task(task_id):
     else:
         return True
 
+def calculate_rec_system_payment(f_promo_code):
+    """
+    This function calculates the reward/payment for referring friends to the study
+    It takes the f_promo_code which is the promo code from the user that is logged in
+    The user whose dashboard the payment will appear on.
+    """
+    total_payment = 0
+    successful_completion = 0
+    # select the number of times the user's promocode has been used
+    # in the table this is stored as f_promo_code because the user at this point is the friend
+    # make sure payment has not been collected already for this
+    select = "SELECT * FROM rec_system where f_promo_code=(%s) AND COLLECT NOT IN ( 0 )"
+    recomended = db.execute(select, (f_promo_code,), 1)
+    # go over each person the user recommended
+    for i in recomended:
+        # since you only know this user's promo code select their info from SESSION_INFO
+        # this is to check if they have been signed up for 1 year and have completed 12 tasks
+      select = "SELECT user_id,time_sign_up FROM SESSION_INFO WHERE promo_code=(%s)"
+      user_info = db.execute(select, (i["promo_code"],), 1)
+      # get the date 1 year after the user has signed up
+      today = datetime.now()
+      one_year_after_sign_up = user_info[0]["time_sign_up"] + timedelta(weeks = 52)
+      # if the user has been signed up for more than a year (52 weeks) then check if they
+      # have completed 12 tasks.. if they have not then the total_payment is 0
+      if one_year_after_sign_up < today:
+        # select the number of tasks they have completed
+        select = "SELECT * FROM TASK_COMPLETED WHERE user_id=(%s)"
+        executed_tasks = db.execute(select, (user_info[0]["user_id"],), 1)
+        # check if the number of tasks is more than 12 if so the referred friend has
+        # successfully completed the study and the user may get the reward
+        if len(executed_tasks) > 12:
+            total_payment = total_payment + 5
+            successful_completion = successful_completion + 1
+    return (len(recomended),total_payment, successful_completion)
+
 def calculate_money():
     """
     Calculate the total amount of money the user has earned since last payment collection
@@ -536,6 +574,7 @@ def register():
         gender_r = request.form.get("gender")
         password = request.form.get("password")
         new_password = request.form.get("confirmation")
+        f_promo_code_r = request.form.get("f_promo_code")
 
         # ensure that all fiels that are required were filled in correctly
         if not username_r or not birthdate_r or not gender_r or not email_r:
@@ -552,6 +591,8 @@ def register():
             user_type = 1
         birthdate = preprocess_birthdate(birthdate_r)
         gender = preprocess_gender(gender_r)
+        if f_promo_code_r:
+            f_promo_code = f_promo_code_r.upper().replace(" ", "")
 
         # Check if password matches and has a number, capital letter, lower case letter and minimum 5 characters
         if check_password(password, new_password):
@@ -584,17 +625,23 @@ def register():
             if len(all_p_ids) < 200:
                 message = "Subject: (IMPORTANT) New Participation ID's Needed \n\n There are less than 200 participation_ids left."
                 send_email(message, username, "agestudy@fsw.leidenuniv.nl")
-
+            promo_code = add_promo_code_2_db()
             # add user to the database
-            param = (username, email, gender, collect_possible, for_money, user_type, birthdate, hash, participation_id)
-            insert = "INSERT INTO session_info (user_name, email, gender, collect_possible, for_money, user_type, birthyear, pas_hash, participation_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            param = (username, email, gender, collect_possible, for_money, user_type, birthdate, hash, participation_id, promo_code)
+            insert = "INSERT INTO session_info (user_name, email, gender, collect_possible, for_money, user_type, birthyear, pas_hash, participation_id, promo_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             result = db.execute(insert, param, 0)
+
 
             select = "SELECT * FROM SESSION_INFO WHERE user_name = %s"
             rows = db.execute(select, (username,), 1)
             # Remember which user has logged in
             session['user_id'] = rows[0][0]
 
+            if f_promo_code_r:
+                # if user has been recommended by a friend add promo code to db
+                insert_promo_code = "INSERT INTO rec_system (user_id, promo_code, f_promo_code) VALUES (%s, %s, %s)"
+                params = (session["user_id"], promo_code, f_promo_code)
+                db.execute(insert_promo_code, params, 0)
 
             # send welcome email to paricipant and to agestudy with participants info
             message = 'Subject: New Participant \n\n username: ' + username + "\npsytoolkit_id: " + generate_id(session['user_id']) + "\n email: " + email + "\n user_id: " + str(rows[0][0]) + "\n user_type: " + str(user_type) + "\n gender: " + str(gender_r) + "\n language: " + session["language"] + "\n participation_id: " + participation_id + "\n Birthdate: " + birthdate
@@ -616,6 +663,13 @@ def register():
         language_set()
         return render_template("register.html",  consent_csv=consent_csv[session["language"]], register_csv=register_csv[session["language"]], layout=layout[session["language"]])
 
+@app.route("/check_promo_code", methods=["GET"])
+def check_promo_code():
+    f_promo_code_r = request.args.get('f_promo_code')
+    f_promo_code = f_promo_code_r.upper().replace(" ", "")
+    select = "SELECT promo_code FROM SESSION_INFO WHERE promo_code = (%s)"
+    rows = db.execute(select, (f_promo_code,), 1)
+    return jsonify(len(rows) == 0)
 
 @app.route("/availability", methods=["GET"])
 def availability():
@@ -701,14 +755,20 @@ def login():
         session['admin'] = rows[0]['admin']
         session['participation_id'] = rows[0]['participation_id']
         session['show_p_id'] = True
+        session['show_rec_system'] = True
         select = "SELECT time_sign_up FROM SESSION_INFO WHERE user_id = (%s)"
         time_sign_up = db.execute(select, (session["user_id"],), 1)
         month_after_sign_up = time_sign_up[0][0] + timedelta(weeks=4)
+        two_weeks_after_sign_up = time_sign_up[0][0] + timedelta(weeks=2)
+
         select_msg = f"SELECT * FROM BB_BOARD WHERE time_insert= (SELECT MAX(time_insert) FROM BB_BOARD WHERE USER_ID = (%s));"
         bb_board_selection = db.execute(select_msg, (rows[0]['user_id'],), 1)
 
         if month_after_sign_up < datetime.now() or bb_board_selection and bb_board_selection[0]["show_msg"]:
             session['show_p_id'] = False
+        # user has been signed up for less than 2 weeks
+        if two_weeks_after_sign_up > datetime.now():
+            session['show_rec_system'] = False
         # Redirect user to home page
         return redirect("/home")
 
@@ -1100,11 +1160,16 @@ def home():
     Home page, contains a money tab and a recommended task
     """
 
-    # calculate the money earned to draw the barchart
-    price = calculate_money()
-
     # make the recomendation system which will recommend one task, show only 1 div
     id = session["user_id"]
+
+    select = "SELECT promo_code FROM SESSION_INFO WHERE USER_ID=(%s)"
+    f_promo_code = db.execute(select, (id,), 1)
+    # calculate the money earned to draw the barchart
+    task_payment = calculate_money()
+    rec_system_payment = calculate_rec_system_payment(f_promo_code[0][0])
+    price = task_payment + rec_system_payment[1]
+
     # select all the completed tasks
     select = f"SELECT * FROM TASK_COMPLETED WHERE USER_ID = (%s)"
     rows = db.execute(select,(id,), 1)
@@ -1128,6 +1193,7 @@ def home():
     time_sign_up = db.execute(select, (session["user_id"],), 1)
     three_weeks_after_sign_up = time_sign_up[0][0] + timedelta(weeks=3)
     phone_survey_available = three_weeks_after_sign_up < datetime.now()
+
 
     one_year_after_sign_up = time_sign_up[0][0] + timedelta(weeks=52)
     select = "SELECT next_collection from TASK_COMPLETED WHERE user_id = (%s)"
@@ -1169,8 +1235,30 @@ def home():
     else:
         recomendation = False
         task = {"img":"", "alt":"", "title":"", "btn_class":"",  "text" : "", "link" : "", "button_text": ""}
-    return render_template("home.html", bb_no_msg=bb_no_msg, bb_msg_title=bb_msg_title, bb_msg=bb_msg, price=price, can_collect_payment=can_collect_payment, user_type=user_type, recomendation=recomendation, layout=layout[session["language"]], home_csv=home_csv[session["language"]], btn_class=task["btn_class"], img=task["img"], alt=task["alt"], title=task["title"], text=task["text"], link=task["link"], button_text=task["button_text"])
+    return render_template("home.html", len_rec_system_payment=rec_system_payment[0], suc_rec_system=rec_system_payment[2], bb_no_msg=bb_no_msg, bb_msg_title=bb_msg_title, bb_msg=bb_msg, price=price, can_collect_payment=can_collect_payment, user_type=user_type, recomendation=recomendation, layout=layout[session["language"]], home_csv=home_csv[session["language"]], btn_class=task["btn_class"], img=task["img"], alt=task["alt"], title=task["title"], text=task["text"], link=task["link"], button_text=task["button_text"])
 
+@app.route("/rec_system", methods=["GET", "POST"])
+@login_required
+@language_check
+def rec_system():
+    select = "SELECT promo_code FROM SESSION_INFO WHERE USER_ID=(%s)"
+    promo_code = db.execute(select, (session["user_id"],), 1)
+    if request.method == "POST":
+        f_promo_code_r = request.form.get("f_promo_code")
+        f_promo_code = f_promo_code_r.upper().replace(" ", "")
+        if f_promo_code != promo_code[0][0]:
+            insert = "INSERT INTO rec_system (user_id, promo_code, f_promo_code, collect) VALUES (%s, %s, %s, %s)"
+            params = (session["user_id"], promo_code[0][0], f_promo_code, 1)
+            db.execute(insert, params, 0)
+            return render_template("rec_system_success.html", rec_system_success_csv=rec_system_success_csv[session["language"]], layout=layout[session["language"]])
+        else:
+            flash(flash_msg_csv[session["language"]]["same_promo_code"])
+            return redirect("/rec_system")
+    else:
+        select = "SELECT promo_code FROM rec_system WHERE promo_code = (%s)"
+        rows = db.execute(select, (promo_code[0][0],), 1)
+        show_rec_system_form = (len(rows) == 0)
+        return render_template("rec_system.html", show_rec_system_form=show_rec_system_form, promo_code=promo_code[0][0], layout=layout[session["language"]], rec_system_csv=rec_system_csv[session["language"]] )
 
 @app.route("/payment", methods=["POST", "GET"])
 @login_required
@@ -1186,17 +1274,27 @@ def payment():
         address = request.form.get("address")
         collection = request.form.get("collection")
         id = session["user_id"]
-        money_earned = calculate_money()
+        task_payment = calculate_money()
         # update the collection to 0 which means that the user has/will collect the money_earned
         # otherwise collect is 1
         date_collected = datetime.now()
         next_collection = datetime.now() + timedelta(weeks = 52)
         update = f"UPDATE TASK_COMPLETED SET COLLECT=0, DATE_COLLECTED = (%s), next_collection = (%s) WHERE USER_ID = (%s)"
-        db.execute(update, (date_collected, id, next_collection), 0)
+        db.execute(update, (date_collected, next_collection, id), 0)
 
         # select the user info
         select = f"SELECT * FROM SESSION_INFO WHERE USER_ID = (%s)"
         rows = db.execute(select, (id,), 1)
+
+        # if the payment has already been collected by friend then make sure friend does not see payment again
+        # collect = 0 if it has been collected and 1 otherwise
+        f_promo_code = rows[0]["promo_code"]
+        rec_system_payment = calculate_rec_system_payment(f_promo_code)
+
+        update = f"UPDATE rec_system SET COLLECT=0 WHERE f_promo_code = (%s)"
+        db.execute(update, (f_promo_code,), 0)
+
+        money_earned = task_payment + rec_system_payment[1]
         # send_email with the users info to our email to contact them about participating
         # email contains username, email, usertype, user_id and the ammount to be collect
         message = 'Subject: Payment collection \n\n The following participant wants to collect their payment for the study' + '\n username: ' + str(rows[0]['user_name']) + "\n First name: " + first_name + "\n Last name: " + last_name + "\n IBAN: " + IBAN + "\n Address: " + address +  "\n email: " + str(rows[0]['email']) + "\n user_id: " + str(rows[0]['user_id']) + "\n user_type: " + str(rows[0]['user_type']) + "\n ammount to collect: " + str(money_earned) + "\n language: " + session["language"]

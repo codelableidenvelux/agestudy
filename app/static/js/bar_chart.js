@@ -13,7 +13,7 @@ if (document.getElementById("barChart")){
     maxVal = 50
   }
   else{
-    maxVal = 100
+    maxVal = 200
   }
   // set the data in the right format
   var data = [
@@ -46,7 +46,7 @@ function barChart(data){
   };
 
   // set the width and height
-  var width = 800 - margin.left - margin.right,
+  var width = 600 - margin.left - margin.right,
   height = 100 - margin.top - margin.bottom;
 
   // append an svg with a g tag

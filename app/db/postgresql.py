@@ -55,6 +55,7 @@ class Db():
                 else:
                     conn.commit()
             except Exception as inst:
+                print(inst)
                 self.logger.warning(f'Unable to execute command:, {sql}, {type(inst)}, {inst.args}, {inst}')
             finally:
                 cur.close()

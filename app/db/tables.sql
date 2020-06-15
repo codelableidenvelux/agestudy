@@ -12,7 +12,8 @@ CREATE TABLE SESSION_INFO (
   consent INT,
   time_sign_up TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   admin INT,
-  credits_participant INT
+  credits_participant INT,
+  promo_code VARCHAR(100)
 );
 
 
@@ -26,11 +27,20 @@ CREATE TABLE TASKS (
   youtube_link VARCHAR(255)
 );
 
+CREATE TABLE rec_system(
+  user_id INT NOT NULL,
+  time_exec TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  promo_code VARCHAR(100) NOT NULL,
+  f_promo_code VARCHAR(100) NOT NULL,
+  collect INT,
+  date_collected TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE RESET_PASSWORD(
   user_id INT NOT NULL,
   time_exec TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   expiry_time TIMESTAMP NOT NULL,
-  hash VARCHAR(255) NOT NULL
+  hash VARCHAR(255) NOT NULL,
   reset_id VARCHAR(255) NOT NULL UNIQUE
 );
 

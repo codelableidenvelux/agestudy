@@ -13,6 +13,7 @@ list11,Register,Registreren
 list12,Log In,Inloggen
 list13,More Information, Meer Informatie
 list14,Admin,Admin
+list15,Recommend Study,Studie Aanbevelen
 info1,Your participation ID is:,Uw deelname-ID is:
 info2,Please copy and paste this into the QuantActions TapCounter App, Kopieer en plak dit in de QuantActions TapCounter App
 info3,by launching the App, wanneer de App is geopend
@@ -20,3 +21,4 @@ info4,click on the plus sign, klik op het plus teken
 info5,then Participate, dan Participate
 info6,and Paste, en Paste
 copy,Copy participation ID, Kopieer deelname-ID
+info_banner,We need your help. Tell your friends about our research and earn 5 EUR for each successful signup OR click <a href=/rec_system> here</a> if you were recommended by a friend. ,We hebben uw hulp nodig. Vertel uw vrienden over ons onderzoek en verdien 5 EUR voor elke succesvolle inschrijving OF <a href=/rec_system> klik</a> hier als u bent  doorverwezen door een vriend.

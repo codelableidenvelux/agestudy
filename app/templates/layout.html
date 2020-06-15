@@ -44,6 +44,9 @@
         <li class="nav-item"><a class="nav-link" href="/">{{ layout["list2"] }}</a></li>
         <li class="nav-item"><a class="nav-link" href="/eeg">{{ layout["list3"] }}</a></li>
         <li class="nav-item"><a class="nav-link" href="/consent">{{ layout["list4"] }}</a></li>
+        {% if session.show_rec_system == True %}
+        <li class="nav-item"><a class="nav-link" href="/rec_system">{{ layout["list15"] }}</a></li>
+        {% endif %}
         <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           {{ layout["list13"] }}
@@ -106,24 +109,10 @@
     </div>
   </header>
   {% endif %}
-<!--
-  {% if session.user_id and session.show_p_id and session.participation_id %}
-  <div class="container-fluid">
-    <div class="row">
-      <div class="banner col-sm">
-      <p>{{ layout["info1"] }}</p>
-      <p class="p_id_p"> <input class="js-copytextarea p_id" readonly value={{ session.participation_id }} /></p>
-      <p>{{ layout["info2"] }}</p>, <p>{{ layout["info3"] }}</p>
-      <p>{{ layout["info4"] }}<object type="image/svg+xml" data="../static/images/plus.svg" width="30" height="30"></object></p>,
-      <p>{{ layout["info5"] }}<object type="image/svg+xml" data="../static/images/participate.svg" width="30" height="30"></object></p>
-      <p>{{ layout["info6"] }} </p>
 
-      <button class="js-textareacopybtn btn btn-primary">{{ layout["copy"] }}</button>
-      </div>
-    </div>
-  </div>
-  {% endif %}
--->
+  {% block banner %}
+  {% endblock %}
+
   <!-- Fill main with different html files -->
   <main class="container p-5">
     {% block main %}{% endblock %}

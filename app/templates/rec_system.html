@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block title %}
+recommend to a friend
+{% endblock %} {% block main %}
+<link href="/static/css/rec_system.css" rel="stylesheet"/>
+
+<div>
+  <h1> {{rec_system_csv["h11"]}}</h1>
+  <p>{{rec_system_csv["p13"]|safe()}}</p>
+  <div class="row">
+    <div class="col d-flex justify-content-center">
+      <div class="card" style="width: 18rem;">
+        <div class="card-header">
+          <p class="card-title">{{rec_system_csv["p11"]}}</p>
+        </div>
+
+        <img class="card-img-top" src="../static/images/gift.svg" alt="Present box">
+        <div class="card-body">
+          <p class="card-title">{{rec_system_csv["p12"]}}</p>
+          <p class="promo_code"> <input class="js-copytextarea" readonly value={{ promo_code }} /></p>
+          <br>
+          <button class="js-textareacopybtn btn btn-primary">{{ rec_system_csv["copy"] }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div>
+  {% if show_rec_system_form %}
+  <h1> {{rec_system_csv["h12"]}}</h1>
+  <p>{{rec_system_csv["p14"]}}</p>
+  <form class="f_promo_code" action="/rec_system" class="needs-validation" method="post">
+    <div class="form-group">
+      <input class="form-control" name="f_promo_code" id="f_promo_code" placeholder="{{ rec_system_csv['placeholder'] }}" type="text" required />
+      <div class="invalid-feedback">
+        {{rec_system_csv["invalid_feedback"]}}
+      </div>
+    </div>
+    <button class="btn btn-primary" id="f_promo_code_button" disabled="disabled" type="submit">{{ rec_system_csv['button1'] }}</button>
+  </form>
+  <script src="/static/js/rec_system.js"></script>
+  {% endif %}
+</div>
+
+{% endblock %}

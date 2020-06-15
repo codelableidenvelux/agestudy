@@ -12,3 +12,5 @@ robot,Please click on the I am not a robot checkbox,Klik op het vakje "Ik ben ge
 invalid_token,Invalid verifcation code. Please request a new one.,Ongelidge verificatie code. Vraag een nieuwe aan alstublieft.
 expired_token,Verification code has expired. Please request a new one., Verificatiecode is verlopen. Vraag een nieuwe aan alstublieft.
 incorrect_route,Incorrect route. Try again,Onjuiste route. Probeer het opnieuw
+same_promo_code,You cannot use your own promocode. Please fill in a valid code.,U kunt uw eigen promocode niet gebruiken. Vul een geldige code in
+alstublieft.

@@ -2,7 +2,21 @@
 
 {% block title %}
 Home
-{% endblock %} {% block main %}
+{% endblock %}
+
+{% block banner %}
+{% if session.user_id  %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="banner col-sm">
+      <p>{{ layout["info_banner"]|safe() }}</p>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block main %}
 <!-- javascript links -->
 <script src="/static/js/bar_chart.js"></script>
 <!-- D3 links -->
@@ -40,6 +54,8 @@ the route to the task and the text in the button. -->
     <p>{{ layout["info4"] }}<object type="image/svg+xml" data="../static/images/plus.svg" width="30" height="30"></object></p>,
     <p>{{ layout["info5"] }}<object type="image/svg+xml" data="../static/images/participate.svg" width="30" height="30"></object></p>
     <p>{{ layout["info6"] }} </p>
+    <br>
+    <button class="js-textareacopybtn btn btn-primary">{{ layout["copy"] }}</button>
     {% elif bb_no_msg %}
     <h3 class="card-title">{{ home_csv["title_card"] }}</h3>
     <p class="card-text bb_board_msg">{{ home_csv["msg_card"] }}</p>
@@ -80,21 +96,21 @@ if its false the div is not show there are no recomendations-->
 {% if user_type %}
 <div class="d-none d-sm-block">
 <div class="price" id="price" value="{{price}}" name="price"></div>
-<h1>{{home_csv["js_title"] }}</h1>
+<h3>{{home_csv["js_title"] }}</h3>
 <div id=barChart></div>
 {%if can_collect_payment %}
 <a id="collection" href="/payment" class="btn btn-primary">{{ home_csv["button2"] }}</a>
-{% endif %}
+{% else %}
 <button class="btn btn-secondary">{{ home_csv["button2"] }}</button>
+{% endif %}
 <input type="button" class="btn btn-primary"  value="?" data-toggle="popover" data-placement="right" data-content="{{ home_csv['payment_info'] }}">
 </div>
+<p>{{ home_csv["len_rec_system_payment_1"] }} {{len_rec_system_payment}} {{ home_csv["len_rec_system_payment_2"] }}</p>
 {% endif %}
 
 <br><br>
 <p><b>{{ home_csv["p3"] }}</b></p>
 <a href="/about_app#working_app" class="btn btn-danger"> {{ home_csv["button_app"] }}</a>
-<br><br>
-<p><b>{{ home_csv["p4"] }}, {{ home_csv["p5"] }} </b></p>
 <br><br>
 
 {% if not session.show_p_id and session.participation_id %}
