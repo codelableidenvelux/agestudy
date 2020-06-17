@@ -228,6 +228,25 @@ Admin
 </div>
 </section>
 
-
+<section id="#change_user_info">
+<div class="row">
+  <div class="col-12">
+    <h1>Change user info from Database (BEWARE CHANGES CANNOT BE REVERSED)</h1>
+    <div class="form-group">
+      <div>
+        <!-- user_id -->
+        <label class="control-label" for="change_user_id">Search by user_id </label>
+        <input class="form-control" id="change_user_id" name="change_user_id" placeholder="User id" type="text"/>
+      </div>
+      <div>
+        <!-- Participation_id -->
+        <label class="control-label" for="change_participation_id">Search by participation_id </label>
+        <input class="form-control" id="change_participation_id" name="change_participation_id" placeholder="Participation id" type="text"/>
+      </div>
+      <button class="btn btn-primary" onclick="change_user_ajax()">Set as for credit participant</button>
+    </div>
+  </div>
+</div>
+</section>
 
 {% endblock %}

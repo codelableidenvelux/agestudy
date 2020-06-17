@@ -110,6 +110,14 @@ function select_user_ajax(){
   });
 }
 
+function change_user_ajax(){
+  $.getJSON("/change_user", {'change_user_id': change_user_id.value, 'change_participation_id': change_participation_id.value}, function(result, state){
+    if (state === "success"){
+      console.log(result)
+    }
+  });
+}
+
 function clear_selection(){
   d3.selectAll('.selection').text("")
 }

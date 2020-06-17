@@ -529,6 +529,19 @@ def index():
         calculate_money()
         return render_template("index.html", layout=layout[session["language"]], phone_survey_available=phone_survey_available, tasks=tasks[session["language"]], show_corsi=show_corsi, show_n_back=show_n_back, show_task_switching=show_task_switching, show_sf_36=show_sf_36, show_phone_survey=show_phone_survey)
 
+def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
+def add_promo_code_2_db():
+  promo_code = id_generator()
+  select = "SELECT promo_code from session_info"
+  existing_codes = db.execute(select, ("",), 1)
+  while any(promo_code == code[0] for code in existing_codes):
+    promo_code = id_generator()
+  #update = "UPDATE SESSION_INFO SET promo_code = (%s) WHERE user_id=(%s);"
+  #db.execute(update, (promo_code,user_id), 0)
+  return promo_code
+
 ################################################################################
 ################################ REGISTER #####################################
 ###############################################################################
@@ -639,9 +652,10 @@ def register():
 
             if f_promo_code_r:
                 # if user has been recommended by a friend add promo code to db
-                insert_promo_code = "INSERT INTO rec_system (user_id, promo_code, f_promo_code) VALUES (%s, %s, %s)"
-                params = (session["user_id"], promo_code, f_promo_code)
+                insert_promo_code = "INSERT INTO rec_system (user_id, promo_code, f_promo_code, collect) VALUES (%s, %s, %s, %s)"
+                params = (session["user_id"], promo_code, f_promo_code, 1)
                 db.execute(insert_promo_code, params, 0)
+
 
             # send welcome email to paricipant and to agestudy with participants info
             message = 'Subject: New Participant \n\n username: ' + username + "\npsytoolkit_id: " + generate_id(session['user_id']) + "\n email: " + email + "\n user_id: " + str(rows[0][0]) + "\n user_type: " + str(user_type) + "\n gender: " + str(gender_r) + "\n language: " + session["language"] + "\n participation_id: " + participation_id + "\n Birthdate: " + birthdate
@@ -759,7 +773,7 @@ def login():
         select = "SELECT time_sign_up FROM SESSION_INFO WHERE user_id = (%s)"
         time_sign_up = db.execute(select, (session["user_id"],), 1)
         month_after_sign_up = time_sign_up[0][0] + timedelta(weeks=4)
-        two_weeks_after_sign_up = time_sign_up[0][0] + timedelta(weeks=2)
+        two_weeks_after_sign_up = time_sign_up[0][0] + timedelta(weeks=0)
 
         select_msg = f"SELECT * FROM BB_BOARD WHERE time_insert= (SELECT MAX(time_insert) FROM BB_BOARD WHERE USER_ID = (%s));"
         bb_board_selection = db.execute(select_msg, (rows[0]['user_id'],), 1)
@@ -1320,6 +1334,20 @@ def admin():
         return redirect("/home")
 
     return render_template("admin.html", admin_csv=admin_csv[session["language"]], layout=layout[session["language"]])
+
+@app.route("/change_user", methods=["GET"])
+@language_check
+def change_user():
+    user_id = request.args.get('change_user_id').lower()
+    participation_id = request.args.get('change_participation_id').lower()
+    if user_id:
+        update = "UPDATE SESSION_INFO SET credits_participant = 1 WHERE user_id = (%s)"
+        db.execute(insert, (user_id,), 0)
+    elif participation_id:
+        update = "UPDATE SESSION_INFO SET credits_participant = 1 WHERE participation_id = (%s)"
+        db.execute(insert, (participation_id,), 0)
+    return jsonify("hello")
+
 
 @app.route("/select_user", methods=["GET"])
 @language_check

@@ -12,18 +12,6 @@ import string
 import random
 from datetime import datetime, timedelta
 
-def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
-    return ''.join(random.choice(chars) for _ in range(size))
-
-def add_promo_code_2_db():
-  promo_code = id_generator()
-  select = "SELECT promo_code from session_info"
-  existing_codes = db.execute(select, ("",), 1)
-  while any(promo_code == code[0] for code in existing_codes):
-    promo_code = id_generator()
-  #update = "UPDATE SESSION_INFO SET promo_code = (%s) WHERE user_id=(%s);"
-  #db.execute(update, (promo_code,user_id), 0)
-  return promo_code
 
 def read_csv(filename):
     df = pd.read_csv(filename, sep=",", index_col=0, encoding = "utf-8")
