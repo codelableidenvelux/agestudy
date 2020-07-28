@@ -12,8 +12,35 @@ Account
     {{username}}
   </div>
   </div>
+  {% if session.participation_id %}
+  <section>
+  <h1>{{ account_csv["reconnect_p_id"] }}</h1>
+  <p>{{ account_csv["p_id_info"] }}</p>
+  <br></br>
+  <p><b>{{ layout["method_1"] }}</b></p><br>
+  <p>{{ layout["info2a"] }}</p><img style="height:29px; margin:0;" src="../static/images/menu_tapcounterapp.png">.
+  <br>
+  <p>{{ layout["info3a"] }}</p><img style="height:29px; margin:0;" src="../static/images/participate-beta_tapcounterapp.png">.
+  <br>
+  <p>{{ layout["info4a"] }}</p>
+  <br>
+  <img src="http://quantactions.com/qrgen.php?id={{session.participation_id}}" alt="barcode participation id">
+  <br>
+  <p><b>{{ layout["method_2"] }}</b></p>
+  <br>
+  <p>{{ layout["info1"] }}</p>
+  <p class="p_id_p"> <input class="js-copytextarea p_id" readonly value={{ session.participation_id }} /></p>
+  <p>{{ layout["info2"] }}</p> <p>{{ layout["info3"] }}</p>,
+  <p>{{ layout["info4"] }}<object type="image/svg+xml" data="../static/images/plus.svg" width="30" height="30"></object></p>,
+  <p>{{ layout["info5"] }}<object type="image/svg+xml" data="../static/images/participate.svg" width="30" height="30"></object></p>
+  <p>{{ layout["info6"] }} </p>
+  <br>
+  <button class="js-textareacopybtn btn btn-primary">{{ layout["copy"] }}</button>
   <br><br>
-
+  </section>
+  {% endif %}
+  <section>
+  <h1>{{account_csv["change_pas"]}}</h1>
   <!-- Form, allow user to change password -->
   <form action="/account" method="post" class = "needs-validation" novalidate>
     <button id = "demo" type="button" class="btn btn-primary">{{account_csv["button1"]}}</button>
@@ -36,6 +63,7 @@ Account
       <button id = "submit" class="btn btn-primary" type="submit">{{account_csv["button2"]}}</button>
     </div>
   </form>
+  </section>
   <!--This script was written with help from https://www.w3schools.com/howto/howto_js_password_validation.asp -->
   <script>
     var password = document.getElementById("password");

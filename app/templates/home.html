@@ -5,13 +5,21 @@ Home
 {% endblock %}
 
 {% block banner %}
-{% if session.user_id  %}
+{% if user_type  %}
 <div class="container-fluid">
-  <div class="row">
-    <div class="banner col-sm">
-      <p>{{ layout["info_banner"]|safe() }}</p>
-    </div>
+<div class="row">
+  <div class="banner col-sm">
+    <p>{{ layout["info_banner"]|safe() }}</p>
   </div>
+</div>
+</div>
+{% else %}
+<div class="container-fluid">
+<div class="row">
+  <div class="banner col-sm">
+    <p>{{ layout["info_banner_2"]|safe() }}</p>
+  </div>
+</div>
 </div>
 {% endif %}
 {% endblock %}
@@ -32,38 +40,51 @@ the image of the task and its alt, the title and description of the task,
 the route to the task and the text in the button. -->
 {% macro card(img, alt, title, text, link, button_text) -%}
 <div class="card " style="width: 18rem;">
-  <img src="{{ img }}" class="card-img-top" alt="{{ alt }}">
-  <div class="card-body">
-    <h5 class="card-title" id="title">{{ title }}</h5>
-    <p class="card-text">{{ text }}</p>
-    <br>
-    <a href="{{link}}" class="btn btn-primary {{btn_class}}" onclick="onClickPC()" id="button_task">{{ button_text }}</a>
-  </div>
+<img src="{{ img }}" class="card-img-top" alt="{{ alt }}">
+<div class="card-body">
+  <h5 class="card-title" id="title">{{ title }}</h5>
+  <p class="card-text">{{ text }}</p>
+  <br>
+  <a href="{{link}}" class="btn btn-primary {{btn_class}}" onclick="onClickPC()" id="button_task">{{ button_text }}</a>
+</div>
 </div>
 {%- endmacro %}
 
 <div class="card">
-  <div class="card-header">
-  {{ home_csv['title_bb_board'] }}
-  </div>
-  <div class="card-body">
-    {% if session.user_id and session.show_p_id and session.participation_id %}
-    <p>{{ layout["info1"] }}</p>
-    <p class="p_id_p"> <input class="js-copytextarea p_id" readonly value={{ session.participation_id }} /></p>
-    <p>{{ layout["info2"] }}</p>, <p>{{ layout["info3"] }}</p>
-    <p>{{ layout["info4"] }}<object type="image/svg+xml" data="../static/images/plus.svg" width="30" height="30"></object></p>,
-    <p>{{ layout["info5"] }}<object type="image/svg+xml" data="../static/images/participate.svg" width="30" height="30"></object></p>
-    <p>{{ layout["info6"] }} </p>
-    <br>
-    <button class="js-textareacopybtn btn btn-primary">{{ layout["copy"] }}</button>
-    {% elif bb_no_msg %}
-    <h3 class="card-title">{{ home_csv["title_card"] }}</h3>
-    <p class="card-text bb_board_msg">{{ home_csv["msg_card"] }}</p>
-    {% else %}
-    <h3 class="card-title">{{ bb_msg_title }}</h3>
-    <p class="card-text bb_board_msg">{{ bb_msg }}</p>
-    {% endif %}
-  </div>
+<div class="card-header">
+{{ home_csv['title_bb_board'] }}
+</div>
+<div class="card-body">
+  {% if session.user_id and session.show_p_id and session.participation_id %}
+  <p>{{ layout["info1a"] }}</p>
+  <br></br>
+  <p><b>{{ layout["method_1"] }}</b></p><br>
+  <p>{{ layout["info2a"] }}</p><img style="height:29px; margin:0;" src="../static/images/menu_tapcounterapp.png">.
+  <br>
+  <p>{{ layout["info3a"] }}</p><img style="height:29px; margin:0;" src="../static/images/participate-beta_tapcounterapp.png">.
+  <br>
+  <p>{{ layout["info4a"] }}</p>
+  <br>
+  <img src="http://quantactions.com/qrgen.php?id={{session.participation_id}}" alt="barcode participation id">
+  <br>
+  <p><b>{{ layout["method_2"] }}</b></p>
+  <br>
+  <p>{{ layout["info1"] }}</p>
+  <p class="p_id_p"> <input class="js-copytextarea p_id" readonly value={{ session.participation_id }} /></p>
+  <p>{{ layout["info2"] }}</p> <p>{{ layout["info3"] }}</p>,
+  <p>{{ layout["info4"] }}<object type="image/svg+xml" data="../static/images/plus.svg" width="30" height="30"></object></p>,
+  <p>{{ layout["info5"] }}<object type="image/svg+xml" data="../static/images/participate.svg" width="30" height="30"></object></p>
+  <p>{{ layout["info6"] }} </p>
+  <br>
+  <button class="js-textareacopybtn btn btn-primary">{{ layout["copy"] }}</button>
+  {% elif bb_no_msg %}
+  <h3 class="card-title">{{ home_csv["title_card"] }}</h3>
+  <p class="card-text bb_board_msg">{{ home_csv["msg_card"] }}</p>
+  {% else %}
+  <h3 class="card-title">{{ bb_msg_title }}</h3>
+  <p class="card-text bb_board_msg">{{ bb_msg }}</p>
+  {% endif %}
+</div>
 </div>
 <br>
 
@@ -73,14 +94,14 @@ if its false the div is not show there are no recomendations-->
 <h3> {{ home_csv["p1"] }} </h3>
 <form id="check_form">
 <div class="form-check">
-  <input class="form-check-input" type="checkbox" value="pc" id="pc" onclick="onClickPC()"
-  {% if session.pc %} checked {%endif%}
-  >
-  <label class="form-check-label" for="pc">
-    {{ home_csv["check_1"] }}
-  </label>
-  <br>
- <p style="color:red;">{{ home_csv["p0"] }}</p>
+<input class="form-check-input" type="checkbox" value="pc" id="pc" onclick="onClickPC()"
+{% if session.pc %} checked {%endif%}
+>
+<label class="form-check-label" for="pc">
+  {{ home_csv["check_1"] }}
+</label>
+<br>
+<p style="color:red;">{{ home_csv["p0"] }}</p>
 </div>
 </form>
 {{ card(img, alt, title, text, link, button_text) }}
@@ -113,9 +134,10 @@ if its false the div is not show there are no recomendations-->
 <a href="/about_app#working_app" class="btn btn-danger"> {{ home_csv["button_app"] }}</a>
 <br><br>
 
+<!--
 {% if not session.show_p_id and session.participation_id %}
 <button class="btn btn-primary" onclick="show_p_id()">{{ home_csv["click_show_p_id"] }}</button>
 <p id="show_p_id_button"> {{ session.participation_id }}</p>
 {% endif %}
-
+-->
 {% endblock %}

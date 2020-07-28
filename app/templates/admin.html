@@ -10,6 +10,10 @@ Admin
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="/static/js/topojson.js"></script>
 <script src="/static/js/d3-tip.js"></script>
+<!-- timeline chart -->
+<link rel="stylesheet" href="https://unpkg.com/d3-milestones/build/d3-milestones.css">
+<script src="https://unpkg.com/d3-milestones/build/d3-milestones.min.js"></script>
+
 
 <!-- JS script for charts -->
 <script src="../static/js/admin_main.js"></script>
@@ -21,6 +25,7 @@ Admin
 <script src="../static/js/gender_barchart.js"></script>
 <script src="../static/js/bullet.js"></script>
 <script src="../static/js/bullet_chart.js"></script>
+<script src="../static/js/timeline_chart.js"></script>
 
 <div class="row basic_stats_row">
   <h1 class="num_p">Number of participants: </h1>
@@ -41,7 +46,6 @@ Admin
     <div class="legend_bullet_chart"></div>
   </div>
 </div>
-
 
 <div class="row">
   <div class="col-4 year_box">
@@ -130,6 +134,18 @@ Admin
     </div>
   </div>
 </div>
+
+<div class="row">
+  <h1 class="col-12">Timeline</h1>
+  <div class="col-10">
+    <div class="timeline_chart"></div>
+    <!-- <button class="btn btn-primary" id="clear_timelines" onclick="clear_timelines()">Clear timelines</button> -->
+  </div>
+  <div class="col-2">
+    <div class="legend_timeline_chart"></div>
+  </div>
+</div>
+
 </section>
 
 <section id="#select_by_gender_age">
@@ -243,8 +259,10 @@ Admin
         <label class="control-label" for="change_participation_id">Search by participation_id </label>
         <input class="form-control" id="change_participation_id" name="change_participation_id" placeholder="Participation id" type="text"/>
       </div>
-      <button class="btn btn-primary" onclick="change_user_ajax()">Set as for credit participant</button>
+      <button class="btn btn-primary" value="credit" onclick="change_user_ajax(this.value)">Set as for credit participant</button>
+      <button class="btn btn-primary" value="withdraw" onclick="change_user_ajax(this.value)">Set participant as withdrawn</button>
     </div>
+    <p class="feedback_db_change"></p>
   </div>
 </div>
 </section>

@@ -219,7 +219,7 @@ def rt():
     # If one of them has been done then redirect the user to the video of the selected task directly
     # They should not do the rt or rt_long again
     #if rt_done or rt_long_done:
-    if rt_done or task == "task_switching":
+    if rt_done or task == "task_switching" or task == "n_back":
         # select the youtube link to the video
         select = f'SELECT {youtube_link_select} FROM TASKS WHERE task_name=(%s)'
         youtube_link = db.execute(select,(task,), 1)
@@ -770,6 +770,7 @@ def login():
         session['participation_id'] = rows[0]['participation_id']
         session['show_p_id'] = True
         session['show_rec_system'] = True
+
         select = "SELECT time_sign_up FROM SESSION_INFO WHERE user_id = (%s)"
         time_sign_up = db.execute(select, (session["user_id"],), 1)
         month_after_sign_up = time_sign_up[0][0] + timedelta(weeks=4)
@@ -780,6 +781,7 @@ def login():
 
         if month_after_sign_up < datetime.now() or bb_board_selection and bb_board_selection[0]["show_msg"]:
             session['show_p_id'] = False
+
         # user has been signed up for less than 2 weeks
         if two_weeks_after_sign_up > datetime.now():
             session['show_rec_system'] = False
@@ -1340,13 +1342,22 @@ def admin():
 def change_user():
     user_id = request.args.get('change_user_id').lower()
     participation_id = request.args.get('change_participation_id').lower()
-    if user_id:
-        update = "UPDATE SESSION_INFO SET credits_participant = 1 WHERE user_id = (%s)"
-        db.execute(insert, (user_id,), 0)
-    elif participation_id:
-        update = "UPDATE SESSION_INFO SET credits_participant = 1 WHERE participation_id = (%s)"
-        db.execute(insert, (participation_id,), 0)
-    return jsonify("hello")
+    value = request.args.get('value')
+    if value == "credit":
+        if user_id:
+            update = "UPDATE SESSION_INFO SET credits_participant = 1 WHERE user_id = (%s)"
+            db.execute(update, (user_id,), 0)
+        elif participation_id:
+            update = "UPDATE SESSION_INFO SET credits_participant = 1 WHERE participation_id = (%s)"
+            db.execute(update, (participation_id,), 0)
+    else:
+        if user_id:
+            update = "UPDATE SESSION_INFO SET consent = 0 WHERE user_id = (%s)"
+            db.execute(update, (user_id,), 0)
+        elif participation_id:
+            update = "UPDATE SESSION_INFO SET consent = 0 WHERE participation_id = (%s)"
+            db.execute(update, (participation_id,), 0)
+    return jsonify("User status changed")
 
 
 @app.route("/select_user", methods=["GET"])
@@ -1385,7 +1396,9 @@ def select_user():
                 'participation_id': rows[0]["participation_id"],
                 'time_sign_up': rows[0]['time_sign_up'], 'admin': rows[0]['admin'],
                 'psytoolkit_id': generate_id(rows[0]["user_id"])}
-    return jsonify(user)
+        select = """ SELECT time_exec, task_id FROM TASK_COMPLETED WHERE user_id = (%s)"""
+        tasks = db.execute(select, (rows[0]["user_id"],),1)
+    return jsonify({"user":user, "tasks":tasks})
 
 @app.route("/query_data", methods=["GET"])
 @language_check
@@ -1417,6 +1430,7 @@ def get_data():
 
     # num of participants
     num_p = len(df_all_p)
+    num_paying_users = len(df_all_p[df_all_p["user_type"] == 1])
     # average age participants
     # change the birthyear type to integer
     df_all_p["date"] = pd.to_datetime(df_all_p.birthyear).values.astype(int)
@@ -1446,6 +1460,11 @@ def get_data():
     gender_mode = df_all_p[df_all_p["gender"] != 999]["gender"].mode()[0]
     gender = [{"gender":"male", "value": int(male)},{"gender": "female", "value":int(female)}]
 
+    # Num completely inactive user
+    inactive_users_list = inactive_users()
+    num_inactive_users = len(inactive_users_list)
+    print(num_inactive_users)
+
     # basic stats
     basic_stats = {"num_p": int(num_p), "average_year": str(average_year), "quantiles_summary": quantiles_summary,
                     "user_type": user_type, "user_type_mode": int(user_type_mode),
@@ -1461,7 +1480,7 @@ def get_data():
 
     tasks = task_frequency(merged)
     total_money_dict = total_money(merged)
-    projected_money_dict = projected_money(num_p)
+    projected_money_dict = projected_money(num_paying_users)
 
     bullet_data = [
   {
@@ -1512,6 +1531,7 @@ def get_data():
     data_json = json.dumps(data)
     return data_json
 
+
 @app.route("/inactive_users", methods=["GET"])
 @language_check
 def inactive_users():
@@ -1536,13 +1556,13 @@ def inactive_users():
 
     # participants who signed up more than a month ago and hasnt performed any tasks
     non_active_users = p_signed_up_1_month_ago - p_who_performed_tasks
-    print(non_active_users)
+
     # participants_id of these non_active_users
     inactive_users_p_id = df_all_p[df_all_p['user_id'].isin(non_active_users)]["participation_id"]
     inactive_users_df = df_all_p[df_all_p['user_id'].isin(non_active_users)]
     inactive_users = inactive_users_df[["user_id", "participation_id"]]
     inactive_users_list = inactive_users.to_json(orient="records")
-    print(inactive_users_list)
+
     return inactive_users_list
 
 @app.route("/about_study", methods=["GET"])
@@ -1569,7 +1589,7 @@ def contact():
     language_set()
     return render_template("contact.html", contact_csv=contact_csv[session["language"]], layout=layout[session["language"]])
 
-#port = int(os.getenv("PORT"))
+port = int(os.getenv("PORT"))
 
-#if __name__ == '__main__':
-#    app.run(host='0.0.0.0', port=port)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=port)

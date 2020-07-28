@@ -87,21 +87,58 @@ function legend(keys, color, div, width, height){
 // parse the date / time
 var parseTime = d3.timeFormat("%d-%b-%Y");
 
+function get_task_type(task_id){
+  task = ""
+  if (task_id === 1){
+    task = "cor"
+  }
+  else if (task_id === 2){
+    task = "nb"
+  }
+  else if (task_id === 3){
+    task = "ts"
+  }
+  else if (task_id === 4){
+    task = "sf"
+  }
+  else if (task_id === 5){
+    task = "ps"
+  }
+  else{
+    task = "rt"
+  }
+  return task
+}
+function process_timeline_data(sign_up, tasks){
+  timeline_data = [{"id":0, "date":sign_up, "type": "sign_up"}]
+  for (i in tasks){
+    timeline_data.push({"id":parseInt(i)+1, "date":new Date(tasks[i][0]), "type":get_task_type(tasks[i][1])})
+  }
+  return timeline_data
+}
+
+
 function select_user_ajax(){
   $.getJSON("/select_user", {'username': username.value, 'user_id': user_id.value, 'participation_id': participation_id.value}, function(result, state){
     if (state === "success"){
       if (Object.keys(result).length != 0){
-        var birthdate = new Date(result["birthdate"])
-        var sign_up =  new Date(result['time_sign_up'])
-        d3.select(".user").html('<b>User_id:</b> '+ result["user_id"] +
-                    '<br> <b>Email:</b> ' + result["email"] +
-                    '<br> <b>Gender:</b> ' + result["gender"] +
+        user = result["user"]
+        tasks = result["tasks"]
+        console.log(tasks)
+        var birthdate = new Date(user["birthdate"])
+        var sign_up =  new Date(user['time_sign_up'])
+        var timeline_data = process_timeline_data(sign_up, tasks)
+
+        timeline_chart(timeline_data)
+        d3.select(".user").html('<b>User_id:</b> '+ user["user_id"] +
+                    '<br> <b>Email:</b> ' + user["email"] +
+                    '<br> <b>Gender:</b> ' + user["gender"] +
                     '<br> <b>Birthdate:</b> '+ parseTime(birthdate) +
-                    '<br> <b>User_type:</b> ' + result["user_type"] +
-                    '<br> <b>Participation_id:</b> ' + result["participation_id"] +
+                    '<br> <b>User_type:</b> ' + user["user_type"] +
+                    '<br> <b>Participation_id:</b> ' + user["participation_id"] +
                     '<br> <b>Time_sign_up:</b> ' +  parseTime(sign_up) +
-                    '<br> <b>Admin:</b> ' + result['admin'] +
-                    '<br> <b>Psytoolkit_id:</b> ' + result['psytoolkit_id'])
+                    '<br> <b>Admin:</b> ' + user['admin'] +
+                    '<br> <b>Psytoolkit_id:</b> ' + user['psytoolkit_id'])
       }
       else{
         d3.select(".user").text('No user found')
@@ -110,16 +147,26 @@ function select_user_ajax(){
   });
 }
 
-function change_user_ajax(){
-  $.getJSON("/change_user", {'change_user_id': change_user_id.value, 'change_participation_id': change_participation_id.value}, function(result, state){
+function change_user_ajax(value){
+  $.getJSON("/change_user", {'change_user_id': change_user_id.value, 'change_participation_id': change_participation_id.value, 'value': value}, function(result, state){
     if (state === "success"){
-      console.log(result)
+      if (change_user_id.value){
+        d3.select('.feedback_db_change').text(result + ": " + value + " for participant: " + change_user_id.value)
+      }
+      else{
+        d3.select('.feedback_db_change').text(result + ": " + value + " for participant: " + change_participation_id.value)
+      }
     }
   });
 }
 
+
 function clear_selection(){
   d3.selectAll('.selection').text("")
+}
+
+function clear_timelines(){
+  d3.selectAll('.timeline_chart').select("svg").remove();
 }
 
 function pretty_print_users(data){

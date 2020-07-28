@@ -33,10 +33,10 @@ def preprocess_checkbox(input):
     Function preprocesses the input user type from the register page,
     it return 1 if the box was checked meaning the user does want to participate
     for monetary compensation.
-    It returns 2 if the user does not want to participate for monetary compensation
+    It returns 0 if the user does not want to participate for monetary compensation
 
     It also is used to check if the user lives in the Netherlands
-    returns 1 if they do and 2 if they dont
+    returns 1 if they do and 0 if they dont
     """
     if input == "on":
         return 1
@@ -60,6 +60,7 @@ def total_money(df):
     total_survey_money = 0
     total_rt_money = 0
     total_tasks_money = 0
+    df = df[df["user_type"] == 1]
 
     by_id = df.groupby(by="user_id")
     for (key, values) in by_id:
