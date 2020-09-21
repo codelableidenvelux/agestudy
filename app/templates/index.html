@@ -17,7 +17,10 @@ Tasks
  <p style="color:red;">{{ tasks["p0"] }}</p>
 </div>
 </form>
-
+<br>
+<a class="btn btn-secondary" href="/reminder">{{ tasks["reminder_href"]}} <span><img src="../static/images/notification_bell.png"/></span></a>
+<input type="button" class="btn btn-primary"  value="?" data-toggle="popover" data-placement="right" data-content="{{ tasks['reminder_tooltip'] }}">
+<!--Icon by https://icons8.com/ -->
 <section id="team" class="pb-6">
 
 

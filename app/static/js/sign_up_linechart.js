@@ -24,7 +24,7 @@ var y = d3.scaleLinear().range([height, 0]);
 // define the line
 var valueline = d3.line()
     .x(function(d) { return x(d.time_sign_up_ymd); })
-    .y(function(d) { return y(d.status); });
+    .y(function(d) { return y(d.email); });
 
 // append the svg obgect to the body of the page
 // appends a 'group' element to 'svg'
@@ -39,11 +39,11 @@ var svg = d3.select(".sign_up_linechart").append("svg")
 
   // Scale the range of the data
   x.domain(d3.extent(data, function(d) { return d.time_sign_up_ymd; }));
-  y.domain([0, d3.max(data, function(d) { return d.status; })]);
+  y.domain([0, d3.max(data, function(d) { return d.email; })]);
   var tool_tip = d3.tip()
   .attr("class", "d3-tip")
   .offset([0, 0])
-  .html(function(d) { return "Date: " + parseTime(d.time_sign_up_ymd) + " -- Value: " + d.status; });
+  .html(function(d) { return "Date: " + parseTime(d.time_sign_up_ymd) + " -- Value: " + d.email; });
   svg.call(tool_tip);
   // Add the valueline path.
   svg.append("path")
@@ -56,7 +56,7 @@ var svg = d3.select(".sign_up_linechart").append("svg")
       .enter().append("circle") // Uses the enter().append() method
         .attr("class", "dot") // Assign a class for styling
         .attr("cx", function(d, i) { return x(d.time_sign_up_ymd) })
-        .attr("cy", function(d) { return y(d.status) })
+        .attr("cy", function(d) { return y(d.email) })
         .attr("r", 5)
         .attr("fill", "#66c2a5")
         .on('mouseover', function(d) {

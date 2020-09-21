@@ -1,0 +1,8 @@
+tag,english,dutch
+p11,Thank you for choosing our reminders. We will remind you via email every 2 months to do the tasks. If you do not want any more reminders please send us an email or click on 'unsubscribe' on our reminder email.,Bedankt voor het kiezen van onze herinneringen. We zullen u elke 2 maanden via e-mail eraan herinneren om de taken uit te voeren. Stuur ons een e-mail of klik op 'uitschrijven' in onze herinneringsmail als u geen herinneringen wilt ontvangen.
+unsubscribe_h1,Fill in the email adress you want to unsubscribe,Vul het e-mailadres in waarop u zich wilt afmelden
+p11,By unsubscribing we will not send any reminder emails to perform the tasks. This does not affect your further participation in this study. You can always choose to get emails again in the future by clicking on the remind me button on the test page.,Als u zich afmeldt sturen we geen herinneringsmails om de taken uit te voeren. Dit heeft geen invloed op uw verdere deelname aan dit onderzoek. U kunt er altijd voor kiezen om opnieuw e-mails te ontvangen in de toekomst door op de herinneringsknop op de testpagina te klikken.
+label_email, Email, Email
+placeholder_email, janedoe@email.com, janedoe@email.com
+unsubscribe,Unsubscribe,Afmelden
+unsubscribed_p11,You have successfully unsubscribed,U heeft zich met succes afgemeld

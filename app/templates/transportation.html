@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+EEG transportation costs
+{% endblock %} {% block main %}
+<script src="/static/js/transportation.js"></script>
+<form action="/transportation" method="post" class="needs-validation">
+  <h1> {{transportation_csv["h11"]}} </h1>
+  <p1>{{ transportation_csv['p11'] }} </p1>
+  <br><br>
+  <input type="radio" name="transportation" value="No" checked onclick="transportation_ammount()">{{ transportation_csv['input1'] }}<br>
+  <input type="radio" name="transportation" value="Yes" onclick="transportation_ammount()">{{ transportation_csv['input2'] }}<br>
+  <input type="radio" name="transportation" value="Maybe" onclick="transportation_ammount()">{{ transportation_csv['input3'] }}<br>
+  <br>
+  <div id="transportation_cost_div" style="display:none;">
+    <label class="control-label"  id="transportation_cost_label" for="transportation_cost">{{ transportation_csv['transportation_cost'] }}</label>
+    <input class="form-control" name="transportation_cost" type="number" placeholder="euros">
+  </div>
+  <br>
+  <button id="transportation" class="btn btn-primary" type="submit">{{ transportation_csv['submit'] }}</button>
+</form>
+{% endblock %}

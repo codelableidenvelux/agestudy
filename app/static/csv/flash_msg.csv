@@ -14,3 +14,4 @@ expired_token,Verification code has expired. Please request a new one., Verifica
 incorrect_route,Incorrect route. Try again,Onjuiste route. Probeer het opnieuw
 same_promo_code,You cannot use your own promocode. Please fill in a valid code.,U kunt uw eigen promocode niet gebruiken. Vul een geldige code in
 alstublieft.
+unsubscribed_p11,You have successfully unsubscribed,U heeft zich met succes afgemeld

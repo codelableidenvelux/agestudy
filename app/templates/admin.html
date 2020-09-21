@@ -190,8 +190,13 @@ Admin
 <section id="#inactive_users">
 <div>
   <h1>Get inactive users by user id and participation id</h1>
-  <p>Inactive users have been signed up for over a month and have not completed any surveys or tasks </p>
+  <p>Inactive users have been signed up for over a month and have not completed any surveys or tasks for x weeks</p>
   <br>
+  <div>
+    <!-- n weeks -->
+    <label class="control-label" for="n_weeks">Fill in the number of inactive weeks </label>
+    <input class="form-control" id="n_weeks" name="n_weeks" placeholder="Number of inactive weeks" type="number" required />
+  </div>
   <button class="btn btn-primary" onclick="inactive_users_ajax()">Get inactive users</button>
   <br>
   <p class="inactive_users_p selection"></p>

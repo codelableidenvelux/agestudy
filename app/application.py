@@ -55,6 +55,8 @@ youtube_csv = read_csv("static/csv/youtube.csv")
 flash_msg_csv = read_csv("static/csv/flash_msg.csv")
 admin_csv = read_csv("static/csv/admin.csv")
 rec_system_csv = read_csv("static/csv/rec_system.csv")
+reminder_csv = read_csv("static/csv/reminder.csv")
+transportation_csv = read_csv("static/csv/transportation.csv")
 rec_system_success_csv = read_csv("static/csv/rec_system_success.csv")
 
 # See which language was chosen and update the language
@@ -173,8 +175,10 @@ def send_email(message, username, recipient_adress):
             server.login(email, pasw)
             server.sendmail(email, recipient_adress, message)
         return True
-    except:
-        print('fail')
+    except SMTPResponseException as e:
+        error_code = e.smtp_code
+        error_message = e.smtp_error
+        print(f'fail to send email {error_code}, {error_message}')
         app.logger.info('%s tried to send the following email: %s. There was an error', username, message)
         return False
 
@@ -722,6 +726,46 @@ def email():
     # get the user information
     return jsonify(username == email)
 
+@app.route("/unsubscribe_reminder", methods=["GET", "POST"])
+@language_check
+def unsubscribe_reminder():
+    language_set()
+    if request.method == "POST":
+        # set to lowercase
+        unsubsribe_email = request.form.get("unsubsribe_email").lower()
+        # check if the email adress already exists
+        select = "SELECT email_adress FROM REMINDER WHERE email_adress = (%s)"
+        email_reminder_exists = db.execute(select, (unsubsribe_email,), 1)
+        if email_reminder_exists:
+            delete = "DELETE FROM reminder WHERE email_adress=(%s);"
+            #select = "SELECT email_adress FROM reminder WHERE email_adress=(%s)"
+            db.execute(delete, (unsubsribe_email,),0)
+            flash(flash_msg_csv[session["language"]]["unsubscribed_p11"])
+            message = "Subject: Unsubscribe reminder participant \n\n Participant with email adress: " + unsubsribe_email + " wants to unsubscribe from the reminder system."
+            email_sent = send_email(message, unsubsribe_email, "agestudy@fsw.leidenuniv.nl")
+        return redirect("/home")
+    else:
+        return render_template("unsubscribe_reminder.html", reminder_csv=reminder_csv[session["language"]], layout=layout[session["language"]])
+
+@app.route("/reminder", methods=["GET", "POST"])
+@language_check
+def reminder():
+    """ Add user's email to sql table of reminders """
+    # select the user' email from the db
+    select = "SELECT email from session_info WHERE user_id = (%s)"
+    email_r = db.execute(select, (session["user_id"],), 1)
+    email = email_r[0][0]
+
+    # check if the email adress already exists
+    select = "SELECT email_adress FROM REMINDER WHERE email_adress = (%s)"
+    email_reminder_exists = db.execute(select, (email,), 1)
+    if not email_reminder_exists:
+        # if it doesnt, insert the new email adress in the db
+        insert = "INSERT INTO reminder(email_adress, user_id) VALUES (%s,%s);"
+        db.execute(insert, (email,session["user_id"]), 0)
+        message = "Subject: Reminder participant \n\n Participant with email adress: " + email + " wants to join the reminder system."
+        email_sent = send_email(message, email, "agestudy@fsw.leidenuniv.nl")
+    return render_template("reminder.html", reminder_csv=reminder_csv[session["language"]], layout=layout[session["language"]])
 ################################################################################
 ################################ LOGIN  #######################################
 ###############################################################################
@@ -1143,6 +1187,28 @@ def consent():
     else:
         return render_template("consent.html", consent_csv=consent_csv[session["language"]], layout=layout[session["language"]])
 
+@app.route("/transportation", methods=["POST"])
+@language_check
+def transportation():
+    """
+    transportation costs
+    """
+    transportation = request.form.get("transportation")
+    transportation_cost = request.form.get("transportation_cost")
+    id = session["user_id"]
+    # select the user info
+    select = "SELECT * FROM SESSION_INFO WHERE USER_ID = (%s)"
+    rows = db.execute(select, (id,), 1)
+
+    # send_email with the users info to our server to contact them about participating
+    message = 'Subject: EEG \n\n The following participant wants to participate in the EEG study' + '\n username: ' + str(rows[0]['user_name']) + "\n email: " + str(rows[0]['email']) + "\n user_id: " + str(rows[0]['user_id']) + "\n user_type: " + str(str(rows[0]['user_type'])) + "\n language: " + session["language"] + "\n transportation cost required: " + transportation + "\n transportation cost: " + transportation_cost
+    email_sent = send_email(message, rows[0]['user_name'], "agestudy@fsw.leidenuniv.nl")
+    # render a thank you page
+    if email_sent:
+        return render_template("sent_email.html", sent_email_csv=sent_email_csv[session["language"]], layout=layout[session["language"]])
+    else:
+        return render_template("email_unsent.html", email_unsent=email_unsent[session["language"]], layout=layout[session["language"]])
+
 @app.route("/eeg", methods=["GET", "POST"])
 @language_check
 def eeg():
@@ -1151,19 +1217,7 @@ def eeg():
     """
     # If they clicked on the submit button
     if request.method == "POST":
-        id = session["user_id"]
-        # select the user info
-        select = "SELECT * FROM SESSION_INFO WHERE USER_ID = (%s)"
-        rows = db.execute(select, (id,), 1)
-
-        # send_email with the users info to our server to contact them about participating
-        message = 'Subject: EEG \n\n The following participant wants to participate in the EEG study' + '\n username: ' + str(rows[0]['user_name']) + "\n email: " + str(rows[0]['email']) + "\n user_id: " + str(rows[0]['user_id']) + "\n user_type: " + str(str(rows[0]['user_type'])) + "\n language: " + session["language"]
-        email_sent = send_email(message, rows[0]['user_name'], "agestudy@fsw.leidenuniv.nl")
-        # render a thank you page
-        if email_sent:
-            return render_template("sent_email.html", sent_email_csv=sent_email_csv[session["language"]], layout=layout[session["language"]])
-        else:
-            return render_template("email_unsent.html", email_unsent=email_unsent[session["language"]], layout=layout[session["language"]])
+        return render_template("transportation.html", transportation_csv=transportation_csv[session["language"]], layout=layout[session["language"]])
     else:
         language_set()
         return render_template("eeg.html", eeg_csv=eeg_csv[session["language"]], layout=layout[session["language"]])
@@ -1517,12 +1571,12 @@ def get_data():
     #flattened_streamgraph = flattened_streamgraph.set_index('time_exec_ymd')
     streamgraph_data = flattened_streamgraph.to_json(orient="records")
 
-    merged["time_sign_up"] = pd.to_datetime(merged["time_sign_up"])
-    merged["year_sign_up"] = merged["time_sign_up"].apply(lambda x: x.year)
-    merged["day_sign_up"] = merged["time_sign_up"].apply(lambda x: x.day)
-    merged["month_sign_up"] = merged["time_sign_up"].apply(lambda x: x.month)
-    merged["time_sign_up_ymd"] = merged.apply(lambda row: str(row.year_sign_up) + "-" + str(row.month_sign_up) + "-" + str(row.day_sign_up), axis=1)
-    sign_up_df = merged[['status','time_sign_up_ymd']]
+    df_all_p["time_sign_up"] = pd.to_datetime(df_all_p["time_sign_up"])
+    df_all_p["year_sign_up"] = df_all_p["time_sign_up"].apply(lambda x: x.year)
+    df_all_p["day_sign_up"] = df_all_p["time_sign_up"].apply(lambda x: x.day)
+    df_all_p["month_sign_up"] = df_all_p["time_sign_up"].apply(lambda x: x.month)
+    df_all_p["time_sign_up_ymd"] = df_all_p.apply(lambda row: str(row.year_sign_up) + "-" + str(row.month_sign_up) + "-" + str(row.day_sign_up), axis=1)
+    sign_up_df = df_all_p[['email','time_sign_up_ymd']]
     sign_up_data = sign_up_df.groupby(by="time_sign_up_ymd").count()
     flattened_sign_up = pd.DataFrame(sign_up_data.to_records())
     sign_up = flattened_sign_up.to_json(orient="records")
@@ -1535,7 +1589,13 @@ def get_data():
 @app.route("/inactive_users", methods=["GET"])
 @language_check
 def inactive_users():
-    select = "SELECT * FROM SESSION_INFO"
+    n_weeks_r = request.args.get('n_weeks')
+    if not n_weeks_r:
+        n_weeks = 100
+    else:
+        n_weeks = int(n_weeks_r)
+    # only select users who are not withdrawn
+    select = "SELECT * FROM SESSION_INFO WHERE CONSENT IS NULL"
     all_participants = db.execute(select, (""), 1)
     df_all_p = pd.DataFrame(all_participants)
     df_all_p = df_all_p.rename(columns={0: "user_id", 1: "user_name", 2:"email", 3:"gender", 4:"collect_possible",
@@ -1548,11 +1608,15 @@ def inactive_users():
     task_completed_df = pd.DataFrame(task_completed)
     task_completed_df = task_completed_df.rename(columns={0:"time_exec", 1:"user_id", 2:"task_id",3:"status"})
 
-    sign_up_1_month_ago = datetime.now() - timedelta(weeks = 4)
+    sign_up_1_month_ago = datetime.now() - timedelta(weeks = 1)
+    # these people have not performed any tasks in X ammount of time
+    # e.g. the participant has not performed any tasks for 2 months (given the participant has been signed up for over a month)
+    # This variable gives the timestamp from when this x ammount of time started
+    inactivity_date = sign_up_1_month_ago - timedelta(weeks = n_weeks)
     # participants who have been signed up for over a month
     p_signed_up_1_month_ago = set(df_all_p[df_all_p["time_sign_up"] < sign_up_1_month_ago]["user_id"].unique())
     # participants who have performed tasks (not including surveys)
-    p_who_performed_tasks = set(task_completed_df["user_id"].unique())
+    p_who_performed_tasks = set(task_completed_df[task_completed_df["time_exec"] > inactivity_date]["user_id"].unique())
 
     # participants who signed up more than a month ago and hasnt performed any tasks
     non_active_users = p_signed_up_1_month_ago - p_who_performed_tasks
@@ -1560,7 +1624,15 @@ def inactive_users():
     # participants_id of these non_active_users
     inactive_users_p_id = df_all_p[df_all_p['user_id'].isin(non_active_users)]["participation_id"]
     inactive_users_df = df_all_p[df_all_p['user_id'].isin(non_active_users)]
-    inactive_users = inactive_users_df[["user_id", "participation_id"]]
+
+
+    # select participants who want a reminder
+    inactive_user_ids_list = inactive_users_df["user_id"].tolist()
+    select_reminders = "SELECT user_id FROM REMINDER WHERE user_id = ANY(%s)"
+    inactive_users_reminders = db.execute(select_reminders, (inactive_user_ids_list,), 1)
+    inactive_users_df["reminder"] = inactive_users_df['user_id'].apply(lambda x: x in [ y["user_id"] for y in inactive_users_reminders])
+
+    inactive_users = inactive_users_df[["user_id", "participation_id", 'reminder']]
     inactive_users_list = inactive_users.to_json(orient="records")
 
     return inactive_users_list

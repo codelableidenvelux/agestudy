@@ -27,6 +27,12 @@ CREATE TABLE TASKS (
   youtube_link VARCHAR(255)
 );
 
+CREATE TABLE REMINDER (
+  email_adress VARCHAR(1000)
+  user_id INT
+  time_exec TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE rec_system(
   user_id INT NOT NULL,
   time_exec TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -35,7 +41,6 @@ CREATE TABLE rec_system(
   collect INT,
   date_collected TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
 
 CREATE TABLE RESET_PASSWORD(
   user_id INT NOT NULL,

@@ -47,24 +47,24 @@ About the app
 
 <section id="participation_id">
 <h1>{{about_app_csv["h14"]}}</h1>
-<p>{{about_app_csv["p4"]}}</p>
-<ul>
-  <li>{{about_app_csv["li1"]}}</li>
-  <li>{{about_app_csv["li2"]}}</li>
-  <li>{{about_app_csv["li3"]}}</li>
-</ul>
-<img src="../static/images/participation_id.png" alt="participation id instructions" class="participation_id">
+<p>{{about_app_csv["li1"]|safe() }}</p>
+<br>
+<p>{{about_app_csv["li2"]}}</p><img style="height:29px; margin:0;" src="../static/images/menu_tapcounterapp.png">
+<br>
+<p>{{about_app_csv["li3"]}}</p><img style="height:29px; margin:0;" src="../static/images/participate-beta_tapcounterapp.png">
+<br>
+<p>{{about_app_csv["li4"]}}</p>
 <br><br>
 <div class="row">
   <div class="col-lg">
     {% if session.language == "dutch" %}
     <div class="embed-responsive embed-responsive-16by9">
-        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/rZvqEGyJDwI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/MtoBkLJIgBI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
     {% else %}
-    <div class="embed-responsive embed-responsive-16by9">
+    <div class="embed-responsive embed-responsive-9by9">
         <img src="../static/images/participation_id.png" alt="participation id instructions" class="email2" />
-        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/6qZpOtr63jQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/vZFWDq5E8oo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
     {% endif %}
   </div>

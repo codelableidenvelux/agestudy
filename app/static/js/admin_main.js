@@ -202,10 +202,11 @@ function query_data_ajax(){
 }
 
 function inactive_users_ajax(){
-  $.getJSON("/inactive_users", {}, function(result, state){
+  $.getJSON("/inactive_users", {'n_weeks': n_weeks.value}, function(result, state){
     if (state === "success"){
       inactive_users_list = []
       for (i in result){
+        console.log(result)
         inactive_users_list.push(JSON.stringify(result[i]) + " <br>")
       }
       d3.select(".inactive_users_p").html(inactive_users_list)

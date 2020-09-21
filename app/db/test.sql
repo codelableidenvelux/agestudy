@@ -21,3 +21,5 @@ alter = "ALTER TABLE session_info ADD COLUMN promo_code VARCHAR(100);"
 alter = "ALTER TABLE session_info ADD UNIQUE promo_code;"
 
 alter = "ALTER TABLE rec_system ADD COLUMN date_collected TIMESTAMP DEFAULT CURRENT_TIMESTAMP;"
+
+'ALTER TABLE REMINDER ADD COLUMN user_id INT'

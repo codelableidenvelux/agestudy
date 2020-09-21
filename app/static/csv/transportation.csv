@@ -1,0 +1,8 @@
+tag,english,dutch
+h11,Do you require public transportation compensation?,Heeft u reiskosten vergoeding voor het openbaar vervoer nodig?
+p11,You can request this compensation given you are traveling from outside of Leiden.,De reiskosten vergoeding kunt u aanvragen als u vanuit een andere bestemming dan Leiden reist.
+submit,Submit,Verzenden
+transportation_cost,Please indicate the average cost required in euros,Geef de gemiddelde reiskosten in euro's aan.
+input1,No,Nee
+input2,Yes,Ja
+input3,Maybe,Misschien
