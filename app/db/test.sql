@@ -23,3 +23,14 @@ alter = "ALTER TABLE session_info ADD UNIQUE promo_code;"
 alter = "ALTER TABLE rec_system ADD COLUMN date_collected TIMESTAMP DEFAULT CURRENT_TIMESTAMP;"
 
 'ALTER TABLE REMINDER ADD COLUMN user_id INT'
+
+select = """
+SELECT tt.*
+FROM EMAILS tt
+INNER JOIN
+    (SELECT USER_ID, MAX(TIME_EXEC) AS MaxDateTime
+    FROM EMAILS
+    GROUP BY USER_ID) groupedtt
+ON tt.USER_ID = groupedtt.USER_ID
+AND tt.TIME_EXEC = groupedtt.MaxDateTime
+"""

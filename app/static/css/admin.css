@@ -128,3 +128,27 @@
   stroke-opacity: 0.5;
   stroke-width: 1.25px;
 }
+
+#inactive_participants_table, .table_css{
+	font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#inactive_participants_table td, #inactive_participants_table th, .table_css td, .table_css th {
+  border: 1px solid #ddd;
+}
+
+#inactive_participants_table tr:nth-child(even), .table_css tr:nth-child(even)
+{background-color: #f2f2f2;}
+
+#inactive_participants_table tr:hover, .table_css tr:hover
+{
+	background-color: #ddd;
+}
+
+#inactive_participants_table th , .table_css th{
+  text-align: left;
+  background-color: #000080;
+  color: white;
+}

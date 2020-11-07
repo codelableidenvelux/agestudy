@@ -86,6 +86,7 @@ Admin
   </div>
 </div>
 
+<!-- streamgraph and linechart visualization
 <div class="row time_series">
   <div class="col-12">
     <button class="btn btn-secondary" id="b1_line" value="See Linechart" onclick="toggle_charts("linechart")">Linegraph</button>
@@ -106,7 +107,7 @@ Admin
     <div class="legend"></div>
   </div>
 </div>
-
+-->
 <section id="#select_user">
 <div class="row">
   <div class="col-12">
@@ -148,58 +149,53 @@ Admin
 
 </section>
 
-<section id="#select_by_gender_age">
-<div class="rows">
-  <div class="col-12">
-    <h1>Query DB</h1>
-    <button class='btn btn-secondary' onclick="clear_selection()">Clear selection</button>
-  </div>
-  <div>
-    <!-- Gender -->
-    <div class="form-drop">
-      <label class="control-label" for="gender">Query DB by gender</label>
-      <select class="form-control custom-select custom-select-lg mb-3" id="gender" name="gender">
-        <option selected disabled value="">Gender</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-        <option value="other">Other</option>
-      </select>
-    </div>
-    <div class="db_print_box">
-      <p class="gender_p selection"></p>
-    </div>
-  </div>
-  <div>
-    <!-- user_type -->
-    <div class="form-drop">
-      <label class="control-label" for="user_type">Query DB by user_type</label>
-      <select class="form-control custom-select custom-select-lg mb-3" id="user_type" name="user_type">
-        <option selected disabled value="">User type</option>
-        <option value="1">Paid</option>
-        <option value="2">Unpaid</option>
-      </select>
-    </div>
-    <div class="db_print_box">
-      <p class="user_type_p selection"></p>
-    </div>
-  </div>
-  <button class="btn btn-primary" onclick="query_data_ajax()">Query DB</button>
-</div>
-</section>
-
 <section id="#inactive_users">
 <div>
   <h1>Get inactive users by user id and participation id</h1>
   <p>Inactive users have been signed up for over a month and have not completed any surveys or tasks for x weeks</p>
-  <br>
+  <small>
+    <br/>
+    <b>Instructions</b>
+    <ol>
+      <li>Fill in the number of inactive weeks</li>
+      <li>Click on the blue button to select or Click on the grey button if you want to select and sort the results by a chosen value</li>
+      <li>To mark an email sent to a user, click on the checkbox, then all the way at the bottom of the section click submit. You can select multiple at the same time. A message will appear at the top of the page if successful.</li>
+      <li>To select users who have never completed a task do not fill in a value and click on the blue button.</li>
+    </ol>
+    <b>Results table information</b>
+    <ul>
+      <li>Reminder is false if the user is not signed up to receive reminders. True means they are signed up in the reminders system.</li>
+      <li>Last active is a date of the last time the user performed a task. If last active is null the participant never conducted any tasks. Last active is also called time_exec.</li>
+      <li>Should email is an advice whether an email should be sent to the user or not. It is true if the user has not received an email in x weeks. False otherwise.</li>
+      <li>Date email sent is the date of the last email that was sent. It is null if no email has ever been sent.</li>
+    </ul>
+  </small>
   <div>
     <!-- n weeks -->
-    <label class="control-label" for="n_weeks">Fill in the number of inactive weeks </label>
+    <label class="control-label" for="n_weeks"></label>
     <input class="form-control" id="n_weeks" name="n_weeks" placeholder="Number of inactive weeks" type="number" required />
   </div>
-  <button class="btn btn-primary" onclick="inactive_users_ajax()">Get inactive users</button>
+
+  <!-- Example split danger button -->
+<div class="btn-group">
+  <button class="btn btn-primary" onclick="inactive_users_ajax('user_id')">Get inactive users</button>
+  <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split sort_by_inactive" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="sr-only">sort by</span>Sort by
+  </button>
+  <div class="dropdown-menu">
+    <a class="dropdown-item" href="javascript:inactive_users_ajax('user_id')">user id</a>
+    <a class="dropdown-item" href="javascript:inactive_users_ajax('reminder')">reminder</a>
+    <a class="dropdown-item" href="javascript:inactive_users_ajax('time_exec')">last active</a>
+    <a class="dropdown-item" href="javascript:inactive_users_ajax('should_email')">should email</a>
+    <a class="dropdown-item" href="javascript:inactive_users_ajax('date_email_sent')">date email sent</a>
+  </div>
+</div>
+
   <br>
-  <p class="inactive_users_p selection"></p>
+  <div class="selection">
+    <form class="inactive_users_form" action="/email_sent" method="post">
+    </form>
+  </div>
 </div>
 </section>
 
@@ -272,4 +268,84 @@ Admin
 </div>
 </section>
 
+<section id="#select_by_gender_age">
+<div class="rows">
+  <div class="col-12">
+    <h1>Query DB</h1>
+    <button class='btn btn-secondary' onclick="clear_selection()">Clear selection</button>
+  </div>
+  <div>
+    <!-- Gender -->
+    <div class="form-drop">
+      <label class="control-label" for="gender">Query DB by gender</label>
+      <select class="form-control custom-select custom-select-lg mb-3 query_dropdown" id="gender" name="gender">
+        <option selected disabled value="">Gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="query_data_ajax()">Query gender</button>
+  </div>
+  <div>
+    <!-- user_type -->
+    <div class="form-drop">
+      <label class="control-label" for="user_type">Query DB by user_type</label>
+      <select class="form-control custom-select custom-select-lg mb-3 query_dropdown" id="user_type" name="user_type">
+        <option selected disabled value="">User type</option>
+        <option value="1">Paid</option>
+        <option value="2">Unpaid</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="query_data_ajax()">Query user type</button>
+  </div>
+  <div>
+    <!-- withdrawn or for credits -->
+    <div>
+    <div class="form-drop">
+      <label class="control-label" for="special_user">Query DB by user_type</label>
+      <select class="form-control custom-select custom-select-lg mb-3 query_dropdown" id="special_user" name="special_user">
+        <option selected disabled value="">Withdrawn or for credit</option>
+        <option value="withdrawn">Withdrawn</option>
+        <option value="credit">Credit</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="query_data_ajax()">Query withdrawn participants</button>
+    </div>
+  </div>
+  <div class="db_print_box">
+    <p class="gender_p selection"></p>
+  </div>
+</div>
+</section>
+
+<section id="#download_data">
+  <div class="rows">
+    <div class="col-12">
+      <h1>Download data from DB</h1>
+    </div>
+      <div class="form-group">
+      <div>
+        <!-- Userame -->
+        <label class="control-label" for="download_password">Insert the password</label>
+        <input class="form-control" id="download_password" name="download_password" placeholder="Type password" type="password" required />
+      </div>
+      <button class="btn btn-primary" onclick="download_data_ajax('session_info')">Download Session Info</button>
+      <br/>
+      <button class="btn btn-primary" onclick="download_data_ajax('tasks')">Download Tasks</button>
+      <br/>
+      <button class="btn btn-primary" onclick="download_data_ajax('rec_system')">Download Rec System</button>
+      <br/>
+      <button class="btn btn-primary" onclick="download_data_ajax('bb_board')">Download BB Board</button>
+      <br/>
+      <button class="btn btn-primary" onclick="download_data_ajax('task_completed')">Download Task Completed</button>
+      <br/>
+      <button class="btn btn-primary" onclick="download_data_ajax('tracked_task')">Download Tracked Task</button>
+      <br/>
+      <button class="btn btn-primary" onclick="download_data_ajax('reminder')">Download Reminder</button>
+      <br/>
+      <button class="btn btn-primary" onclick="download_data_ajax('emails')">Download Emails</button>
+    </div>
+  </div>
+</section>
 {% endblock %}

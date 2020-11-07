@@ -3,7 +3,7 @@ window.onload = function()
   var requests = [d3.json("/get_data")]
   Promise.all(requests).then(function(response) {
     stacked_barchart(response)
-    streamgraph(response)
+    // streamgraph(response)
     boxplot(response)
     var data_gender = gender_barchart(response)
     barchart(data_gender, ".gender_barchart", ["gender", "value"])
@@ -138,7 +138,10 @@ function select_user_ajax(){
                     '<br> <b>Participation_id:</b> ' + user["participation_id"] +
                     '<br> <b>Time_sign_up:</b> ' +  parseTime(sign_up) +
                     '<br> <b>Admin:</b> ' + user['admin'] +
-                    '<br> <b>Psytoolkit_id:</b> ' + user['psytoolkit_id'])
+                    '<br> <b>Psytoolkit_id:</b> ' + user['psytoolkit_id'] +
+                    '<br> <b>Consent:</b> ' + user['consent'] +
+                    '<br> <b>Credits participant:</b> ' + user['credits_participant'] +
+                    '<br> <b>Promo code:</b> ' + user['promo_code'])
       }
       else{
         d3.select(".user").text('No user found')
@@ -170,27 +173,44 @@ function clear_timelines(){
 }
 
 function pretty_print_users(data){
-  users = []
+  users = ""
   for (data_item in data){
   var birthdate = new Date(data[data_item][3])
   var sign_up =  new Date(data[data_item][6])
-  var user = '<b>User_id:</b> '+ data[data_item][0] +
-              ' - <b>Email:</b> ' + data[data_item][1] +
-              ' - <b>Gender:</b> ' + data[data_item][2] +
-              ' - <b>Birthdate:</b> '+ parseTime(birthdate) +
-              ' - <b>User_type:</b> ' + data[data_item][4] +
-              ' - <b>Participation_id:</b> ' + data[data_item][5] +
-              ' - <b>Time_sign_up:</b> ' +  parseTime(sign_up) +
-              ' - <b>Admin:</b> ' + data[data_item][7] + "<br><br>"
-    users.push(user)
+
+  var user_id = `<td> ${data[data_item][0]} </td>`
+  var participation_id = `<td> ${data[data_item][5]} </td>`
+  var gender = `<td> ${data[data_item][2]} </td>`
+  var birthdate = `<td> ${parseTime(birthdate)} </td>`
+  var time_sign_up = `<td> ${parseTime(sign_up)} </td>`
+  var user_type = `<td> ${data[data_item][4] } </td>`
+  var consent = `<td> ${data[data_item][8] } </td>`
+  var credits_participant = `<td> ${data[data_item][9] } </td>`
+    users = users + `<tr> ${user_id} ${participation_id}  ${gender} ${birthdate} ${time_sign_up} ${user_type} ${consent} ${credits_participant}  <tr>`
   }
-  return users
+  html = `
+  <table class=table_css style="width:100%">
+              <tr>
+                <th>User ID</th>
+                <th>Participation ID</th>
+                <th>Gender</th>
+                <th>Birthdate</th>
+                <th>Time sign up:</th>
+                <th>User type</th>
+                <th>Consent</th>
+                <th>Credits participant</th>
+              </tr>
+              ${users}
+          </table>`
+  return html
 }
 
-function query_data_ajax(){
-  $.getJSON("/query_data", {'gender': gender.value, 'user_type': user_type.value}, function(result, state){
+function query_data_ajax(type){
+  $.getJSON("/query_data", {'gender': gender.value, 'user_type': user_type.value, 'special_user' :special_user.value}, function(result, state){
     if (state === "success"){
-      console.log(result)
+      $('.query_dropdown option').prop('selected', function() {
+        return this.defaultSelected;
+      });
       if (Object.keys(result).length != 0){
         d3.select(".gender_p").html(pretty_print_users(result))
       }
@@ -201,15 +221,96 @@ function query_data_ajax(){
   });
 }
 
-function inactive_users_ajax(){
+function download_data_ajax(table){
+  $.getJSON("/download_data", {'download_password': download_password.value, 'table_name': table}, function(results, state){
+    if (state === "success"){
+      // if the password is incorrect then flash a message, send user to top of page, fade out the message
+      if (results === "Incorrect Password"){
+        $('#flash').append('<header><div class="alert alert-primary border text-center" id="flash" role="alert">' + results + '</div></header>')
+        $(document).ready(function(){
+            $(this).scrollTop(0);
+            setTimeout(function() {
+              $('.alert').fadeOut('slow');}, 2000); // <-- time in milliseconds
+        });
+      }
+      else{
+      // convert json to csv and get the data in right format for the csv file
+      const column_names = results[0];
+      const result = results[1];
+      const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+      const header = Object.keys(result[0])
+      let csv = result.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+      csv.unshift(column_names.join(','))
+      csv = csv.join('\r\n')
+
+      // write to a file and download
+      let csvContent = "data:text/csv;charset=utf-8," + csv;
+      var encodedUri = encodeURI(csvContent);
+      var link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      filename = table + ".csv"
+      link.setAttribute("download",filename);
+      document.body.appendChild(link); // Required for FF
+      link.click();
+      // reload so that they need to fill in password again to be able to download another file
+      location.reload()
+    }
+  }
+});
+}
+
+function inactive_users_ajax(sort_by){
   $.getJSON("/inactive_users", {'n_weeks': n_weeks.value}, function(result, state){
     if (state === "success"){
-      inactive_users_list = []
-      for (i in result){
-        console.log(result)
-        inactive_users_list.push(JSON.stringify(result[i]) + " <br>")
+      if (sort_by === "user_id"){
+          result = result.sort();
       }
-      d3.select(".inactive_users_p").html(inactive_users_list)
+      else{
+        result = result.sort(function (a, b) {
+          return b[sort_by] - a[sort_by];
+        });
+      }
+
+     $(".sort_by_inactive").text(sort_by);
+
+      console.log(sort_by)
+      console.log(result)
+      var inactive_participants_list = "";
+      var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
+      for (i in result){
+        time_exec = date_formating(result[i].time_exec)
+        date_email_sent = date_formating(result[i].date_email_sent)
+        var input_item = `<td><input type='checkbox' name=${i} value=${result[i].user_id}><label for=${i}>${JSON.stringify(result[i].user_id)}</label></td>`
+        var p_id_item = `<td>${JSON.stringify(result[i].participation_id)}</td>`
+        var reminder_item = `<td>${JSON.stringify(result[i].reminder)}</td>`
+        var time_exec_item = `<td>${JSON.stringify(time_exec)}</td>`
+        var email_sent_item = `<td>${JSON.stringify(result[i].should_email)}</td>`
+        var date_email_sent_item = `<td>${JSON.stringify(date_email_sent)}</td>`
+        inactive_participants_list = inactive_participants_list + `<tr> ${input_item} ${p_id_item} ${reminder_item} ${time_exec_item} ${email_sent_item} ${date_email_sent_item}</tr>`
+      }
+      html = `
+      <table id="inactive_participants_table" style="width:100%">
+                  <tr>
+                    <th>User ID</th>
+                    <th>Participation ID</th>
+                    <th>Reminder</th>
+                    <th>Last active (time_exec) <br/> dd/mm/yy </th>
+                    <th>Should email</th>
+                    <th>Date email sent <br/> dd/mm/yy </th>
+                  </tr>
+                  ${inactive_participants_list}
+              </table>`
+      d3.select(".inactive_users_form").html(html + '<input class="btn btn-primary" type="submit" value="Submit">')
     }
   });
+  return false
+}
+
+function date_formating(date){
+  if (date != null){
+    date = new Date(date)
+    var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    date = date.toLocaleDateString("en-GB"); // 9/17/2016
+  }
+  return date
 }

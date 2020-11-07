@@ -1426,21 +1426,21 @@ def select_user():
         select = """SELECT "user_id", "email", "gender",
                            "birthyear", "user_type",
                            "participation_id", "time_sign_up",
-                           "admin"
+                           "admin", "consent", "credits_participant", "promo_code"
                    FROM SESSION_INFO WHERE user_name  = (%s)"""
         rows = db.execute(select, (username,), 1)
     if user_id:
         select = """SELECT "user_id", "email", "gender",
                            "birthyear", "user_type",
                            "participation_id", "time_sign_up",
-                           "admin"
+                           "admin", "consent", "credits_participant", "promo_code"
                    FROM SESSION_INFO WHERE user_id  = (%s)"""
         rows = db.execute(select, (user_id,), 1)
     if participation_id:
         select = """SELECT "user_id", "email", "gender",
                            "birthyear", "user_type",
                            "participation_id", "time_sign_up",
-                           "admin"
+                           "admin", "consent", "credits_participant", "promo_code"
                    FROM SESSION_INFO WHERE participation_id  = (%s)"""
         rows = db.execute(select, (participation_id,), 1)
     user = {}
@@ -1449,7 +1449,10 @@ def select_user():
                 'birthdate':rows[0]["birthyear"], 'user_type': rows[0]["user_type"],
                 'participation_id': rows[0]["participation_id"],
                 'time_sign_up': rows[0]['time_sign_up'], 'admin': rows[0]['admin'],
-                'psytoolkit_id': generate_id(rows[0]["user_id"])}
+                'psytoolkit_id': generate_id(rows[0]["user_id"]),
+                'consent': rows[0]['consent'],
+                'credits_participant': rows[0]['credits_participant'],
+                'promo_code': rows[0]['promo_code']}
         select = """ SELECT time_exec, task_id FROM TASK_COMPLETED WHERE user_id = (%s)"""
         tasks = db.execute(select, (rows[0]["user_id"],),1)
     return jsonify({"user":user, "tasks":tasks})
@@ -1459,18 +1462,42 @@ def select_user():
 def query_data():
     # gender
     gender_r = request.args.get('gender').lower()
-    gender = preprocess_gender(gender_r)
-    select = """SELECT "user_id", "email", "gender",
+    user_type = request.args.get('user_type')
+    special_user = request.args.get('special_user')
+    if gender_r:
+        gender = preprocess_gender(gender_r)
+        select = """SELECT "user_id", "email", "gender",
                        "birthyear", "user_type",
                        "participation_id", "time_sign_up",
-                       "admin"
+                       "admin", "consent", "credits_participant"
                FROM SESSION_INFO WHERE gender = (%s)"""
-    rows = db.execute(select, (gender,), 1)
-
-    #User type
-    user_type = request.args.get('user_type')
-    print(user_type)
-    return jsonify(rows)
+        rows = db.execute(select, (gender,), 1)
+        return jsonify(rows)
+    if user_type:
+        select = """SELECT "user_id", "email", "gender",
+                       "birthyear", "user_type",
+                       "participation_id", "time_sign_up",
+                       "admin", "consent", "credits_participant"
+               FROM SESSION_INFO WHERE user_type = (%s)"""
+        rows = db.execute(select, (user_type,), 1)
+        return jsonify(rows)
+    if special_user:
+        if special_user == "withdrawn":
+            select = """SELECT "user_id", "email", "gender",
+                           "birthyear", "user_type",
+                           "participation_id", "time_sign_up",
+                           "admin", "consent", "credits_participant"
+                   FROM SESSION_INFO WHERE consent = (%s)"""
+            rows = db.execute(select, (0,), 1)
+        else:
+            select = """SELECT "user_id", "email", "gender",
+                           "birthyear", "user_type",
+                           "participation_id", "time_sign_up",
+                           "admin", "consent", "credits_participant"
+                   FROM SESSION_INFO WHERE credits_participant = (%s)"""
+            rows = db.execute(select, (1,), 1)
+        return jsonify(rows)
+    return jsonify(False)
 
 @app.route("/get_data", methods=["GET"])
 @language_check
@@ -1586,14 +1613,50 @@ def get_data():
     return data_json
 
 
+@app.route("/download_data", methods=["GET"])
+@language_check
+def download_data():
+    download_password = request.args.get('download_password')
+    table_name = request.args.get('table_name')
+    if download_password:
+        pass_txt_r  = open("download_pass.txt", "r")
+        pass_txt = pass_txt_r.read().strip("\n")
+        if pass_txt != download_password:
+            return jsonify("Incorrect Password")
+        if table_name == "session_info":
+            columns = ['user_id','gender','collect_possible','for_money','user_type','birthyear','participation_id',
+            'consent','time_sign_up','admin','credits_participant','promo_code']
+
+            select = """SELECT user_id, gender, collect_possible,
+            for_money, user_type, birthyear, participation_id,
+            consent, time_sign_up, admin, credits_participant, promo_code FROM session_info"""
+            table = db.execute(select, ("",), 1)
+        elif table_name == "reminder":
+            columns = ['time_exec', 'user_id']
+            select = "SELECT time_exec, user_id FROM reminder"
+            table = db.execute(select, ("",), 1)
+        else:
+            select_cols = f"SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table_name}'"
+            columns_unflattened = db.execute(select_cols, ("",), 1)
+            columns = [item for sublist in columns_unflattened for item in sublist]
+            select = f"SELECT * FROM {table_name}"
+            table = db.execute(select, ("",), 1)
+        return jsonify(columns, table)
+    else:
+        return jsonify("Incorrect Password")
+
 @app.route("/inactive_users", methods=["GET"])
 @language_check
 def inactive_users():
     n_weeks_r = request.args.get('n_weeks')
     if not n_weeks_r:
+        # default check 100 weeks of inactivity (users who have never been active)
         n_weeks = 100
+        # default 2 months of no emails
+        n_weeks_email = 8
     else:
         n_weeks = int(n_weeks_r)
+        n_weeks_email = int(n_weeks_r)
     # only select users who are not withdrawn
     select = "SELECT * FROM SESSION_INFO WHERE CONSENT IS NULL"
     all_participants = db.execute(select, (""), 1)
@@ -1608,7 +1671,7 @@ def inactive_users():
     task_completed_df = pd.DataFrame(task_completed)
     task_completed_df = task_completed_df.rename(columns={0:"time_exec", 1:"user_id", 2:"task_id",3:"status"})
 
-    sign_up_1_month_ago = datetime.now() - timedelta(weeks = 1)
+    sign_up_1_month_ago = datetime.now() - timedelta(weeks = 4)
     # these people have not performed any tasks in X ammount of time
     # e.g. the participant has not performed any tasks for 2 months (given the participant has been signed up for over a month)
     # This variable gives the timestamp from when this x ammount of time started
@@ -1632,11 +1695,52 @@ def inactive_users():
     inactive_users_reminders = db.execute(select_reminders, (inactive_user_ids_list,), 1)
     inactive_users_df["reminder"] = inactive_users_df['user_id'].apply(lambda x: x in [ y["user_id"] for y in inactive_users_reminders])
 
-    inactive_users = inactive_users_df[["user_id", "participation_id", 'reminder']]
+    # select last day a user performed a task
+    groupby = task_completed_df[task_completed_df['user_id'].isin(non_active_users)].groupby(by="user_id").tail(1)
+    last_activity_date = pd.DataFrame(groupby).sort_values(by='user_id')
+    merged = pd.merge(inactive_users_df, last_activity_date, how="outer", on='user_id', sort="True")
+
+    # select the most recent input for each participant
+    select_emails = """
+    SELECT tt.*
+    FROM EMAILS tt
+    INNER JOIN
+        (SELECT USER_ID, MAX(TIME_EXEC) AS MaxDateTime
+        FROM EMAILS
+        GROUP BY USER_ID) groupedtt
+    ON tt.USER_ID = groupedtt.USER_ID
+    AND tt.TIME_EXEC = groupedtt.MaxDateTime
+    """
+
+    # check whether an email (reminder) has been sent to the user
+    emails = db.execute(select_emails, ("",), 1)
+    emails_df = pd.DataFrame(emails)
+    emails_df = emails_df.rename(columns={0:"user_id", 1:"date_email_sent", 2:"email_sent"})
+    merged_2 = pd.merge(merged, emails_df, how="left", on='user_id', sort="True")
+
+    # determine which users need to receive an email
+    # if it has been 2 months since an email was sent then another email needs to be sent again.
+    two_months_ago = datetime.now() - timedelta(weeks=n_weeks_email)
+    do_not_email = merged_2[merged_2["date_email_sent"] > two_months_ago]["user_id"]
+    merged_2["should_email"] = merged_2["user_id"].apply(lambda x: x not in do_not_email.unique())
+
+    inactive_users = merged_2[["user_id", "participation_id", 'reminder', 'time_exec', 'should_email', 'date_email_sent']]
+
     inactive_users_list = inactive_users.to_json(orient="records")
 
     return inactive_users_list
 
+@app.route("/email_sent", methods=["POST"])
+@language_check
+def email_sent():
+    user_ids = request.form
+    for key in user_ids:
+        print ('form key '+user_ids[key])
+        insert = "INSERT INTO EMAILS (user_id, email_sent) VALUES (%s, %s)"
+        db.execute(insert, (user_ids[key], 1), 0)
+
+    flash("Successfully updated email information")
+    return redirect("/admin")
 @app.route("/about_study", methods=["GET"])
 @language_check
 def about_study():

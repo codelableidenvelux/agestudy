@@ -28,9 +28,15 @@ CREATE TABLE TASKS (
 );
 
 CREATE TABLE REMINDER (
-  email_adress VARCHAR(1000)
-  user_id INT
+  email_adress VARCHAR(1000),
+  user_id INT,
   time_exec TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE EMAILS (
+  user_id INT,
+  time_exec TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  email_sent INT
 );
 
 CREATE TABLE rec_system(

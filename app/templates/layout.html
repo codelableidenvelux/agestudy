@@ -108,6 +108,8 @@
       {{ get_flashed_messages() | join(" ") }}
     </div>
   </header>
+  {%else%}
+  <div id="flash"></div>
   {% endif %}
 
   {% block banner %}
