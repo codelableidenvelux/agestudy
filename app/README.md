@@ -73,8 +73,6 @@ If not locked tasks are recommended in the above order.
 The home page also contains a payment tab which shows the user the amount of money they have earned so far. The payment is only allowed to be connected once a year.
 ![home](static/images/home.png)
 
-TODO: Collection of the money_earned on admin page 
-
 # Tests
 The user must be sitting comfortably behind a computer to perform a test. This is confirmed through a checkbox. Only if this is checked can the user see the buttons that lead to the tests. The surveys can be completed any time and the user can sign up for EEG any time. 
 
@@ -109,7 +107,7 @@ Users can recommend the study to others. They give out their promocode to their 
 If the recommended friend participates for 1 year successfully then the user gets 5 euro compensation. 
 
 There is no limit to the number of friends a user can recommend. However, 1 user can only be recommended by 1 friend. 
-
+![account](static/images/recommend_study.png)
 
 # About
 This contains information about the study. 
@@ -135,4 +133,4 @@ It contains a button where the user can change their password. They are prompted
 # Admin
 Admin page is not accessible to other users.
 
-![account](static/images/account.jpg)
+
