@@ -6,7 +6,6 @@ This README contains information on the structure of this repository.
 ## Repository overview
 ├──Nested =  This indicates there is a file inside a folder  
 <pre>
-├── requirements.txt   <- The requirements file for reproducing the analysis
 ├── app                <- Source code for the web application     
 │   ├── templates           <- Contains all the html scripts
 │   ├── static           <- Contains css, js and images
@@ -46,8 +45,6 @@ This README contains information on the structure of this repository.
 │   │
 │   ├── SF-36      <- Contains the script for the SF-36
 │   ├── Feedback     <- Contains the script for the feedback survey
-├────────────────────────────────────────────────────────────────────────────────────
-├── data_processing   <- Contains basic data_cleaning and processing scripts
 ├────────────────────────────────────────────────────────────────────────────────────
 ├── reports   <- Contains files such as feedback or powerpoints
 </pre>
