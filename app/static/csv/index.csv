@@ -27,5 +27,5 @@ p0,Confirm this by checking the box to activate the tests.,Bevestig dit door het
 p_done,Completed, Voltooid
 p_unavailable,Unavailable,Niet Beschikbaar
 p_unavailable_explanation,This survey will be available 3 weeks after registration, Deze enquête is 3 weken na registratie beschikbaar
-reminder_tooltip,By clicking the grey button you choose to be reminded every 2 months via email to do the tasks. You can always change your mind about these reminders.,Door op de grijze knop te klikken kiest u ervoor om elke 2 maanden via e-mail eraan herinnerd te worden om de taken uit te voeren. U kunt altijd van gedachten veranderen over deze herinneringen.
+reminder_tooltip,By clicking the grey button you choose to be reminded every month via email to do the tasks. You can always change your mind about these reminders.,Door op de grijze knop te klikken kiest u ervoor om elk maand via e-mail eraan herinnerd te worden om de taken uit te voeren. U kunt altijd van gedachten veranderen over deze herinneringen.
 reminder_href,Remind me,Help me herinneren

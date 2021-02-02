@@ -4,7 +4,7 @@ input1,Email Address,Email adres
 input2,Password,Wachtwoord
 button1,Log In,Inloggen
 p1,Don’t have an account yet?  <a href=/register>Register!</a> ,Nog geen account? <a href=/register>Registreren!</a>
-p2,Remember which e-mail address you use for this website,Onthoud welk e-mail adres u voor deze website gebruikt.
+p2,Remember which e-mail address you use for this website. Did you sign-up before and want to create an account with a different e-mail address? Please e-mail agestudy@fsw.leidenuniv.nl.,Onthoud welk e-mail adres u voor deze website gebruikt. Heeft u zich al eerder aangemeld en wilt u een account aanmaken met een ander e-mail adres? Stuur dan een e-mail naar agestudy@fsw.leidenuniv.nl.
 beta, This website is under beta testing. All test data will be deleted prior to launch on April 15th 2020,In het kader van de bètatest worden alle testgegevens vóór de lancering op 15 april 2020 gewist.
 forgot_1,Oops,Oeps
 forgot_2,<a href=/forgot_password>I forgot my password</a>,<a href=/forgot_password>Ik ben mijn wachtwoord vergeten</a>

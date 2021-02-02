@@ -1671,7 +1671,7 @@ def inactive_users():
     task_completed_df = pd.DataFrame(task_completed)
     task_completed_df = task_completed_df.rename(columns={0:"time_exec", 1:"user_id", 2:"task_id",3:"status"})
 
-    sign_up_1_month_ago = datetime.now() - timedelta(weeks = 4)
+    sign_up_1_month_ago = datetime.now() - timedelta(weeks = 8)
     # these people have not performed any tasks in X ammount of time
     # e.g. the participant has not performed any tasks for 2 months (given the participant has been signed up for over a month)
     # This variable gives the timestamp from when this x ammount of time started
