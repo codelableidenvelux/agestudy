@@ -73,6 +73,15 @@ Admin
 <div class="row task_frequency">
   <div class="col-6">
     <h1>Task completion</h1>
+    <div class="task_frequency_dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="task_frequency_dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+         Choose chart type
+      </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <a class="dropdown-item" onclick="toggle_charts('tasks')">Tasks</a>
+    <a class="dropdown-item"onclick="toggle_charts('tasks_p')">Participants</a>
+  </div>
+</div>
   </div>
   <div class="col-6">
     <h1>Sign up distribution</h1>

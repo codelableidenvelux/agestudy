@@ -2,7 +2,7 @@ window.onload = function()
 {
   var requests = [d3.json("/get_data")]
   Promise.all(requests).then(function(response) {
-    stacked_barchart(response)
+    stacked_barchart(response, 'tasks')
     // streamgraph(response)
     boxplot(response)
     var data_gender = gender_barchart(response)
@@ -37,15 +37,10 @@ function basic_info(response){
 function toggle_charts(chart){
   var requests = [d3.json("/get_data")]
   Promise.all(requests).then(function(response) {
-    d3.select(".linechart").select("svg").remove();
-    d3.select(".streamgraph").select("svg").remove();
-    d3.select(".legend").select("svg").remove();
-    if (chart == "streamgraph"){
-      streamgraph(response)
-    }
-    else{
-      linechart(response)
-    }
+    d3.select(".stacked_barchart").select("svg").remove();
+
+    stacked_barchart(response, chart)
+
   }).catch(function(e) {
       throw(e);
   });

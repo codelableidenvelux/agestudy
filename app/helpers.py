@@ -99,7 +99,7 @@ def get_num_active_participants(groupby_object):
 
     for (key, value) in groupby_object:
         today = datetime.now()
-        months_participating = today.month - value["time_sign_up"].iloc[0].month + 1
+        months_participating = today.month - value["time_sign_up"].iloc[0].month
         num_test_per_month = len(value["month"].unique())
         if months_participating == num_test_per_month:
             num_active_participants = num_active_participants + 1
@@ -109,21 +109,27 @@ def get_num_active_participants(groupby_object):
 def task_frequency(df):
     sf_36_done = 0
     sf_36= 0
+    sf_36_p = 0
 
     phone_survey_done = 0
     phone_survey = 0
+    phone_survey_p = 0
 
     rt_done = 0
     rt = 0
+    rt_p = 0
 
     corsi_done = 0
     corsi = 0
+    corsi_p = 0
 
     n_back_done = 0
     n_back= 0
+    n_back_p = 0
 
     t_switch_done = 0
     t_switch = 0
+    t_switch_p = 0
 
     by_id = df.groupby(by=["user_id", "status"])
     for (key, values) in by_id:
@@ -153,13 +159,36 @@ def task_frequency(df):
             else:
                 t_switch = t_switch + 1
 
+    by_id = df.groupby(by=["task_id", "user_id"])
+    for (key, values) in by_id:
+        if key[0] == 4:
+            sf_36_p = sf_36_p + 1
+        elif key[0] == 5:
+            phone_survey_p = phone_survey_p + 1
+        elif key[0] == 8:
+            rt_p = rt_p + 1
+        elif key[0] == 1:
+            corsi_p = corsi_p + 1
+        elif key[0] == 2:
+            n_back_p = n_back_p + 1
+        else:
+            t_switch_p = t_switch_p + 1
+
     tasks = [{"task": "sf_36","complete": sf_36_done,"incomplete": sf_36},
             {"task": "phone_survey","complete": phone_survey_done,"incomplete": phone_survey},
             {"task": "rt","complete": rt_done,"incomplete": rt},
             {"task": "corsi","complete": corsi_done,"incomplete": corsi},
             {"task": "n_back","complete": n_back_done,"incomplete": n_back},
             {"task": "t_switch","complete": t_switch_done,"incomplete": t_switch}]
-    return tasks
+
+    tasks_p = [{"task": "sf_36","complete": sf_36_p, "incomplete": 0},
+            {"task": "phone_survey","complete": phone_survey_p, "incomplete": 0},
+            {"task": "rt","complete": rt_p, "incomplete": 0},
+            {"task": "corsi","complete": corsi_p, "incomplete": 0},
+            {"task": "n_back","complete": n_back_p, "incomplete": 0},
+            {"task": "t_switch","complete": t_switch_p, "incomplete": 0}]
+
+    return (tasks,tasks_p)
 
 def remove_whitespace(input):
     return input.replace(' ', '')

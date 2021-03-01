@@ -1,12 +1,11 @@
 //
-function stacked_barchart(response){
+function stacked_barchart(response, chart){
   $.getScript("../static/js/d3-tip.js")
   .fail(function( jqxhr, settings, exception ) {
     console.log("fail")
   });
   // create the svg
-  data = response[0]["tasks"]
-
+  data = response[0][chart]
   var svg = d3.select(".stacked_barchart").append("svg").attr("height", 500).attr("width", 1000)
 
   var margin = {top: 20, right: 20, bottom: 50, left: 70}

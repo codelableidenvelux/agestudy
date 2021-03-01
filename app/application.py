@@ -1544,7 +1544,6 @@ def get_data():
     # Num completely inactive user
     inactive_users_list = inactive_users()
     num_inactive_users = len(inactive_users_list)
-    print(num_inactive_users)
 
     # basic stats
     basic_stats = {"num_p": int(num_p), "average_year": str(average_year), "quantiles_summary": quantiles_summary,
@@ -1559,7 +1558,9 @@ def get_data():
     merged["month"] = merged["time_exec"].apply(lambda x: x.month)
 
 
-    tasks = task_frequency(merged)
+    tasks_all = task_frequency(merged)
+    tasks = tasks_all[0]
+    tasks_p = tasks_all[1]
     total_money_dict = total_money(merged)
     projected_money_dict = projected_money(num_paying_users)
 
@@ -1602,13 +1603,13 @@ def get_data():
     df_all_p["year_sign_up"] = df_all_p["time_sign_up"].apply(lambda x: x.year)
     df_all_p["day_sign_up"] = df_all_p["time_sign_up"].apply(lambda x: x.day)
     df_all_p["month_sign_up"] = df_all_p["time_sign_up"].apply(lambda x: x.month)
-    df_all_p["time_sign_up_ymd"] = df_all_p.apply(lambda row: str(row.year_sign_up) + "-" + str(row.month_sign_up) + "-" + str(row.day_sign_up), axis=1)
+    df_all_p["time_sign_up_ymd"] = df_all_p.apply(lambda row: str(row.year_sign_up) + "-" + str(row.month_sign_up), axis=1)
     sign_up_df = df_all_p[['email','time_sign_up_ymd']]
     sign_up_data = sign_up_df.groupby(by="time_sign_up_ymd").count()
     flattened_sign_up = pd.DataFrame(sign_up_data.to_records())
     sign_up = flattened_sign_up.to_json(orient="records")
 
-    data = {"basic_stats": basic_stats, "tasks": tasks, "bullet": bullet_data, "streamgraph_data": streamgraph_data, "sign_up": sign_up }
+    data = {"basic_stats": basic_stats, "tasks": tasks, "tasks_p":tasks_p, "bullet": bullet_data, "streamgraph_data": streamgraph_data, "sign_up": sign_up }
     data_json = json.dumps(data)
     return data_json
 
@@ -1765,7 +1766,7 @@ def contact():
     language_set()
     return render_template("contact.html", contact_csv=contact_csv[session["language"]], layout=layout[session["language"]])
 
-port = int(os.getenv("PORT"))
+#port = int(os.getenv("PORT"))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port)
