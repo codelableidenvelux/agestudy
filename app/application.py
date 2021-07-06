@@ -1265,11 +1265,12 @@ def home():
     phone_survey_available = three_weeks_after_sign_up < datetime.now()
 
 
-    one_year_after_sign_up = time_sign_up[0][0] + timedelta(weeks=52)
+    one_year_after_sign_up = time_sign_up[0][0] + timedelta(weeks=43)
     select = "SELECT next_collection from TASK_COMPLETED WHERE user_id = (%s)"
     next_collection = db.execute(select, (session["user_id"],), 1)
     can_collect_payment = False
-    if one_year_after_sign_up < datetime.now() and next_collection[0][0] and next_collection[0][0] < datetime.now():
+    #if one_year_after_sign_up < datetime.now() and user_type and next_collection[0][0] and next_collection[0][0] < datetime.now():
+    if one_year_after_sign_up < datetime.now():
         can_collect_payment = True
 
     select_msg = f"SELECT * FROM BB_BOARD WHERE time_insert= (SELECT MAX(time_insert) FROM BB_BOARD WHERE USER_ID = (%s));"
@@ -1766,7 +1767,7 @@ def contact():
     language_set()
     return render_template("contact.html", contact_csv=contact_csv[session["language"]], layout=layout[session["language"]])
 
-#port = int(os.getenv("PORT"))
+port = int(os.getenv("PORT"))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port)
