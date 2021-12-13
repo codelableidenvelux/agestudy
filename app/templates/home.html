@@ -126,7 +126,16 @@ if its false the div is not show there are no recomendations-->
 {% endif %}
 <input type="button" class="btn btn-primary"  value="?" data-toggle="popover" data-placement="right" data-content="{{ home_csv['payment_info'] }}">
 </div>
+<br></br>
+<div>
+<h3>{{ home_csv["rec_system_h1"] }}</h3>
+<p>{{ home_csv["rec_system_p1"] }} </p>
 <p>{{ home_csv["len_rec_system_payment_1"] }} {{len_rec_system_payment}} {{ home_csv["len_rec_system_payment_2"] }}</p>
+<br></br>
+<p> {{home_csv["rec_system_payment_1"] }} <b>{{suc_rec_system}} {{home_csv["rec_system_payment_3"] }}</b></p><br>
+<p> {{home_csv["rec_system_payment_2"] }} <b>{{amount_to_earn}} {{home_csv["rec_system_payment_3"] }}</b></p><br>
+<p> {{ home_csv["rec_system_p3"] }} </p>
+</div>
 {% endif %}
 
 <br><br>

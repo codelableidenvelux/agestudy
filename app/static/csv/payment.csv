@@ -1,7 +1,40 @@
 tag,english,dutch,
-h11,Please provide your IBAN name and address to receive your payment,Geef alstublieft uw IBAN naam en adres om uw betaling te ontvangen
+h11,Please provide your IBAN name address BSN and birthdate to receive your payment,Geef alstublieft uw IBAN naam adres BSN en geboortedatum om uw betaling te ontvangen
 input1,First name,Voornaam
 input2,Last name,Achternaam
 input3,IBAN number,IBAN nummer
 input4,Address,Adres
+input5,Citizen Service Number (BSN),Burgerservicenummer (BSN)
+input6,Date of birth,Geboortedag
+date_1,01,01
+date_2,02,02
+date_3,03,03
+date_4,04,04
+date_5,05,05
+date_6,06,06
+date_7,07,07
+date_8,08,08
+date_9,09,09
+date_10,10,10
+date_11,11,11
+date_12,12,12
+date_13,13,13
+date_14,14,14
+date_15,15,15
+date_16,16,16
+date_17,17,17
+date_18,18,18
+date_19,19,19
+date_20,20,20
+date_21,21,21
+date_22,22,22
+date_23,23,23
+date_24,24,24
+date_25,25,25
+date_26,26,26
+date_27,27,27
+date_28,28,28
+date_29,29,29
+date_30,30,30
+date_31,31,31
 button1,Send request,Stuur verzoek

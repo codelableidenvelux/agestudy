@@ -4,6 +4,7 @@ import smtplib, ssl
 
 import urllib.request
 import pandas as pd
+import numpy as np
 
 from flask import redirect, render_template, request, session
 from functools import wraps
@@ -11,7 +12,48 @@ from dateutil.parser import parse
 import string
 import random
 from datetime import datetime, timedelta
+from db.postgresql import Db
 
+def min_max_norm(data):
+    """ min max normalization """
+    x = (data - np.nanmin(data)) / (np.nanmax(data) - np.nanmin(data))
+    return x
+    
+def calculate_ranking(sh):
+    # Determine how long the participant has been participating
+    today = datetime.now()
+    G = list(sh['G'])
+    days_since_sign_up = list(map(lambda a: (today - a.value).days ,G[1:]))
+    days_since_sign_up = np.array(days_since_sign_up)
+
+    # Determine how many tasks they have made
+    tasks_made = list(map(lambda a: a.value ,list(sh['H'])))
+    tasks_made = np.array(tasks_made[1:])
+    tasks_made[tasks_made == 'many'] = 100
+    tasks_made = tasks_made.astype('int')
+    # normalize values
+    days_since_sign_up_norm = min_max_norm(days_since_sign_up)
+    tasks_made_norm = min_max_norm(tasks_made)
+    # determine which participants have already been booked
+    booked = list(map(lambda a: a.value == 'yes' ,list(sh['L'])))
+    # weigh values and rank participants
+    weighted = tasks_made_norm * 0.5 + days_since_sign_up_norm * 0.5
+    r = np.argsort(-weighted)
+    # reorder ranking ingnoring already booked participants
+    large_ranking = r.max() * 10
+    r[booked[1:]] = large_ranking
+    rank = dict(zip(r,np.zeros(len(r))))
+    count = 0
+    for x in sorted(rank): #now we go from lowest to highest in the array, adding 1 to the dict-value
+        rank[x] = count
+        count += 1
+
+    # set booked participant rankings to nan
+    ranking = np.array([rank[x] for x in r], 'float')
+    ranking[booked[1:]] = np.nan
+    ranking_list = list(ranking)
+    #ranking_list.insert(0, G[0].value)
+    return ranking_list
 
 def read_csv(filename):
     df = pd.read_csv(filename, sep=",", index_col=0, encoding = "utf-8")

@@ -114,12 +114,13 @@ function process_timeline_data(sign_up, tasks){
 
 
 function select_user_ajax(){
-  $.getJSON("/select_user", {'username': username.value, 'user_id': user_id.value, 'participation_id': participation_id.value}, function(result, state){
+  $.getJSON("/select_user", {'username': username.value, 'user_id': user_id.value, 'participation_id': participation_id.value, 'view_user_payment_bar' : view_user_payment_bar.checked}, function(result, state){
     if (state === "success"){
       if (Object.keys(result).length != 0){
-        user = result["user"]
-        tasks = result["tasks"]
-        console.log(tasks)
+        var user = result["user"];
+        var tasks = result["tasks"];
+        var payment = result["payment"];
+
         var birthdate = new Date(user["birthdate"])
         var sign_up =  new Date(user['time_sign_up'])
         var timeline_data = process_timeline_data(sign_up, tasks)
@@ -136,12 +137,51 @@ function select_user_ajax(){
                     '<br> <b>Psytoolkit_id:</b> ' + user['psytoolkit_id'] +
                     '<br> <b>Consent:</b> ' + user['consent'] +
                     '<br> <b>Credits participant:</b> ' + user['credits_participant'] +
-                    '<br> <b>Promo code:</b> ' + user['promo_code'])
+                    '<br> <b>Promo code:</b> ' + user['promo_code'] +
+                    '<br> <b>Duplicate ID:</b> ' + user['duplicate_id'] +
+                    '<br> <b>Can collect payment:</b> ' + user['can_collect_payment'] +
+                    '<br> <b>Date of last collection:</b> ' + user['date_collected'])
+
+      d3.select("#barChart").select('svg').remove();
+      d3.select("#barChart").select('h1').remove();
+      d3.select("#barChart").select('p').remove();
+      console.log(payment)
+      if (user["user_type"] == 1 && document.getElementById("view_user_payment_bar").checked){
+        d3.select("#barChart").append('h1').text('Payment Info')
+        var price = payment[0]
+        if (price < 10){
+          maxVal = 26
+        }
+        else if(price > 10 && price < 30){
+          maxVal = 50
+        }
+        else{
+          maxVal = 200
+        }
+        // set the data in the right format
+        var data = [{"name": "€",
+          "value": maxVal,
+          // opacity is 0 as not to show this rect
+          "opacity": "0",
+          // just attach a random color it will not show since opacity is 0
+          "color": "white"},
+          { "name": "€",
+          "value": price,
+          // opacity is 1 to show this rect
+          "opacity": "1",
+          // this is the color of the rect
+          "color": "#ff7632"}]
+        // make the barchart by calling the barchart function
+        barChart(data)}
+        else if (user["user_type"] == 2  && document.getElementById("view_user_payment_bar").checked ){
+          d3.select("#barChart").append('h1').text('Payment Info')
+          d3.select("#barChart").append('p').text('User not participating for payment')
+        };
+      }
       }
       else{
         d3.select(".user").text('No user found')
       }
-    }
   });
 }
 
@@ -154,6 +194,14 @@ function change_user_ajax(value){
       else{
         d3.select('.feedback_db_change').text(result + ": " + value + " for participant: " + change_participation_id.value)
       }
+    }
+  });
+}
+
+function duplicate_user_ajax(value){
+  $.getJSON("/duplicate_user_ajax", {'p_id_1': p_id_1.value, 'p_id_2': p_id_2.value}, function(result, state){
+    if (state === "success"){
+        d3.select('.feedback_db_duplicate').text(result)
     }
   });
 }

@@ -1,19 +1,25 @@
-from flask import Flask, redirect, render_template, request, session, flash, jsonify,url_for
+from flask import Flask, redirect, render_template, request, session, flash, jsonify,url_for, Response
 from flask_session import Session
 from tempfile import mkdtemp
 from db.postgresql import Db
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 from helpers import *
 import re
 from datetime import datetime, timedelta
 import string
 import random
+import decimal
 import requests
 import uuid
 import json
 from email.message import EmailMessage
 from email.headerregistry import Address
 from email.utils import make_msgid
+from openpyxl import load_workbook
+from openpyxl.writer.excel import save_virtual_workbook
+from openpyxl.styles import PatternFill, Font
+from flask.json import JSONEncoder
 
 app = Flask(__name__)
 key  = open("secret_key.txt", "r")
@@ -22,7 +28,7 @@ app.secret_key = secret_key
 
 
 # Ensure templates are auto-reloaded
-#app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_FILE_DIR"] = mkdtemp()
@@ -440,16 +446,15 @@ def calculate_rec_system_payment(f_promo_code):
         executed_tasks = db.execute(select, (user_info[0]["user_id"],), 1)
         # check if the number of tasks is more than 12 if so the referred friend has
         # successfully completed the study and the user may get the reward
-        if len(executed_tasks) > 12:
+        if len(executed_tasks) >= 6:
             total_payment = total_payment + 5
             successful_completion = successful_completion + 1
     return (len(recomended),total_payment, successful_completion)
 
-def calculate_money():
+def calculate_money(id):
     """
     Calculate the total amount of money the user has earned since last payment collection
     """
-    id = session['user_id']
     # get the completed tasks where the user has not completed payment
     select = f"SELECT * FROM TASK_COMPLETED WHERE USER_ID = (%s) AND COLLECT NOT IN ( 0 )"
     completed_tasks = db.execute(select, (id,), 1)
@@ -467,8 +472,7 @@ def calculate_money():
         if type(i[-1]) is datetime:
             if (i[2] != 4 or i[2] != 5) and i[-1].month == datetime.now().month:
                 can_collect_task_this_month = False
-
-
+    print(can_collect_task_this_month)
     # seperate each task per month
     months_dict = {}
     for task in completed_tasks:
@@ -506,6 +510,7 @@ def calculate_money():
             money_earned = money_earned + 2
         # set the amount for the tasks to 0 every month as not to go over the total value
         money_earned_tasks = 0
+        print(money_earned)
         # round to 2 decimals
     return round(money_earned, 2)
 
@@ -530,8 +535,10 @@ def index():
         time_sign_up = db.execute(select, (session["user_id"],), 1)
         three_weeks_after_sign_up = time_sign_up[0][0] + timedelta(weeks=3)
         phone_survey_available = three_weeks_after_sign_up < datetime.now()
-        calculate_money()
-        return render_template("index.html", layout=layout[session["language"]], phone_survey_available=phone_survey_available, tasks=tasks[session["language"]], show_corsi=show_corsi, show_n_back=show_n_back, show_task_switching=show_task_switching, show_sf_36=show_sf_36, show_phone_survey=show_phone_survey)
+        calculate_money(session['user_id'])
+        select = f'SELECT * FROM REMINDER WHERE user_id={session["user_id"]}'
+        reminder = db.execute(select, ("",), 1)
+        return render_template("index.html", layout=layout[session["language"]], phone_survey_available=phone_survey_available, tasks=tasks[session["language"]], show_corsi=show_corsi, show_n_back=show_n_back, show_task_switching=show_task_switching, show_sf_36=show_sf_36, show_phone_survey=show_phone_survey, reminder=len(reminder))
 
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
@@ -644,8 +651,8 @@ def register():
                 send_email(message, username, "agestudy@fsw.leidenuniv.nl")
             promo_code = add_promo_code_2_db()
             # add user to the database
-            param = (username, email, gender, collect_possible, for_money, user_type, birthdate, hash, participation_id, promo_code)
-            insert = "INSERT INTO session_info (user_name, email, gender, collect_possible, for_money, user_type, birthyear, pas_hash, participation_id, promo_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            param = (username, email, gender, collect_possible, for_money, user_type, birthdate, hash, participation_id, promo_code, session["language"])
+            insert = "INSERT INTO session_info (user_name, email, gender, collect_possible, for_money, user_type, birthyear, pas_hash, participation_id, promo_code, language) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             result = db.execute(insert, param, 0)
 
 
@@ -726,6 +733,19 @@ def email():
     # get the user information
     return jsonify(username == email)
 
+@app.route("/automatic_unsubscribe_reminder", methods=["GET", "POST"])
+def automatic_unsubscribe_reminder():
+    select = "SELECT email_adress FROM REMINDER WHERE user_id = (%s)"
+    email_reminder_exists = db.execute(select, (session["user_id"],), 1)
+    if email_reminder_exists:
+        delete = "DELETE FROM reminder WHERE email_adress=(%s);"
+        #select = "SELECT email_adress FROM reminder WHERE email_adress=(%s)"
+        db.execute(delete, (email_reminder_exists[0][0],),0)
+        flash(flash_msg_csv[session["language"]]["unsubscribed_p11"])
+        message = "Subject: Unsubscribe reminder participant \n\n Participant with email adress: " + email_reminder_exists[0][0] + " with user_id: " + str(session["user_id"]) +  " wants to unsubscribe from the reminder system."
+        email_sent = send_email(message, email_reminder_exists[0][0], "agestudy@fsw.leidenuniv.nl")
+    return redirect("/")
+
 @app.route("/unsubscribe_reminder", methods=["GET", "POST"])
 @language_check
 def unsubscribe_reminder():
@@ -752,9 +772,10 @@ def unsubscribe_reminder():
 def reminder():
     """ Add user's email to sql table of reminders """
     # select the user' email from the db
-    select = "SELECT email from session_info WHERE user_id = (%s)"
-    email_r = db.execute(select, (session["user_id"],), 1)
-    email = email_r[0][0]
+    select = "SELECT email,participation_id from session_info WHERE user_id = (%s)"
+    select_users = db.execute(select, (session["user_id"],), 1)
+    email = select_users[0][0]
+    participation_id = select_users[0][1]
 
     # check if the email adress already exists
     select = "SELECT email_adress FROM REMINDER WHERE email_adress = (%s)"
@@ -763,7 +784,7 @@ def reminder():
         # if it doesnt, insert the new email adress in the db
         insert = "INSERT INTO reminder(email_adress, user_id) VALUES (%s,%s);"
         db.execute(insert, (email,session["user_id"]), 0)
-        message = "Subject: Reminder participant \n\n Participant with email adress: " + email + " wants to join the reminder system."
+        message = "Subject: Reminder participant \n\n Participant with email adress: " + email + " and participation_id: " + participation_id + " wants to join the reminder system."
         email_sent = send_email(message, email, "agestudy@fsw.leidenuniv.nl")
     return render_template("reminder.html", reminder_csv=reminder_csv[session["language"]], layout=layout[session["language"]])
 ################################################################################
@@ -848,7 +869,6 @@ def check_password(password, new_password):
     # check if password has number, length and symbols
     number = len(re.findall(r"[0-9]", password))
     return len(password) >= 5 and number > 0
-
 
 @app.route("/bb_board", methods=["GET", "POST"])
 def bb_board():
@@ -1204,6 +1224,9 @@ def transportation():
     message = 'Subject: EEG \n\n The following participant wants to participate in the EEG study' + '\n username: ' + str(rows[0]['user_name']) + "\n email: " + str(rows[0]['email']) + "\n user_id: " + str(rows[0]['user_id']) + "\n user_type: " + str(str(rows[0]['user_type'])) + "\n language: " + session["language"] + "\n transportation cost required: " + transportation + "\n transportation cost: " + transportation_cost
     email_sent = send_email(message, rows[0]['user_name'], "agestudy@fsw.leidenuniv.nl")
     # render a thank you page
+    date_requested = datetime.now()
+    update = "UPDATE SESSION_INFO SET eeg_participation_request = (%s), eeg_participation_request_date = (%s) WHERE user_id= (%s);"
+    db.execute(update, (1,date_requested,id), 0)
     if email_sent:
         return render_template("sent_email.html", sent_email_csv=sent_email_csv[session["language"]], layout=layout[session["language"]])
     else:
@@ -1222,6 +1245,26 @@ def eeg():
         language_set()
         return render_template("eeg.html", eeg_csv=eeg_csv[session["language"]], layout=layout[session["language"]])
 
+def check_can_collect_payment(id):
+    """
+    Check if participant can collect payment this is true if :
+    - They have been signed up for a year
+    - They have never collected payment before or their last collection was more than 5 months ago
+    """
+    select = "SELECT time_sign_up FROM SESSION_INFO WHERE user_id = (%s)"
+    time_sign_up = db.execute(select, (id,), 1)
+    one_year_after_sign_up = time_sign_up[0][0] + timedelta(weeks=43)
+    select = "SELECT date_collected,next_collection from TASK_COMPLETED WHERE user_id = (%s)"
+    date_collected = db.execute(select, (id,), 1)
+    can_collect_payment = False
+    #if one_year_after_sign_up < datetime.now() and user_type and next_collection[0][0] and next_collection[0][0] < datetime.now():
+    if one_year_after_sign_up < datetime.now() and len(date_collected) >= 1 and (date_collected[0][0] == None or date_collected[0][0] < (datetime.now() - timedelta(weeks=22))):
+        can_collect_payment = True
+        date_collected = date_collected[0][0]
+    elif len(date_collected) > 1:
+        date_collected = date_collected[0][0]
+    return (can_collect_payment,date_collected,time_sign_up)
+
 @app.route("/home", methods=["GET", "POST"])
 @login_required
 @language_check
@@ -1236,9 +1279,10 @@ def home():
     select = "SELECT promo_code FROM SESSION_INFO WHERE USER_ID=(%s)"
     f_promo_code = db.execute(select, (id,), 1)
     # calculate the money earned to draw the barchart
-    task_payment = calculate_money()
+    task_payment = calculate_money(id)
     rec_system_payment = calculate_rec_system_payment(f_promo_code[0][0])
-    price = task_payment + rec_system_payment[1]
+    #price = task_payment + rec_system_payment[1]
+    amount_to_earn = rec_system_payment[0]*5
 
     # select all the completed tasks
     select = f"SELECT * FROM TASK_COMPLETED WHERE USER_ID = (%s)"
@@ -1259,19 +1303,9 @@ def home():
     for i in rows:
         completed_tasks.append(i["task_id"])
 
-    select = "SELECT time_sign_up FROM SESSION_INFO WHERE user_id = (%s)"
-    time_sign_up = db.execute(select, (session["user_id"],), 1)
+    can_collect_payment,date_collected,time_sign_up = check_can_collect_payment(id)
     three_weeks_after_sign_up = time_sign_up[0][0] + timedelta(weeks=3)
     phone_survey_available = three_weeks_after_sign_up < datetime.now()
-
-
-    one_year_after_sign_up = time_sign_up[0][0] + timedelta(weeks=43)
-    select = "SELECT next_collection from TASK_COMPLETED WHERE user_id = (%s)"
-    next_collection = db.execute(select, (session["user_id"],), 1)
-    can_collect_payment = False
-    #if one_year_after_sign_up < datetime.now() and user_type and next_collection[0][0] and next_collection[0][0] < datetime.now():
-    if one_year_after_sign_up < datetime.now():
-        can_collect_payment = True
 
     select_msg = f"SELECT * FROM BB_BOARD WHERE time_insert= (SELECT MAX(time_insert) FROM BB_BOARD WHERE USER_ID = (%s));"
     bb_board_selection = db.execute(select_msg, (id,), 1)
@@ -1306,7 +1340,7 @@ def home():
     else:
         recomendation = False
         task = {"img":"", "alt":"", "title":"", "btn_class":"",  "text" : "", "link" : "", "button_text": ""}
-    return render_template("home.html", len_rec_system_payment=rec_system_payment[0], suc_rec_system=rec_system_payment[2], bb_no_msg=bb_no_msg, bb_msg_title=bb_msg_title, bb_msg=bb_msg, price=price, can_collect_payment=can_collect_payment, user_type=user_type, recomendation=recomendation, layout=layout[session["language"]], home_csv=home_csv[session["language"]], btn_class=task["btn_class"], img=task["img"], alt=task["alt"], title=task["title"], text=task["text"], link=task["link"], button_text=task["button_text"])
+    return render_template("home.html", amount_to_earn=amount_to_earn, len_rec_system_payment=rec_system_payment[0], suc_rec_system=rec_system_payment[1], bb_no_msg=bb_no_msg, bb_msg_title=bb_msg_title, bb_msg=bb_msg, price=task_payment, can_collect_payment=can_collect_payment, user_type=user_type, recomendation=recomendation, layout=layout[session["language"]], home_csv=home_csv[session["language"]], btn_class=task["btn_class"], img=task["img"], alt=task["alt"], title=task["title"], text=task["text"], link=task["link"], button_text=task["button_text"])
 
 @app.route("/rec_system", methods=["GET", "POST"])
 @login_required
@@ -1336,7 +1370,7 @@ def rec_system():
 @language_check
 def payment():
     """
-    payment
+    Request payment from agestudy. Ask for personal information.
     """
     if request.method == "POST":
         first_name = request.form.get("first_name")
@@ -1344,8 +1378,14 @@ def payment():
         IBAN = request.form.get("IBAN")
         address = request.form.get("address")
         collection = request.form.get("collection")
+        BSN = request.form.get("BSN")
+        date = request.form.get("date_payment")
+        month = request.form.get("month_payment")
+        year = request.form.get("year_payment")
+        birthdate = f'{date}/{month}/{year}'
         id = session["user_id"]
-        task_payment = calculate_money()
+
+        task_payment = calculate_money(id)
         # update the collection to 0 which means that the user has/will collect the money_earned
         # otherwise collect is 1
         date_collected = datetime.now()
@@ -1368,7 +1408,7 @@ def payment():
         money_earned = task_payment + rec_system_payment[1]
         # send_email with the users info to our email to contact them about participating
         # email contains username, email, usertype, user_id and the ammount to be collect
-        message = 'Subject: Payment collection \n\n The following participant wants to collect their payment for the study' + '\n username: ' + str(rows[0]['user_name']) + "\n First name: " + first_name + "\n Last name: " + last_name + "\n IBAN: " + IBAN + "\n Address: " + address +  "\n email: " + str(rows[0]['email']) + "\n user_id: " + str(rows[0]['user_id']) + "\n user_type: " + str(rows[0]['user_type']) + "\n ammount to collect: " + str(money_earned) + "\n language: " + session["language"]
+        message = 'Subject: Payment collection \n\n The following participant wants to collect their payment for the study' + '\n username: ' + str(rows[0]['user_name']) + "\n First name: " + first_name + "\n Last name: " + last_name + "\n IBAN: " + IBAN + "\n Address: " + address + "\n BSN: " + BSN +  "\n birthdate: " + birthdate + "\n email: " + str(rows[0]['email']) + "\n user_id: " + str(rows[0]['user_id']) + "\n user_type: " + str(rows[0]['user_type']) + "\n ammount to collect from tasks: " + str(task_payment) + "\n ammount to collect from recommender system: "+ str(rec_system_payment[1]) + "\n language: " + session["language"]
         email_sent = send_email(message, rows[0]['user_name'], "agestudy@fsw.leidenuniv.nl")
 
         if email_sent:
@@ -1377,7 +1417,7 @@ def payment():
         else:
             return render_template("email_unsent.html", email_unsent=email_unsent[session["language"]], layout=layout[session["language"]])
     else:
-        return render_template("payment.html", payment=payment_csv[session["language"]], layout=layout[session["language"]])
+        return render_template("payment.html", payment=payment_csv[session["language"]],  register_csv=register_csv[session["language"]], layout=layout[session["language"]])
 
 @app.route("/admin", methods=["POST", "GET"])
 @login_required
@@ -1414,6 +1454,26 @@ def change_user():
             db.execute(update, (participation_id,), 0)
     return jsonify("User status changed")
 
+@app.route("/duplicate_user_ajax", methods=["GET"])
+@language_check
+def duplicate_user():
+    p_id_1 = request.args.get('p_id_1').strip()
+    p_id_2 = request.args.get('p_id_2').strip()
+    if p_id_1 and p_id_2:
+        #print(p_id_1)
+        #print(p_id_2)
+        select = 'SELECT user_id FROM session_info WHERE participation_id=(%s)'
+        user_id_1 = db.execute(select, (p_id_1,), 1)
+        select = 'SELECT user_id FROM session_info WHERE participation_id=(%s)'
+        user_id_2 = db.execute(select, (p_id_2,), 1)
+        update = "UPDATE SESSION_INFO SET duplicate_id = (%s) WHERE user_id=(%s);"
+        #update = "UPDATE SESSION_INFO SET credits_participant = 1 WHERE user_id = (%s)"
+        db.execute(update, (user_id_1[0][0],user_id_2[0][0]), 0)
+        db.execute(update, (user_id_2[0][0],user_id_1[0][0]), 0)
+
+        update = "UPDATE SESSION_INFO SET consent = 0 WHERE participation_id = (%s)"
+        db.execute(update, (p_id_2,), 0)
+    return jsonify("User status changed")
 
 @app.route("/select_user", methods=["GET"])
 @language_check
@@ -1421,31 +1481,39 @@ def select_user():
     username = request.args.get('username').lower()
     user_id = request.args.get('user_id').lower()
     participation_id = request.args.get('participation_id').lower()
+    view_user_payment_bar = request.args.get('view_user_payment_bar')
 
     if username:
         # get the user information
         select = """SELECT "user_id", "email", "gender",
                            "birthyear", "user_type",
                            "participation_id", "time_sign_up",
-                           "admin", "consent", "credits_participant", "promo_code"
+                           "admin", "consent", "credits_participant", "promo_code", "duplicate_id"
                    FROM SESSION_INFO WHERE user_name  = (%s)"""
         rows = db.execute(select, (username,), 1)
+        participant_info = username
+        participant_info_str = 'user_name'
     if user_id:
         select = """SELECT "user_id", "email", "gender",
                            "birthyear", "user_type",
                            "participation_id", "time_sign_up",
-                           "admin", "consent", "credits_participant", "promo_code"
+                           "admin", "consent", "credits_participant", "promo_code", "duplicate_id"
                    FROM SESSION_INFO WHERE user_id  = (%s)"""
         rows = db.execute(select, (user_id,), 1)
+        participant_info = user_id
+        participant_info_str = 'user_id'
     if participation_id:
         select = """SELECT "user_id", "email", "gender",
                            "birthyear", "user_type",
                            "participation_id", "time_sign_up",
-                           "admin", "consent", "credits_participant", "promo_code"
+                           "admin", "consent", "credits_participant", "promo_code", "duplicate_id"
                    FROM SESSION_INFO WHERE participation_id  = (%s)"""
         rows = db.execute(select, (participation_id,), 1)
+        participant_info = participation_id
+        participant_info_str = 'participation_id'
     user = {}
     if rows:
+        can_collect_payment,date_collected,time_sign_up = check_can_collect_payment(rows[0]["user_id"])
         user = {'user_id':rows[0]["user_id"], 'email':rows[0]["email"], 'gender':rows[0]["gender"],
                 'birthdate':rows[0]["birthyear"], 'user_type': rows[0]["user_type"],
                 'participation_id': rows[0]["participation_id"],
@@ -1453,10 +1521,15 @@ def select_user():
                 'psytoolkit_id': generate_id(rows[0]["user_id"]),
                 'consent': rows[0]['consent'],
                 'credits_participant': rows[0]['credits_participant'],
-                'promo_code': rows[0]['promo_code']}
+                'promo_code': rows[0]['promo_code'],
+                'duplicate_id': rows[0]['duplicate_id'],
+                'can_collect_payment': can_collect_payment,
+                'date_collected': date_collected}
         select = """ SELECT time_exec, task_id FROM TASK_COMPLETED WHERE user_id = (%s)"""
         tasks = db.execute(select, (rows[0]["user_id"],),1)
-    return jsonify({"user":user, "tasks":tasks})
+        payment = admin_view_user_payment(view_user_payment_bar, participant_info_str, participant_info,rows[0]["user_type"])
+
+    return jsonify({"user":user, "tasks":tasks, 'payment':payment, 'can_collect_payment':can_collect_payment, 'date_collected':date_collected})
 
 @app.route("/query_data", methods=["GET"])
 @language_check
@@ -1614,6 +1687,137 @@ def get_data():
     data_json = json.dumps(data)
     return data_json
 
+ALLOWED_EXTENSIONS = {'xlsx', 'xlx', 'csv'}
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route("/excel_upload", methods=["POST"])
+def excel_upload():
+    if request.method == "POST":
+        download_password = request.form.get('download_password')
+        pass_txt_r  = open("download_pass.txt", "r")
+        pass_txt = pass_txt_r.read().strip("\n")
+        if pass_txt != download_password:
+            flash("Incorrect Password")
+            return redirect('/admin')
+        # check if file part in post request
+        if 'excel_file_input' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['excel_file_input']
+        # Check if filename is not empty
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        # check if file is not empty and that the uploaded file is among the allowed options
+        if file and allowed_file(file.filename):
+            wb = load_workbook(file, data_only = True)
+            #### New participants
+            sh = wb['SubjectOverview']
+            # Get all the user_ids
+            user_ids = list(map(lambda a: a.value ,list(sh['A'])))
+            # Only select actual ids
+            user_ids =  [x for x in user_ids if type(x) == int]
+            # query DB for all user_ids
+            select = "SELECT user_id FROM session_info"
+            all_user_ids = db.execute(select, ("",), 1)
+            # DB returns a list of lists, flatten to allow easy comparison
+            all_user_ids_flattened = [item for sublist in all_user_ids for item in sublist]
+            # Check the user_ids missing from the sheet
+            missing = tuple(set(all_user_ids_flattened) - set(user_ids))
+            # If only only participant is missing (one new user) then add only that user
+            if len(missing) == 1:
+                select = f"SELECT * FROM session_info WHERE user_id =(%s)"
+                new_ps = db.execute(select, (missing[0],), 1)
+            # Add all users
+            else:
+                select = f"SELECT * FROM session_info WHERE user_id IN {missing}"
+                new_ps = db.execute(select, ("",), 1)
+            # if there is new participant(s) loop over all of them and extract relevant fields
+            if new_ps:
+                for p in new_ps:
+                    user_id = p['user_id']
+                    # format date month year
+                    birthdate = p['birthyear'].strftime("%d/%m/%Y")
+                    participation_id = p['participation_id']
+                    psytoolkit_ID = generate_id(p['user_id'])
+                    language = p['language']
+                    payment_request = 1
+                    if p['user_type'] == 2:
+                        payment_request = 0
+                    payment_decision = ''
+                    requested_EEG = p['eeg_participation_request']
+                    EEG_email_sent = ''
+                    sign_up_date = p['time_sign_up'].strftime("%d/%m/%Y")
+                    # calculate age at sign up
+                    datetime_birthyear = datetime.combine(p['birthyear'], datetime.min.time())
+                    datetime_since_sign_up = p['time_sign_up'] - datetime_birthyear
+                    age_at_sign_up = divmod(datetime_since_sign_up.total_seconds(), 31536000)[0]
+                    sh.append([user_id,birthdate, participation_id,psytoolkit_ID,language,payment_request,payment_decision,requested_EEG,EEG_email_sent,sign_up_date,age_at_sign_up])
+            ### Reminder ###
+            select = f"SELECT user_id FROM reminder"
+            reminder_participants = db.execute(select, ("",), 1)
+            # DB returns a list of lists, flatten to allow easy comparison
+            reminder_ids_flattened = [item for sublist in reminder_participants for item in sublist]
+            count = 1
+            for row in list(sh["A"]):
+                if row.value in reminder_ids_flattened:
+                    sh[f"AJ{count}"] = 1
+                count += 1
+            #### EEG ####
+            # Select the EEG sheet
+            sh2 = wb['EEG-Labvisit']
+            # select all participants that requested EEG
+            select = f"SELECT participation_id FROM session_info WHERE eeg_participation_request IN (1)"
+            requested_EEG = db.execute(select, ("",), 1)
+            requested_EEG_flattened = [item for sublist in requested_EEG for item in sublist]
+            # select all participation ids from the excel sheet
+            participation_ids = list(map(lambda a: a.value ,list(sh2['A'])))
+            participation_ids = participation_ids[1:]
+            # see which participants are missing from the sheet
+            missing = tuple(set(requested_EEG_flattened) - set(participation_ids))
+            if len(missing) == 1:
+                select = f"SELECT * FROM session_info WHERE participation_id=(%s)"
+                new_eeg_ps = db.execute(select, (missing[0],), 1)
+            else:
+                select = f"SELECT * FROM session_info WHERE participation_id IN {missing}"
+                new_eeg_ps = db.execute(select, ("",), 1)
+            # loop over all participant(s) that made EEG requests
+            if new_eeg_ps:
+                for pe in new_eeg_ps:
+                    datetime_birthyear = datetime.combine(pe['birthyear'], datetime.min.time())
+                    # calculate current age
+                    datetime_current = datetime.now() - datetime_birthyear
+                    current_age = divmod(datetime_current.total_seconds(), 31536000)[0]
+                    # calculate how many tasks the participants completed
+                    select = "SELECT * FROM TASK_COMPLETED WHERE user_id=(%s)"
+                    task_completed = db.execute(select, (pe['user_id'], ), 1)
+                    sh2.append({'A': pe['participation_id'], 'G': pe['time_sign_up'], 'H': len(task_completed), 'J':current_age})
+                    # highlight the column if their age is larger or equal to 70
+                    if current_age >= 70:
+                        sh2[f'J{sh2.max_row}'].fill =  PatternFill("solid", fgColor="ffc3c6")
+                        sh2[f'J{sh2.max_row}'].font = Font(color="9C0006")
+                # recalculate rankings
+                ranking = calculate_ranking(sh2)
+                # assign the new rankings to the cells
+                count = 2
+                for row in range(len(ranking)):
+                    sh2[f'F{count}'].value = ranking[row]
+                    count += 1
+            #return jsonify('random test thing')
+            return Response(save_virtual_workbook(wb), headers={'Content-Disposition': f'attachment; filename={file.filename}','Content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
+        else:
+            flash('Invalid file, please upload an excel file (with file extension .xlsx)')
+            return redirect('/admin')
+    else:
+        flash('Invalid request')
+        return redirect('/admin')
+
+class JsonEncoder(JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, decimal.Decimal):
+            return float(obj)
+        return JSONEncoder.default(self, obj)
 
 @app.route("/download_data", methods=["GET"])
 @language_check
@@ -1627,11 +1831,10 @@ def download_data():
             return jsonify("Incorrect Password")
         if table_name == "session_info":
             columns = ['user_id','gender','collect_possible','for_money','user_type','birthyear','participation_id',
-            'consent','time_sign_up','admin','credits_participant','promo_code']
-
+            'consent','time_sign_up','admin','credits_participant','promo_code', 'duplicate_id']
             select = """SELECT user_id, gender, collect_possible,
             for_money, user_type, birthyear, participation_id,
-            consent, time_sign_up, admin, credits_participant, promo_code FROM session_info"""
+            consent, time_sign_up, admin, credits_participant, promo_code, duplicate_id FROM session_info"""
             table = db.execute(select, ("",), 1)
         elif table_name == "reminder":
             columns = ['time_exec', 'user_id']
@@ -1643,9 +1846,31 @@ def download_data():
             columns = [item for sublist in columns_unflattened for item in sublist]
             select = f"SELECT * FROM {table_name}"
             table = db.execute(select, ("",), 1)
+            print(table)
+        app.json_encoder = JsonEncoder
         return jsonify(columns, table)
     else:
         return jsonify("Incorrect Password")
+
+def admin_view_user_payment(view_user_payment_bar, participant_info_str, participant_info, user_type):
+    """
+    Based on either a username (email), participation_id, or user_id
+    calculate the payment a participant is entitled to.
+    If this information was not requested then return None
+    """
+    task_payment = None
+    rec_system_payment = None
+    if view_user_payment_bar == 'true' and user_type == 1:
+        select = f"SELECT promo_code FROM SESSION_INFO WHERE {participant_info_str}=(%s)"
+        f_promo_code = db.execute(select, (participant_info,), 1)
+        # calculate the money earned to draw the barchart
+        if participant_info_str != 'user_id':
+            select = f"SELECT user_id FROM SESSION_INFO WHERE {participant_info_str}=(%s)"
+            user_id = db.execute(select, (participant_info,), 1)
+            participant_info = user_id[0][0]
+        task_payment = calculate_money(participant_info)
+        rec_system_payment = calculate_rec_system_payment(f_promo_code[0][0])
+    return (task_payment, rec_system_payment)
 
 @app.route("/inactive_users", methods=["GET"])
 @language_check
@@ -1767,7 +1992,7 @@ def contact():
     language_set()
     return render_template("contact.html", contact_csv=contact_csv[session["language"]], layout=layout[session["language"]])
 
-port = int(os.getenv("PORT"))
+#port = int(os.getenv("PORT"))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port)

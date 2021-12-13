@@ -19,8 +19,13 @@ add an admin
 update = "UPDATE SESSION_INFO SET admin = (%s) WHERE user_id=220;"
 alter = "ALTER TABLE session_info ADD COLUMN promo_code VARCHAR(100);"
 alter = "ALTER TABLE session_info ADD UNIQUE promo_code;"
+alter = "ALTER TABLE session_info ADD COLUMN eeg_participation_request INT;"
+alter = "ALTER TABLE session_info ADD COLUMN language VARCHAR(100);"
 
+update = "UPDATE SESSION_INFO SET duplicate_id = (%s) WHERE user_id=(%s);"
 alter = "ALTER TABLE rec_system ADD COLUMN date_collected TIMESTAMP DEFAULT CURRENT_TIMESTAMP;"
+alter = "ALTER TABLE session_info ADD COLUMN eeg_participation_request_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP;"
+alter = "ALTER TABLE session_info ALTER COLUMN eeg_participation_request_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP;"
 
 'ALTER TABLE REMINDER ADD COLUMN user_id INT'
 

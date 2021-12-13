@@ -1,7 +1,6 @@
 function sign_up_linechart(response){
   var str_data = response[0]["sign_up"];
   var data = JSON.parse(str_data);
-  console.log(data)
   for (i in data){
     data[i]["time_sign_up_ymd"] = new Date(data[i]["time_sign_up_ymd"]);
   }
@@ -18,8 +17,6 @@ var parseTime = d3.timeFormat("%d-%b-%y");
 // set the ranges
 var x = d3.scaleUtc().range([0, width]);
 var y = d3.scaleLinear().range([height, 0]);
-
-
 
 // define the line
 var valueline = d3.line()
@@ -88,7 +85,7 @@ var svg = d3.select(".sign_up_linechart").append("svg")
   // Add the X Axis
   svg.append("g")
       .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x).ticks(5).tickFormat(d3.timeFormat("%b %d")));
+      .call(d3.axisBottom(x).ticks(5).tickFormat(d3.timeFormat("%b %Y")));
 
   // Add the Y Axis
   svg.append("g")

@@ -18,8 +18,13 @@ Tasks
 </div>
 </form>
 <br>
+{% if reminder %}
+<a class="btn btn-secondary" href="/automatic_unsubscribe_reminder">{{ tasks["reminder_href_stop"]}} <span><img src="../static/images/notification_bell.png"/></span></a>
+<input type="button" class="btn btn-primary"  value="?" data-toggle="popover" data-placement="right" data-content="{{ tasks['reminder_tooltip_stop'] }}">
+{% else %}
 <a class="btn btn-secondary" href="/reminder">{{ tasks["reminder_href"]}} <span><img src="../static/images/notification_bell.png"/></span></a>
 <input type="button" class="btn btn-primary"  value="?" data-toggle="popover" data-placement="right" data-content="{{ tasks['reminder_tooltip'] }}">
+  {% endif %}
 <!--Icon by https://icons8.com/ -->
 <section id="team" class="pb-6">
 

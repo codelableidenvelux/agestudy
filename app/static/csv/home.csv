@@ -14,5 +14,12 @@ click_show_p_id,Click to see your participation id, Klik om uw deelname-ID te zi
 title_bb_board,My Messages,Mijn Berichten
 title_card,Welcome,Welkom
 msg_card,Good luck with the tasks,Veel succes met de taken
+rec_system_h1,Recommending agestudy, Agestudy aanbevelen
+rec_system_p1, You can earn 5 euros for each friend that stays on for 1 year or more., U kunt 5 euro verdienen voor elke vriend die 1 jaar of langer meedoet aan het onderzoek.
 len_rec_system_payment_1,You have referred our research to ,U heeft ons onderzoek doorverwezen naar
-len_rec_system_payment_2,friend(s),vriend(en)
+len_rec_system_payment_2,friend(s).,vriend(en).
+rec_system_p2,The total amount that can be earned is:, Het totaal te ontvangen bedrag is:
+rec_system_payment_1,Amount to earn now (friend has already been active for 1 year):, Nu te ontvangen bedrag (vriend is al 1 jaar actief):
+rec_system_payment_2,Total amount to earn (after friend has been active for 1 year):, Totaal te ontvangen bedrag (nadat vriend 1 jaar actief is geweest):
+rec_system_payment_3, €, €
+rec_system_p3,When you collect payment the total amount will go back to 0., Wanneer u een betaling ophaalt gaat het totaal weer naar 0.

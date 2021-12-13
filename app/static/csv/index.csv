@@ -29,3 +29,5 @@ p_unavailable,Unavailable,Niet Beschikbaar
 p_unavailable_explanation,This survey will be available 3 weeks after registration, Deze enquête is 3 weken na registratie beschikbaar
 reminder_tooltip,By clicking the grey button you choose to be reminded every month via email to do the tasks. You can always change your mind about these reminders.,Door op de grijze knop te klikken kiest u ervoor om elk maand via e-mail eraan herinnerd te worden om de taken uit te voeren. U kunt altijd van gedachten veranderen over deze herinneringen.
 reminder_href,Remind me,Help me herinneren
+reminder_href_stop,Unsubscribe from reminders,Afmelden van herinneringen
+reminder_tooltip_stop,By unsubscribing we will not send any reminder emails to perform the tasks. This does not affect your further participation in this study. You can always choose to get emails again in the future by clicking on the remind me button on the test page.,Als u zich afmeldt sturen we geen herinneringsmails om de taken uit te voeren. Dit heeft geen invloed op uw verdere deelname aan dit onderzoek. U kunt er altijd voor kiezen om opnieuw e-mails te ontvangen in de toekomst door op de 

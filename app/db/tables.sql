@@ -13,7 +13,11 @@ CREATE TABLE SESSION_INFO (
   time_sign_up TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   admin INT,
   credits_participant INT,
-  promo_code VARCHAR(100)
+  promo_code VARCHAR(100),
+  duplicate_id INT,
+  language VARCHAR(100),
+  eeg_participation_request INT,
+  eeg_participation_request_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 

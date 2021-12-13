@@ -26,97 +26,20 @@ Admin
 <script src="../static/js/bullet.js"></script>
 <script src="../static/js/bullet_chart.js"></script>
 <script src="../static/js/timeline_chart.js"></script>
+<script src="/static/js/bar_chart.js"></script>
 
-<div class="row basic_stats_row">
-  <h1 class="num_p">Number of participants: </h1>
-</div>
-<div class="row basic_stats_row">
-  <h1 class="num_active_p">Number of active participants: </h1>
-</div>
-<div class="row basic_stats_row">
-  <p>** Active participants complete 1 task every month</p>
-</div>
-
-<div class="row bullet_chart_box">
-  <h1 class="col-12">Money distrubution</h1>
-  <div class="col-10">
-    <div class="bullet_chart"></div>
+<div>
+  <div class="row basic_stats_row">
+    <h1 class="num_p">Number of participants: </h1>
   </div>
-  <div class="col-2">
-    <div class="legend_bullet_chart"></div>
+  <div class="row basic_stats_row">
+    <h1 class="num_active_p">Number of active participants: </h1>
+  </div>
+  <div class="row basic_stats_row">
+    <p>** Active participants complete 1 task every month</p>
   </div>
 </div>
 
-<div class="row">
-  <div class="col-4 year_box">
-    <h1>Age statistics</h1>
-    <p class="average_age">Average age: </p>
-    <div class="year"></div>
-    <div class="boxplot"></div>
-  </div>
-
-
-  <div class="col-4 gender_box">
-    <h1>Gender</h1>
-    <p class="gender_mode"> </p>
-    <div class="gender_barchart"></div>
-    <p>** Data contains missing values </p>
-  </div>
-
-  <div class="col-4 user_type_box">
-    <h1>User type</h1>
-    <p class="user_type_mode"> </p>
-    <div class="user_type_barchart"></div>
-  </div>
-</div>
-
-<div class="row task_frequency">
-  <div class="col-6">
-    <h1>Task completion</h1>
-    <div class="task_frequency_dropdown">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="task_frequency_dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-         Choose chart type
-      </button>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-    <a class="dropdown-item" onclick="toggle_charts('tasks')">Tasks</a>
-    <a class="dropdown-item"onclick="toggle_charts('tasks_p')">Participants</a>
-  </div>
-</div>
-  </div>
-  <div class="col-6">
-    <h1>Sign up distribution</h1>
-  </div>
-
-  <div class=col-6>
-    <div class="stacked_barchart"></div>
-  </div>
-  <div class="col-6">
-    <div class="sign_up_linechart"></div>
-  </div>
-</div>
-
-<!-- streamgraph and linechart visualization
-<div class="row time_series">
-  <div class="col-12">
-    <button class="btn btn-secondary" id="b1_line" value="See Linechart" onclick="toggle_charts("linechart")">Linegraph</button>
-    <button class="btn btn-secondary" id="b2_stream" value="See Streamgraph" onclick="toggle_charts("streamgraph")">Streamgraph</button>
-  </div>
-
-  <div class="col-10">
-    <div class="streamgraph"></div>
-    <div>
-      <div class="linechart"></div>
-      <select id="selectbox">
-        <option value="_1">Fahrenheit</option>
-        <option value="_2">Celsius</option>
-      </select>
-    </div>
-  </div>
-  <div class="col-2">
-    <div class="legend"></div>
-  </div>
-</div>
--->
 <section id="#select_user">
 <div class="row">
   <div class="col-12">
@@ -137,6 +60,14 @@ Admin
         <label class="control-label" for="participation_id">Search by participation_id </label>
         <input class="form-control" id="participation_id" name="participation_id" placeholder="Participation id" type="text"/>
       </div>
+
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value=""  name="view_user_payment_bar" id="view_user_payment_bar">
+        <label class="form-check-label" for="view_user_payment_bar">
+          View payment bar chart from user dashboard
+        </label>
+      </div>
+
       <button class="btn btn-primary" onclick="select_user_ajax()">Search</button>
     </div>
     <div class="db_print_box">
@@ -153,6 +84,12 @@ Admin
   </div>
   <div class="col-2">
     <div class="legend_timeline_chart"></div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-10">
+    <div id="barChart"></div>
   </div>
 </div>
 
@@ -277,6 +214,27 @@ Admin
 </div>
 </section>
 
+<section id="#duplicate_user">
+<div class="row">
+  <div class="col-12">
+    <h1>Mark duplicate accounts (BEWARE CHANGES CANNOT BE REVERSED)</h1>
+    <div class="form-group">
+      <div>
+        <!-- user_id -->
+        <label class="control-label" for="p_id_1">Participation ID account 1 (The account that <b>will</b> remain in use)</label>
+        <input class="form-control" id="p_id_1" name="p_id_1" placeholder="Participation id 1" type="text"/>
+      </div>
+      <div>
+        <label class="control-label" for="p_id_2">Participation ID account 2</label>
+        <input class="form-control" id="p_id_2" name="p_id_2" placeholder="Participation id 2" type="text"/>
+      </div>
+      <button class="btn btn-primary" onclick="duplicate_user_ajax(this.value)">Complete</button>
+    </div>
+    <p class="feedback_db_duplicate"></p>
+  </div>
+</div>
+</section>
+
 <section id="#select_by_gender_age">
 <div class="rows">
   <div class="col-12">
@@ -337,8 +295,16 @@ Admin
       <div>
         <!-- Userame -->
         <label class="control-label" for="download_password">Insert the password</label>
-        <input class="form-control" id="download_password" name="download_password" placeholder="Type password" type="password" required />
+
       </div>
+      <form enctype="multipart/form-data" method="post" action="/excel_upload">
+        <div class="form-group">
+          <input class="form-control" id="download_password" name="download_password" placeholder="Type password" type="password" required />
+          <label>Upload latest version of excel file</label>
+          <input type="file" class="form-control-file" name="excel_file_input">
+          <button class="btn btn-primary" type="submit" >Get updated excel</button>
+        </div>
+      </form>
       <button class="btn btn-primary" onclick="download_data_ajax('session_info')">Download Session Info</button>
       <br/>
       <button class="btn btn-primary" onclick="download_data_ajax('tasks')">Download Tasks</button>
@@ -357,4 +323,89 @@ Admin
     </div>
   </div>
 </section>
+
+<section id="#visualizations">
+  <div>
+  <div class="row bullet_chart_box">
+    <h1 class="col-12">Money distrubution</h1>
+    <div class="col-10">
+      <div class="bullet_chart"></div>
+    </div>
+    <div class="col-2">
+      <div class="legend_bullet_chart"></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-4 year_box">
+      <h1>Age statistics</h1>
+      <p class="average_age">Average age: </p>
+      <div class="year"></div>
+      <div class="boxplot"></div>
+    </div>
+
+
+    <div class="col-4 gender_box">
+      <h1>Gender</h1>
+      <p class="gender_mode"> </p>
+      <div class="gender_barchart"></div>
+      <p>** Data contains missing values </p>
+    </div>
+
+    <div class="col-4 user_type_box">
+      <h1>User type</h1>
+      <p class="user_type_mode"> </p>
+      <div class="user_type_barchart"></div>
+    </div>
+  </div>
+
+  <div class="row task_frequency">
+    <div class="col-6">
+      <h1>Task completion</h1>
+      <div class="task_frequency_dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="task_frequency_dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+           Choose chart type
+        </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <a class="dropdown-item" onclick="toggle_charts('tasks')">Tasks</a>
+      <a class="dropdown-item"onclick="toggle_charts('tasks_p')">Participants</a>
+    </div>
+  </div>
+    </div>
+    <div class="col-6">
+      <h1>Sign up distribution</h1>
+    </div>
+
+    <div class=col-6>
+      <div class="stacked_barchart"></div>
+    </div>
+    <div class="col-6">
+      <div class="sign_up_linechart"></div>
+    </div>
+  </div>
+  </div>
+</section>
+
+<!-- streamgraph and linechart visualization
+<div class="row time_series">
+  <div class="col-12">
+    <button class="btn btn-secondary" id="b1_line" value="See Linechart" onclick="toggle_charts("linechart")">Linegraph</button>
+    <button class="btn btn-secondary" id="b2_stream" value="See Streamgraph" onclick="toggle_charts("streamgraph")">Streamgraph</button>
+  </div>
+
+  <div class="col-10">
+    <div class="streamgraph"></div>
+    <div>
+      <div class="linechart"></div>
+      <select id="selectbox">
+        <option value="_1">Fahrenheit</option>
+        <option value="_2">Celsius</option>
+      </select>
+    </div>
+  </div>
+  <div class="col-2">
+    <div class="legend"></div>
+  </div>
+</div>
+-->
 {% endblock %}
