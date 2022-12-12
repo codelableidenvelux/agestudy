@@ -1,4 +1,4 @@
 ---
 applications:
  - name: agestudy
-   memory: 128M
+   memory: 256M

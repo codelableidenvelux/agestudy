@@ -7,3 +7,5 @@ app/pass.txt
 app/credential_postgressql.txt
 app/CSR.csr
 app/as.key
+app/download_pass.txt
+~.csv
