@@ -229,7 +229,8 @@ def rt():
     # If one of them has been done then redirect the user to the video of the selected task directly
     # They should not do the rt or rt_long again
     #if rt_done or rt_long_done:
-    if rt_done or task == "task_switching" or task == "n_back":
+    #if rt_done or task == "task_switching" or task == "n_back":
+    if rt_done:
         # select the youtube link to the video
         select = f'SELECT {youtube_link_select} FROM TASKS WHERE task_name=(%s)'
         youtube_link = db.execute(select,(task,), 1)
