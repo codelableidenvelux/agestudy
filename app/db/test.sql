@@ -22,6 +22,8 @@ alter = "ALTER TABLE session_info ADD UNIQUE promo_code;"
 alter = "ALTER TABLE session_info ADD COLUMN eeg_participation_request INT;"
 alter = "ALTER TABLE session_info ADD COLUMN language VARCHAR(100);"
 
+update = "UPDATE SESSION_INFO SET user_name = (%s) WHERE user_id=997;"
+
 update = "UPDATE SESSION_INFO SET duplicate_id = (%s) WHERE user_id=(%s);"
 alter = "ALTER TABLE rec_system ADD COLUMN date_collected TIMESTAMP DEFAULT CURRENT_TIMESTAMP;"
 alter = "ALTER TABLE session_info ADD COLUMN eeg_participation_request_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP;"

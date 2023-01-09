@@ -9,3 +9,5 @@ app/CSR.csr
 app/as.key
 app/download_pass.txt
 *.pyc
+~.csv
+

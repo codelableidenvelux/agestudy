@@ -16,10 +16,10 @@ import json
 from email.message import EmailMessage
 from email.headerregistry import Address
 from email.utils import make_msgid
-from openpyxl import load_workbook
-from openpyxl.writer.excel import save_virtual_workbook
-from openpyxl.styles import PatternFill, Font
 from flask.json import JSONEncoder
+#from openpyxl import load_workbook
+#from openpyxl.writer.excel import save_virtual_workbook
+#from openpyxl.styles import PatternFill, Font
 
 app = Flask(__name__)
 key  = open("secret_key.txt", "r")
@@ -461,26 +461,21 @@ def calculate_money(id):
     completed_tasks = db.execute(select, (id,), 1)
 
     # Select all the tasks (even if the payment has been collected already)
-    select_all_tasks = f"SELECT * FROM TASK_COMPLETED WHERE USER_ID = (%s)"
-    all_tasks = db.execute(select_all_tasks, (id,), 1)
+    #select_all_tasks = f"SELECT * FROM TASK_COMPLETED WHERE USER_ID = (%s)"
+    #all_tasks = db.execute(select_all_tasks, (id,), 1)
 
     # Assume that payment for task can be collected (because they have not collected payment this month yet)
     can_collect_task_this_month = True
     # go over all the tasks
-    for i in all_tasks:
-        # check if a task (not a survey) has been performed this month AND check if payment has alread been collected this month
-        # If this is true, since payment for tasks can only be collected once a month set can_collect_task_this_month to false
-        if type(i[-1]) is datetime:
-            if (i[2] != 4 or i[2] != 5) and i[-1].month == datetime.now().month:
-                can_collect_task_this_month = False
     print(can_collect_task_this_month)
     # seperate each task per month
     months_dict = {}
     for task in completed_tasks:
-        if task[0].month in months_dict:
-            months_dict[task[0].month].append(task)
+        tmp = int(str(task[0].month)+str(task[0].year))
+        if tmp in months_dict:
+            months_dict[tmp].append(task)
         else:
-            months_dict[task[0].month] = [task]
+            months_dict[tmp] = [task]
     # this is the total amount earned
     money_earned = 0
     # this is the amount only for the tasks
@@ -1993,7 +1988,7 @@ def contact():
     language_set()
     return render_template("contact.html", contact_csv=contact_csv[session["language"]], layout=layout[session["language"]])
 
-#port = int(os.getenv("PORT"))
+port = int(os.getenv("PORT"))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port)
