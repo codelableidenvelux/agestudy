@@ -27,11 +27,14 @@ function preview_bb_msg(){
 
 function basic_info(response){
   var data = response[0]["basic_stats"]
-  d3.select(".num_p")
-    .text("Number of participants: " + data["num_p"]);
+   d3.select(".num_p")
+     .text("Number of participants: " + data["num_p"]);
 
     d3.select(".num_active_p")
       .text("Number of active participants: " + data["num_active_p"]);
+
+    d3.select(".n_p_ids")
+      .text("Number of participation ids: " + data["n_p_ids"]);
 }
 
 function toggle_charts(chart){
@@ -83,7 +86,7 @@ function legend(keys, color, div, width, height){
 var parseTime = d3.timeFormat("%d-%b-%Y");
 
 function get_task_type(task_id){
-  task = ""
+  var task = ""
   if (task_id === 1){
     task = "cor"
   }
@@ -123,9 +126,8 @@ function select_user_ajax(){
 
         var birthdate = new Date(user["birthdate"])
         var sign_up =  new Date(user['time_sign_up'])
-        var timeline_data = process_timeline_data(sign_up, tasks)
-
-        timeline_chart(timeline_data)
+        //var timeline_data = process_timeline_data(sign_up, tasks)
+        //timeline_chart(timeline_data)
         d3.select(".user").html('<b>User_id:</b> '+ user["user_id"] +
                     '<br> <b>Email:</b> ' + user["email"] +
                     '<br> <b>Gender:</b> ' + user["gender"] +
@@ -176,6 +178,7 @@ function select_user_ajax(){
           d3.select("#barChart").append('h1').text('Payment Info')
           d3.select("#barChart").append('p').text('User not participating for payment')
         };
+        d3.select(".tasks_table").html(pretty_print_tasks(tasks))
       }
       }
       else{
@@ -244,6 +247,74 @@ function pretty_print_users(data){
               </tr>
               ${users}
           </table>`
+  return html
+}
+
+function pretty_print_tasks(tasks){
+  let task_table = ""
+  var groups = []
+  tasks = tasks.sort(function (a, b) {
+      return new Date(b[0]) - new Date(a[0]);
+    });
+  var total_payout = 0;
+  for (task in tasks){
+    var task_id = tasks[task][1]
+    var date_date_exec = new Date(tasks[task][0])
+    var date_date_collected =  new Date(tasks[task][3])
+    if (tasks[task][2]){
+      var col = 'False'
+    }
+    else{
+      var col = 'True'
+    }
+    var tasktype = get_task_type(task_id)
+    if (tasktype == 'cor' || tasktype == 'ts' || tasktype == 'nb'){
+      task_id = 10
+    }
+    var id = date_date_exec.getFullYear().toString() + date_date_exec.getMonth().toString() + task_id.toString();
+    if (!groups[id] && tasktype != 'ps' && tasktype != 'sf' && tasktype != 'rt')
+    {
+      var payment = '1.75'
+      groups[id] = payment
+    }
+    else if (!groups[id] && tasktype == 'rt') {
+      var payment = '0.25'
+      groups[id] = payment
+    }
+    else if (tasktype == 'ps' || tasktype == 'sf' ){
+      var payment = '2'
+      groups[id] = payment
+    }
+    else{
+      var payment = '0'
+      groups[id] = payment
+    }
+    if (tasks[task][2]){
+      total_payout = total_payout + parseFloat(payment)
+      console.log(total_payout)
+      console.log(parseFloat(payment))
+    }
+
+    var index = `<td> ${parseInt(task)+1} </td>`
+    var date_exec = `<td> ${parseTime(date_date_exec)} </td>`
+    var task_name = `<td> ${tasktype} </td>`
+    var collected = `<td> ${col} </td>`
+    var payment_col =  `<td> ${payment} </td>`
+      task_table = task_table + `<tr> ${index} ${date_exec} ${task_name}  ${collected} ${payment_col}<tr>`
+  }
+  html = `<div class=table_scroll>
+  <p> <b>Potential total:</b> ${total_payout} € </p>
+  <table class=table_css style="width:100%;">
+              <tr>
+                <th>N</th>
+                <th>Date performed</th>
+                <th>Task type</th>
+                <th>Collected payment</th>
+                <th>Payment</th>
+              </tr>
+              ${task_table}
+  </table>
+  </div>`
   return html
 }
 

@@ -1,6 +1,5 @@
 function gender_barchart(response){
   var data = response[0]["basic_stats"]["gender"]
-  console.log(data)
   var gender_mode_num = response[0]["basic_stats"]["gender_mode"]
   var gender_mode = ""
   if (gender_mode_num == 1){
@@ -19,7 +18,6 @@ function gender_barchart(response){
 
 function user_type_barchart(response){
   var data = response[0]["basic_stats"]["user_type"]
-  console.log(data)
   var user_type_mode_num = response[0]["basic_stats"]["user_type_mode"]
   var user_type_mode = ""
   if (user_type_mode_num == 1){

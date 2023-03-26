@@ -1234,7 +1234,7 @@ def eeg():
 def check_can_collect_payment(id):
     """
     Check if participant can collect payment this is true if :
-    - They have been signed up for a year
+    - They have been signed up for almost a year (43 weeks)
     - They have never collected payment before or their last collection was more than 5 months ago
     """
     select = "SELECT time_sign_up FROM SESSION_INFO WHERE user_id = (%s)"
@@ -1509,7 +1509,7 @@ def select_user():
                 'duplicate_id': rows[0]['duplicate_id'],
                 'can_collect_payment': can_collect_payment,
                 'date_collected': date_collected}
-        select = """ SELECT time_exec, task_id FROM TASK_COMPLETED WHERE user_id = (%s)"""
+        select = """ SELECT time_exec, task_id,collect,date_collected FROM TASK_COMPLETED WHERE user_id = (%s)"""
         tasks = db.execute(select, (rows[0]["user_id"],),1)
         payment = admin_view_user_payment(view_user_payment_bar, participant_info_str, participant_info,rows[0]["user_type"])
 
@@ -1578,6 +1578,10 @@ def get_data():
     5:"for_money", 6:"user_type", 7:"birthyear", 8: "pas_hash", 9: "consent", 10:"time_sign_up",
     11:"participation_id", 12:"admin"})
 
+    select = "SELECT * FROM PARTICIPATION_ID"
+    all_p_ids = db.execute(select, ("", ), 1)
+    n_p_ids = len(all_p_ids)
+
     # num of participants
     num_p = len(df_all_p)
     num_paying_users = len(df_all_p[df_all_p["user_type"] == 1])
@@ -1617,7 +1621,7 @@ def get_data():
     # basic stats
     basic_stats = {"num_p": int(num_p), "average_year": str(average_year), "quantiles_summary": quantiles_summary,
                     "user_type": user_type, "user_type_mode": int(user_type_mode),
-                    "gender":gender, "gender_mode": int(gender_mode)}
+                    "gender":gender, "gender_mode": int(gender_mode), 'n_p_ids' : n_p_ids}
     # basic stats contains basic information
     select = "SELECT * FROM TRACKED_TASK"
     tracked_task = db.execute(select, ("", ), 1)
@@ -1678,7 +1682,7 @@ def get_data():
     flattened_sign_up = pd.DataFrame(sign_up_data.to_records())
     sign_up = flattened_sign_up.to_json(orient="records")
 
-    data = {"basic_stats": basic_stats, "tasks": tasks, "tasks_p":tasks_p, "bullet": bullet_data, "streamgraph_data": streamgraph_data, "sign_up": sign_up }
+    data = {"basic_stats": basic_stats, "tasks": tasks, "tasks_p":tasks_p, "bullet": bullet_data, "streamgraph_data": streamgraph_data, "sign_up": sign_up}
     data_json = json.dumps(data)
     return data_json
 

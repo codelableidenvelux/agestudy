@@ -3,7 +3,6 @@ function bullet_chart(response){
   .fail(function( jqxhr, settings, exception ) {
     console.log("fail")
   });
-  console.log(response)
 var data =  response[0]["bullet"]
 
 

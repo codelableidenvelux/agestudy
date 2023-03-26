@@ -4,7 +4,6 @@ function boxplot(response){
     console.log("fail")
   });
   data = response[0]["basic_stats"]["quantiles_summary"]
-  console.log(response[0]["basic_stats"])
   var average_year = new Date(response[0]["basic_stats"]["average_year"]);
   var today = new Date();
   var average_age = today.getFullYear() - average_year.getFullYear()
