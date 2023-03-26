@@ -25,7 +25,7 @@ inter = tuple(map(int, intersect))
 participants_task_executed_active = []
 participants_task_executed_inactive = []
 
-for p in inter[0:50]:
+for p in inter:
   select_time = f"SELECT time_exec FROM TASK_COMPLETED WHERE time_exec= (SELECT MAX(time_exec) FROM TASK_COMPLETED WHERE USER_ID = (%s));"
   last_task = db.execute(select_time,(int(p),), 1)
   can_collect = check_can_collect_payment(int(p))[0]

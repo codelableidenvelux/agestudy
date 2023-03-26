@@ -14,16 +14,16 @@ list12,Log In,Inloggen
 list13,More Information, Meer Informatie
 list14,Admin,Admin
 list15,Recommend Study,Studie Aanbevelen
-info1,Your participation ID is:,Uw deelname-ID is:
+info1,Copy and paste your participation ID (the characters below) into the QuantActions TapCounter App,Kopieer en plak uw deelname-ID (onderstaande karakters) in de QuantActions TapCounter App
 info2,Copy and paste this into the QuantActions TapCounter App:, Kopieer en plak dit in de QuantActions TapCounter App:
-info3,When the app is launched, Wanneer de App is geopend
-info4,click on the plus sign, klik op het plus teken
-info5,then Participate, dan Participate
-info6,and Paste, en Paste
+info3,1. When the app is launched, 1. Wanneer de App is geopend
+info4,click on the plus sign , klik op het plus teken
+info5,2. Then click on Participate , 2. Klik dan op Participate
+info6,3. And Paste, 3. En Paste
 info1a,To complete the registration use one of these methods:,Gebruik een van de volgende methoden om de registratie te voltooien:
-info2a,Open the TapCounter App and press the menu button,Open de TapCounter App en druk op de menuknop
-info3a,Open the QR-Code scanner by clicking on, Open de QR-codescanner door te klikken op
-info4a,Point the camera at the following QR code:,Richt de camera op de volgende QR-code:
+info2a,1. Open the TapCounter App and press the menu button,1. Open de TapCounter App en druk op de menuknop
+info3a,2. Open the QR-Code scanner by clicking on, 2. Open de QR-codescanner door te klikken op
+info4a,3. Point the camera at the following QR code:,3. Richt de camera op de volgende QR-code:
 method_1,Method 1, Methode 1
 method_2,Method 2, Methode 2
 copy,Copy participation ID, Kopieer deelname-ID

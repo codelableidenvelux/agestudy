@@ -18,7 +18,7 @@ def min_max_norm(data):
     """ min max normalization """
     x = (data - np.nanmin(data)) / (np.nanmax(data) - np.nanmin(data))
     return x
-    
+
 def calculate_ranking(sh):
     # Determine how long the participant has been participating
     today = datetime.now()
@@ -135,7 +135,8 @@ def projected_money(num_p):
     survey = sf_36 + phone_survey
     total = survey + rt + tasks * 3
     return {"total": total, "tasks": tasks, "survey": survey, "rt": rt}
-
+    
+"""
 def get_num_active_participants(groupby_object):
     num_active_participants = 0
 
@@ -146,6 +147,7 @@ def get_num_active_participants(groupby_object):
         if months_participating == num_test_per_month:
             num_active_participants = num_active_participants + 1
     return num_active_participants
+"""
 
 
 def task_frequency(df):

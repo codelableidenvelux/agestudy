@@ -36,376 +36,408 @@ Admin
     <h1 class="num_active_p">Number of active participants: </h1>
   </div>
   <div class="row basic_stats_row">
-    <p>** Active participants complete 1 task every month</p>
+    <p>** Active participants completed at least 1 task in the last 6 month</p>
   </div>
 </div>
 
 <section id="#select_user">
-<div class="row">
-  <div class="col-12">
-    <h1>Select user from database </h1>
-    <div class="form-group">
-      <div>
-        <!-- Userame -->
-        <label class="control-label" for="username">Search by email </label>
-        <input class="form-control" id="username" name="username" placeholder="Email" type="text" required />
-      </div>
-      <div>
-        <!-- user_id -->
-        <label class="control-label" for="user_id">Search by user_id </label>
-        <input class="form-control" id="user_id" name="user_id" placeholder="User id" type="text"/>
-      </div>
-      <div>
-        <!-- Participation_id -->
-        <label class="control-label" for="participation_id">Search by participation_id </label>
-        <input class="form-control" id="participation_id" name="participation_id" placeholder="Participation id" type="text"/>
-      </div>
-
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" value=""  name="view_user_payment_bar" id="view_user_payment_bar">
-        <label class="form-check-label" for="view_user_payment_bar">
-          View payment bar chart from user dashboard
-        </label>
-      </div>
-
-      <button class="btn btn-primary" onclick="select_user_ajax()">Search</button>
-    </div>
-    <div class="db_print_box">
-      <p class="user"></p>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <h1 class="col-12">Timeline</h1>
-  <div class="col-10">
-    <div class="timeline_chart"></div>
-    <!-- <button class="btn btn-primary" id="clear_timelines" onclick="clear_timelines()">Clear timelines</button> -->
-  </div>
-  <div class="col-2">
-    <div class="legend_timeline_chart"></div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-10">
-    <div id="barChart"></div>
-  </div>
-</div>
-
-</section>
-
-<section id="#inactive_users">
-<div>
-  <h1>Get inactive users by user id and participation id</h1>
-  <p>Inactive users have been signed up for over a month and have not completed any surveys or tasks for x weeks</p>
-  <small>
-    <br/>
-    <b>Instructions</b>
-    <ol>
-      <li>Fill in the number of inactive weeks</li>
-      <li>Click on the blue button to select or Click on the grey button if you want to select and sort the results by a chosen value</li>
-      <li>To mark an email sent to a user, click on the checkbox, then all the way at the bottom of the section click submit. You can select multiple at the same time. A message will appear at the top of the page if successful.</li>
-      <li>To select users who have never completed a task do not fill in a value and click on the blue button.</li>
-    </ol>
-    <b>Results table information</b>
-    <ul>
-      <li>Reminder is false if the user is not signed up to receive reminders. True means they are signed up in the reminders system.</li>
-      <li>Last active is a date of the last time the user performed a task. If last active is null the participant never conducted any tasks. Last active is also called time_exec.</li>
-      <li>Should email is an advice whether an email should be sent to the user or not. It is true if the user has not received an email in x weeks. False otherwise.</li>
-      <li>Date email sent is the date of the last email that was sent. It is null if no email has ever been sent.</li>
-    </ul>
-  </small>
-  <div>
-    <!-- n weeks -->
-    <label class="control-label" for="n_weeks"></label>
-    <input class="form-control" id="n_weeks" name="n_weeks" placeholder="Number of inactive weeks" type="number" required />
-  </div>
-
-  <!-- Example split danger button -->
-<div class="btn-group">
-  <button class="btn btn-primary" onclick="inactive_users_ajax('user_id')">Get inactive users</button>
-  <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split sort_by_inactive" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <span class="sr-only">sort by</span>Sort by
-  </button>
-  <div class="dropdown-menu">
-    <a class="dropdown-item" href="javascript:inactive_users_ajax('user_id')">user id</a>
-    <a class="dropdown-item" href="javascript:inactive_users_ajax('reminder')">reminder</a>
-    <a class="dropdown-item" href="javascript:inactive_users_ajax('time_exec')">last active</a>
-    <a class="dropdown-item" href="javascript:inactive_users_ajax('should_email')">should email</a>
-    <a class="dropdown-item" href="javascript:inactive_users_ajax('date_email_sent')">date email sent</a>
-  </div>
-</div>
-
-  <br>
-  <div class="selection">
-    <form class="inactive_users_form" action="/email_sent" method="post">
-    </form>
-  </div>
-</div>
-</section>
-
-<section id="#send_msg">
-<div>
-  <form action="/bb_board" method="post">
-  <h1>Send message to a user</h1>
-  <h3>Select user</h3>
-  <div>
-    <!-- Participation_id -->
-    <label class="control-label" for="participation_id_bb_board">Select by participation_id </label>
-    <input class="form-control" id="participation_id_bb_board" name="participation_id_bb_board" placeholder="Participation id" type="text"/>
-  </div>
-  <div>
-    <!-- user_id -->
-    <label class="control-label" for="user_id_bb_board">Select by user_id </label>
-    <input class="form-control" id="user_id_bb_board" name="user_id_bb_board" placeholder="User id" type="text"/>
-  </div>
-  <h3>Type message</h3>
-  <div>
-    <!-- Bulletin board title -->
-    <label class="control-label" for="bb_msg_title">Insert Title </label>
-    <input class="form-control" maxlength="500" id="bb_msg_title" name="bb_msg_title" placeholder="Insert Title" onkeyup="preview_bb_msg()" type="text"/>
-  </div>
-  <div>
-    <!-- Bulletin board message -->
-    <label class="control-label" for="bb_msg">Insert Message </label>
-    <input class="form-control" maxlength="500" id="bb_msg" name="bb_msg" placeholder="Insert Message" onkeyup="preview_bb_msg()" type="text"/>
-  </div>
-  <p>Message should not be very long</p>
-  <br>
-  <h3>Preview</h3>
-  <div class="card preview">
-    <div class="card-header">
-      My Messages
-    </div>
-    <div class="card-body">
-      <h3 class="card-title bb_board_title"></h3>
-      <p class="card-text bb_board_msg"></p>
-    </div>
-  </div>
-  <p class="length_text">0/500<p>
-  <br>
-  <button class="btn btn-primary" name="msg" value="send_msg" type="submit">Send message</button>
-  <button class="btn btn-primary" name="msg" value="remove_msg" type="submit">Remove message</button>
-  </form>
-</div>
-</section>
-
-<section id="#change_user_info">
-<div class="row">
-  <div class="col-12">
-    <h1>Change user info from Database (BEWARE CHANGES CANNOT BE REVERSED)</h1>
-    <div class="form-group">
-      <div>
-        <!-- user_id -->
-        <label class="control-label" for="change_user_id">Search by user_id </label>
-        <input class="form-control" id="change_user_id" name="change_user_id" placeholder="User id" type="text"/>
-      </div>
-      <div>
-        <!-- Participation_id -->
-        <label class="control-label" for="change_participation_id">Search by participation_id </label>
-        <input class="form-control" id="change_participation_id" name="change_participation_id" placeholder="Participation id" type="text"/>
-      </div>
-      <button class="btn btn-primary" value="credit" onclick="change_user_ajax(this.value)">Set as for credit participant</button>
-      <button class="btn btn-primary" value="withdraw" onclick="change_user_ajax(this.value)">Set participant as withdrawn</button>
-    </div>
-    <p class="feedback_db_change"></p>
-  </div>
-</div>
-</section>
-
-<section id="#duplicate_user">
-<div class="row">
-  <div class="col-12">
-    <h1>Mark duplicate accounts (BEWARE CHANGES CANNOT BE REVERSED)</h1>
-    <div class="form-group">
-      <div>
-        <!-- user_id -->
-        <label class="control-label" for="p_id_1">Participation ID account 1 (The account that <b>will</b> remain in use)</label>
-        <input class="form-control" id="p_id_1" name="p_id_1" placeholder="Participation id 1" type="text"/>
-      </div>
-      <div>
-        <label class="control-label" for="p_id_2">Participation ID account 2</label>
-        <input class="form-control" id="p_id_2" name="p_id_2" placeholder="Participation id 2" type="text"/>
-      </div>
-      <button class="btn btn-primary" onclick="duplicate_user_ajax(this.value)">Complete</button>
-    </div>
-    <p class="feedback_db_duplicate"></p>
-  </div>
-</div>
-</section>
-
-<section id="#select_by_gender_age">
-<div class="rows">
-  <div class="col-12">
-    <h1>Query DB</h1>
-    <button class='btn btn-secondary' onclick="clear_selection()">Clear selection</button>
-  </div>
-  <div>
-    <!-- Gender -->
-    <div class="form-drop">
-      <label class="control-label" for="gender">Query DB by gender</label>
-      <select class="form-control custom-select custom-select-lg mb-3 query_dropdown" id="gender" name="gender">
-        <option selected disabled value="">Gender</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-        <option value="other">Other</option>
-      </select>
-    </div>
-    <button class="btn btn-primary" onclick="query_data_ajax()">Query gender</button>
-  </div>
-  <div>
-    <!-- user_type -->
-    <div class="form-drop">
-      <label class="control-label" for="user_type">Query DB by user_type</label>
-      <select class="form-control custom-select custom-select-lg mb-3 query_dropdown" id="user_type" name="user_type">
-        <option selected disabled value="">User type</option>
-        <option value="1">Paid</option>
-        <option value="2">Unpaid</option>
-      </select>
-    </div>
-    <button class="btn btn-primary" onclick="query_data_ajax()">Query user type</button>
-  </div>
-  <div>
-    <!-- withdrawn or for credits -->
-    <div>
-    <div class="form-drop">
-      <label class="control-label" for="special_user">Query DB by user_type</label>
-      <select class="form-control custom-select custom-select-lg mb-3 query_dropdown" id="special_user" name="special_user">
-        <option selected disabled value="">Withdrawn or for credit</option>
-        <option value="withdrawn">Withdrawn</option>
-        <option value="credit">Credit</option>
-      </select>
-    </div>
-    <button class="btn btn-primary" onclick="query_data_ajax()">Query withdrawn participants</button>
-    </div>
-  </div>
-  <div class="db_print_box">
-    <p class="gender_p selection"></p>
-  </div>
-</div>
-</section>
-
-<section id="#download_data">
-  <div class="rows">
+  <div class="row">
     <div class="col-12">
-      <h1>Download data from DB</h1>
-    </div>
+      <h1>Select user from database </h1>
       <div class="form-group">
-      <div>
-        <!-- Userame -->
-        <label class="control-label" for="download_password">Insert the password</label>
-
-      </div>
-      <form enctype="multipart/form-data" method="post" action="/excel_upload">
-        <div class="form-group">
-          <input class="form-control" id="download_password" name="download_password" placeholder="Type password" type="password" required />
-          <label>Upload latest version of excel file</label>
-          <input type="file" class="form-control-file" name="excel_file_input">
-          <button class="btn btn-primary" type="submit" >Get updated excel</button>
+        <div>
+          <!-- Userame -->
+          <label class="control-label" for="username">Search by email </label>
+          <input class="form-control" id="username" name="username" placeholder="Email" type="text" required />
         </div>
-      </form>
-      <button class="btn btn-primary" onclick="download_data_ajax('session_info')">Download Session Info</button>
-      <br/>
-      <button class="btn btn-primary" onclick="download_data_ajax('tasks')">Download Tasks</button>
-      <br/>
-      <button class="btn btn-primary" onclick="download_data_ajax('rec_system')">Download Rec System</button>
-      <br/>
-      <button class="btn btn-primary" onclick="download_data_ajax('bb_board')">Download BB Board</button>
-      <br/>
-      <button class="btn btn-primary" onclick="download_data_ajax('task_completed')">Download Task Completed</button>
-      <br/>
-      <button class="btn btn-primary" onclick="download_data_ajax('tracked_task')">Download Tracked Task</button>
-      <br/>
-      <button class="btn btn-primary" onclick="download_data_ajax('reminder')">Download Reminder</button>
-      <br/>
-      <button class="btn btn-primary" onclick="download_data_ajax('emails')">Download Emails</button>
-    </div>
-  </div>
-</section>
+        <div>
+          <!-- user_id -->
+          <label class="control-label" for="user_id">Search by user_id </label>
+          <input class="form-control" id="user_id" name="user_id" placeholder="User id" type="text"/>
+        </div>
+        <div>
+          <!-- Participation_id -->
+          <label class="control-label" for="participation_id">Search by participation_id </label>
+          <input class="form-control" id="participation_id" name="participation_id" placeholder="Participation id" type="text"/>
+        </div>
 
-<section id="#visualizations">
-  <div>
-  <div class="row bullet_chart_box">
-    <h1 class="col-12">Money distrubution</h1>
-    <div class="col-10">
-      <div class="bullet_chart"></div>
-    </div>
-    <div class="col-2">
-      <div class="legend_bullet_chart"></div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value=""  name="view_user_payment_bar" id="view_user_payment_bar">
+          <label class="form-check-label" for="view_user_payment_bar">
+            View payment bar chart from user dashboard
+          </label>
+        </div>
+
+        <button class="btn btn-primary" onclick="select_user_ajax()">Search</button>
+      </div>
+      <div class="db_print_box">
+        <p class="user"></p>
+      </div>
     </div>
   </div>
 
   <div class="row">
-    <div class="col-4 year_box">
-      <h1>Age statistics</h1>
-      <p class="average_age">Average age: </p>
-      <div class="year"></div>
-      <div class="boxplot"></div>
+    <h1 class="col-12">Timeline</h1>
+    <div class="col-10">
+      <div class="timeline_chart"></div>
+      <!-- <button class="btn btn-primary" id="clear_timelines" onclick="clear_timelines()">Clear timelines</button> -->
     </div>
-
-
-    <div class="col-4 gender_box">
-      <h1>Gender</h1>
-      <p class="gender_mode"> </p>
-      <div class="gender_barchart"></div>
-      <p>** Data contains missing values </p>
-    </div>
-
-    <div class="col-4 user_type_box">
-      <h1>User type</h1>
-      <p class="user_type_mode"> </p>
-      <div class="user_type_barchart"></div>
+    <div class="col-2">
+      <div class="legend_timeline_chart"></div>
     </div>
   </div>
 
-  <div class="row task_frequency">
-    <div class="col-6">
-      <h1>Task completion</h1>
-      <div class="task_frequency_dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="task_frequency_dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-           Choose chart type
-        </button>
-    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-      <a class="dropdown-item" onclick="toggle_charts('tasks')">Tasks</a>
-      <a class="dropdown-item"onclick="toggle_charts('tasks_p')">Participants</a>
+  <div class="row">
+    <div class="col-10">
+      <div id="barChart"></div>
     </div>
   </div>
-    </div>
-    <div class="col-6">
-      <h1>Sign up distribution</h1>
+
+</section>
+
+<section id="#inactive_users">
+  <div>
+    <h1>Get inactive users by user id and participation id</h1>
+    <p>Inactive users have been signed up for over a month and have not completed any surveys or tasks for x weeks</p>
+    <small>
+      <br/>
+      <b>Instructions</b>
+      <ol>
+        <li>Fill in the number of inactive weeks</li>
+        <li>Click on the blue button to select or Click on the grey button if you want to select and sort the results by a chosen value</li>
+        <li>To mark an email sent to a user, click on the checkbox, then all the way at the bottom of the section click submit. You can select multiple at the same time. A message will appear at the top of the page if successful.</li>
+        <li>To select users who have never completed a task do not fill in a value and click on the blue button.</li>
+      </ol>
+      <b>Results table information</b>
+      <ul>
+        <li>Reminder is false if the user is not signed up to receive reminders. True means they are signed up in the reminders system.</li>
+        <li>Last active is a date of the last time the user performed a task. If last active is null the participant never conducted any tasks. Last active is also called time_exec.</li>
+        <li>Should email is an advice whether an email should be sent to the user or not. It is true if the user has not received an email in x weeks. False otherwise.</li>
+        <li>Date email sent is the date of the last email that was sent. It is null if no email has ever been sent.</li>
+      </ul>
+    </small>
+    <div>
+      <!-- n weeks -->
+      <label class="control-label" for="n_weeks"></label>
+      <input class="form-control" id="n_weeks" name="n_weeks" placeholder="Number of inactive weeks" type="number" required />
     </div>
 
-    <div class=col-6>
-      <div class="stacked_barchart"></div>
+    <!-- Example split danger button -->
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="inactive_users_ajax('user_id')">Get inactive users</button>
+      <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split sort_by_inactive" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="sr-only">sort by</span>Sort by
+      </button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="javascript:inactive_users_ajax('user_id')">user id</a>
+        <a class="dropdown-item" href="javascript:inactive_users_ajax('reminder')">reminder</a>
+        <a class="dropdown-item" href="javascript:inactive_users_ajax('time_exec')">last active</a>
+        <a class="dropdown-item" href="javascript:inactive_users_ajax('should_email')">should email</a>
+        <a class="dropdown-item" href="javascript:inactive_users_ajax('date_email_sent')">date email sent</a>
+      </div>
     </div>
-    <div class="col-6">
-      <div class="sign_up_linechart"></div>
+
+    <br>
+    <div class="selection">
+      <form class="inactive_users_form" action="/email_sent" method="post">
+      </form>
     </div>
-  </div>
   </div>
 </section>
 
-<!-- streamgraph and linechart visualization
-<div class="row time_series">
-  <div class="col-12">
-    <button class="btn btn-secondary" id="b1_line" value="See Linechart" onclick="toggle_charts("linechart")">Linegraph</button>
-    <button class="btn btn-secondary" id="b2_stream" value="See Streamgraph" onclick="toggle_charts("streamgraph")">Streamgraph</button>
-  </div>
-
-  <div class="col-10">
-    <div class="streamgraph"></div>
-    <div>
-      <div class="linechart"></div>
-      <select id="selectbox">
-        <option value="_1">Fahrenheit</option>
-        <option value="_2">Celsius</option>
-      </select>
+<section id="#send_msg">
+  <div>
+    <form action="/bb_board" method="post">
+      <h1>Send message to a user</h1>
+      <h3>Select user</h3>
+      <div>
+        <!-- Participation_id -->
+        <label class="control-label" for="participation_id_bb_board">Select by participation_id </label>
+        <input class="form-control" id="participation_id_bb_board" name="participation_id_bb_board" placeholder="Participation id" type="text"/>
+      </div>
+      <div>
+        <!-- user_id -->
+        <label class="control-label" for="user_id_bb_board">Select by user_id </label>
+        <input class="form-control" id="user_id_bb_board" name="user_id_bb_board" placeholder="User id" type="text"/>
+      </div>
+      <h3>Type message</h3>
+      <div>
+        <!-- Bulletin board title -->
+        <label class="control-label" for="bb_msg_title">Insert Title </label>
+        <input class="form-control" maxlength="500" id="bb_msg_title" name="bb_msg_title" placeholder="Insert Title" onkeyup="preview_bb_msg()" type="text"/>
+      </div>
+      <div>
+        <!-- Bulletin board message -->
+        <label class="control-label" for="bb_msg">Insert Message </label>
+        <input class="form-control" maxlength="500" id="bb_msg" name="bb_msg" placeholder="Insert Message" onkeyup="preview_bb_msg()" type="text"/>
+      </div>
+      <p>Message should not be very long</p>
+      <br>
+      <h3>Preview</h3>
+      <div class="card preview">
+        <div class="card-header">
+          My Messages
+        </div>
+        <div class="card-body">
+          <h3 class="card-title bb_board_title"></h3>
+          <p class="card-text bb_board_msg"></p>
+        </div>
+      </div>
+      <p class="length_text">0/500<p>
+        <br>
+        <button class="btn btn-primary" name="msg" value="send_msg" type="submit">Send message</button>
+        <button class="btn btn-primary" name="msg" value="remove_msg" type="submit">Remove message</button>
+      </form>
     </div>
-  </div>
-  <div class="col-2">
-    <div class="legend"></div>
-  </div>
+  </section>
+
+  <section id="#change_user_info">
+    <div class="row">
+      <div class="col-12">
+        <h1>Change user info from Database (BEWARE CHANGES CANNOT BE REVERSED)</h1>
+        <div class="form-group">
+          <div>
+            <!-- user_id -->
+            <label class="control-label" for="change_user_id">Search by user_id </label>
+            <input class="form-control" id="change_user_id" name="change_user_id" placeholder="User id" type="text"/>
+          </div>
+          <div>
+            <!-- Participation_id -->
+            <label class="control-label" for="change_participation_id">Search by participation_id </label>
+            <input class="form-control" id="change_participation_id" name="change_participation_id" placeholder="Participation id" type="text"/>
+          </div>
+          <button class="btn btn-primary" value="credit" onclick="change_user_ajax(this.value)">Set as for credit participant</button>
+          <button class="btn btn-primary" value="withdraw" onclick="change_user_ajax(this.value)">Set participant as withdrawn</button>
+        </div>
+        <p class="feedback_db_change"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="#duplicate_user">
+    <div class="row">
+      <div class="col-12">
+        <h1>Mark duplicate accounts (BEWARE CHANGES CANNOT BE REVERSED)</h1>
+        <div class="form-group">
+          <div>
+            <!-- user_id -->
+            <label class="control-label" for="p_id_1">Participation ID account 1 (The account that <b>will</b> remain in use)</label>
+            <input class="form-control" id="p_id_1" name="p_id_1" placeholder="Participation id 1" type="text"/>
+          </div>
+          <div>
+            <label class="control-label" for="p_id_2">Participation ID account 2</label>
+            <input class="form-control" id="p_id_2" name="p_id_2" placeholder="Participation id 2" type="text"/>
+          </div>
+          <button class="btn btn-primary" onclick="duplicate_user_ajax(this.value)">Complete</button>
+        </div>
+        <p class="feedback_db_duplicate"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="#download_active_inactive">
+    <div class="rows">
+      <div class="col-12">
+        <h1>Download list of active and inactive participants</h1>
+        <p>Emails addresses of participants who:</p><br>
+        <ul>
+          <li>Are not withdrawn</li>
+          <li>Participate for payment</li>
+          <li>Can collect payment</li>
+        </ul>
+        <p><b>Active:</b> performed at least 1 task in the past 6 months</p>
+        <br>
+        <p><b>Inactive:</b> performed at least 1 task since signing up but no task in the past 6 months</p>
+        <br></br>
+        <p><i>Note: it can take up to 5 minutes ... just wait... While you're waiting remember that this is sensitive data and only download if you're going to use it immediately and delete it immediately after use from your personal device</i></p>
+        <br></br>
+      </div>
+      <div class="form-group">
+        <div>
+          <!-- Userame -->
+          <label class="control-label" for="download_ai_pass">Insert the password</label>
+            <div class="form-group">
+              <input class="form-control" id="download_ai_pass" name="download_ai_pass" placeholder="Type password" type="password" required />
+            </div>
+        </div>
+        <button class="btn btn-primary" onclick="download_active_inactive('active')">Download Active</button>
+        <br/>
+        <button class="btn btn-primary" onclick="download_active_inactive('inactive')">Download Inactive</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="#select_by_gender_age">
+    <div class="rows">
+      <div class="col-12">
+        <h1>Query DB</h1>
+        <button class='btn btn-secondary' onclick="clear_selection()">Clear selection</button>
+      </div>
+      <div>
+        <!-- Gender -->
+        <div class="form-drop">
+          <label class="control-label" for="gender">Query DB by gender</label>
+          <select class="form-control custom-select custom-select-lg mb-3 query_dropdown" id="gender" name="gender">
+            <option selected disabled value="">Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="query_data_ajax()">Query gender</button>
+      </div>
+      <div>
+        <!-- user_type -->
+        <div class="form-drop">
+          <label class="control-label" for="user_type">Query DB by user_type</label>
+          <select class="form-control custom-select custom-select-lg mb-3 query_dropdown" id="user_type" name="user_type">
+            <option selected disabled value="">User type</option>
+            <option value="1">Paid</option>
+            <option value="2">Unpaid</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="query_data_ajax()">Query user type</button>
+      </div>
+      <div>
+        <!-- withdrawn or for credits -->
+        <div>
+          <div class="form-drop">
+            <label class="control-label" for="special_user">Query DB by user_type</label>
+            <select class="form-control custom-select custom-select-lg mb-3 query_dropdown" id="special_user" name="special_user">
+              <option selected disabled value="">Withdrawn or for credit</option>
+              <option value="withdrawn">Withdrawn</option>
+              <option value="credit">Credit</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="query_data_ajax()">Query withdrawn participants</button>
+        </div>
+      </div>
+      <div class="db_print_box">
+        <p class="gender_p selection"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="#download_data">
+    <div class="rows">
+      <div class="col-12">
+        <h1>Download data from DB</h1>
+      </div>
+      <div class="form-group">
+        <div>
+          <!-- Userame -->
+          <label class="control-label" for="download_password">Insert the password</label>
+
+        </div>
+        <form enctype="multipart/form-data" method="post" action="/excel_upload">
+          <div class="form-group">
+            <input class="form-control" id="download_password" name="download_password" placeholder="Type password" type="password" required />
+            <label>Upload latest version of excel file</label>
+            <input type="file" class="form-control-file" name="excel_file_input">
+            <button class="btn btn-primary" type="submit" >Get updated excel</button>
+          </div>
+        </form>
+        <button class="btn btn-primary" onclick="download_data_ajax('session_info')">Download Session Info</button>
+        <br/>
+        <button class="btn btn-primary" onclick="download_data_ajax('tasks')">Download Tasks</button>
+        <br/>
+        <button class="btn btn-primary" onclick="download_data_ajax('rec_system')">Download Rec System</button>
+        <br/>
+        <button class="btn btn-primary" onclick="download_data_ajax('bb_board')">Download BB Board</button>
+        <br/>
+        <button class="btn btn-primary" onclick="download_data_ajax('task_completed')">Download Task Completed</button>
+        <br/>
+        <button class="btn btn-primary" onclick="download_data_ajax('tracked_task')">Download Tracked Task</button>
+        <br/>
+        <button class="btn btn-primary" onclick="download_data_ajax('reminder')">Download Reminder</button>
+        <br/>
+        <button class="btn btn-primary" onclick="download_data_ajax('emails')">Download Emails</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="#visualizations">
+    <div>
+      <div class="row bullet_chart_box">
+        <h1 class="col-12">Money distrubution</h1>
+        <div class="col-10">
+          <div class="bullet_chart"></div>
+        </div>
+        <div class="col-2">
+          <div class="legend_bullet_chart"></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-4 year_box">
+          <h1>Age statistics</h1>
+          <p class="average_age">Average age: </p>
+          <div class="year"></div>
+          <div class="boxplot"></div>
+        </div>
+
+
+        <div class="col-4 gender_box">
+          <h1>Gender</h1>
+          <p class="gender_mode"> </p>
+          <div class="gender_barchart"></div>
+          <p>** Data contains missing values </p>
+        </div>
+
+        <div class="col-4 user_type_box">
+          <h1>User type</h1>
+          <p class="user_type_mode"> </p>
+          <div class="user_type_barchart"></div>
+        </div>
+      </div>
+
+      <div class="row task_frequency">
+        <div class="col-6">
+          <h1>Task completion</h1>
+          <div class="task_frequency_dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="task_frequency_dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Choose chart type
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" onclick="toggle_charts('tasks')">Tasks</a>
+              <a class="dropdown-item"onclick="toggle_charts('tasks_p')">Participants</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <h1>Sign up distribution</h1>
+        </div>
+
+        <div class=col-6>
+          <div class="stacked_barchart"></div>
+        </div>
+        <div class="col-6">
+          <div class="sign_up_linechart"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- streamgraph and linechart visualization
+  <div class="row time_series">
+  <div class="col-12">
+  <button class="btn btn-secondary" id="b1_line" value="See Linechart" onclick="toggle_charts("linechart")">Linegraph</button>
+  <button class="btn btn-secondary" id="b2_stream" value="See Streamgraph" onclick="toggle_charts("streamgraph")">Streamgraph</button>
+</div>
+
+<div class="col-10">
+<div class="streamgraph"></div>
+<div>
+<div class="linechart"></div>
+<select id="selectbox">
+<option value="_1">Fahrenheit</option>
+<option value="_2">Celsius</option>
+</select>
+</div>
+</div>
+<div class="col-2">
+<div class="legend"></div>
+</div>
 </div>
 -->
 {% endblock %}

@@ -1,0 +1,125 @@
+ALLOWED_EXTENSIONS = {'xlsx', 'xlx', 'csv'}
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    
+@app.route("/excel_upload", methods=["POST"])
+def excel_upload():
+    if request.method == "POST":
+        download_password = request.form.get('download_password')
+        pass_txt_r  = open("download_pass.txt", "r")
+        pass_txt = pass_txt_r.read().strip("\n")
+        if pass_txt != download_password:
+            flash("Incorrect Password")
+            return redirect('/admin')
+        # check if file part in post request
+        if 'excel_file_input' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['excel_file_input']
+        # Check if filename is not empty
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        # check if file is not empty and that the uploaded file is among the allowed options
+        if file and allowed_file(file.filename):
+            wb = load_workbook(file, data_only = True)
+            #### New participants
+            sh = wb['SubjectOverview']
+            # Get all the user_ids
+            user_ids = list(map(lambda a: a.value ,list(sh['A'])))
+            # Only select actual ids
+            user_ids =  [x for x in user_ids if type(x) == int]
+            # query DB for all user_ids
+            select = "SELECT user_id FROM session_info"
+            all_user_ids = db.execute(select, ("",), 1)
+            # DB returns a list of lists, flatten to allow easy comparison
+            all_user_ids_flattened = [item for sublist in all_user_ids for item in sublist]
+            # Check the user_ids missing from the sheet
+            missing = tuple(set(all_user_ids_flattened) - set(user_ids))
+            # If only only participant is missing (one new user) then add only that user
+            if len(missing) == 1:
+                select = f"SELECT * FROM session_info WHERE user_id =(%s)"
+                new_ps = db.execute(select, (missing[0],), 1)
+            # Add all users
+            else:
+                select = f"SELECT * FROM session_info WHERE user_id IN {missing}"
+                new_ps = db.execute(select, ("",), 1)
+            # if there is new participant(s) loop over all of them and extract relevant fields
+            if new_ps:
+                for p in new_ps:
+                    user_id = p['user_id']
+                    # format date month year
+                    birthdate = p['birthyear'].strftime("%d/%m/%Y")
+                    participation_id = p['participation_id']
+                    psytoolkit_ID = generate_id(p['user_id'])
+                    language = p['language']
+                    payment_request = 1
+                    if p['user_type'] == 2:
+                        payment_request = 0
+                    payment_decision = ''
+                    requested_EEG = p['eeg_participation_request']
+                    EEG_email_sent = ''
+                    sign_up_date = p['time_sign_up'].strftime("%d/%m/%Y")
+                    # calculate age at sign up
+                    datetime_birthyear = datetime.combine(p['birthyear'], datetime.min.time())
+                    datetime_since_sign_up = p['time_sign_up'] - datetime_birthyear
+                    age_at_sign_up = divmod(datetime_since_sign_up.total_seconds(), 31536000)[0]
+                    sh.append([user_id,birthdate, participation_id,psytoolkit_ID,language,payment_request,payment_decision,requested_EEG,EEG_email_sent,sign_up_date,age_at_sign_up])
+            ### Reminder ###
+            select = f"SELECT user_id FROM reminder"
+            reminder_participants = db.execute(select, ("",), 1)
+            # DB returns a list of lists, flatten to allow easy comparison
+            reminder_ids_flattened = [item for sublist in reminder_participants for item in sublist]
+            count = 1
+            for row in list(sh["A"]):
+                if row.value in reminder_ids_flattened:
+                    sh[f"AJ{count}"] = 1
+                count += 1
+            #### EEG ####
+            # Select the EEG sheet
+            sh2 = wb['EEG-Labvisit']
+            # select all participants that requested EEG
+            select = f"SELECT participation_id FROM session_info WHERE eeg_participation_request IN (1)"
+            requested_EEG = db.execute(select, ("",), 1)
+            requested_EEG_flattened = [item for sublist in requested_EEG for item in sublist]
+            # select all participation ids from the excel sheet
+            participation_ids = list(map(lambda a: a.value ,list(sh2['A'])))
+            participation_ids = participation_ids[1:]
+            # see which participants are missing from the sheet
+            missing = tuple(set(requested_EEG_flattened) - set(participation_ids))
+            if len(missing) == 1:
+                select = f"SELECT * FROM session_info WHERE participation_id=(%s)"
+                new_eeg_ps = db.execute(select, (missing[0],), 1)
+            else:
+                select = f"SELECT * FROM session_info WHERE participation_id IN {missing}"
+                new_eeg_ps = db.execute(select, ("",), 1)
+            # loop over all participant(s) that made EEG requests
+            if new_eeg_ps:
+                for pe in new_eeg_ps:
+                    datetime_birthyear = datetime.combine(pe['birthyear'], datetime.min.time())
+                    # calculate current age
+                    datetime_current = datetime.now() - datetime_birthyear
+                    current_age = divmod(datetime_current.total_seconds(), 31536000)[0]
+                    # calculate how many tasks the participants completed
+                    select = "SELECT * FROM TASK_COMPLETED WHERE user_id=(%s)"
+                    task_completed = db.execute(select, (pe['user_id'], ), 1)
+                    sh2.append({'A': pe['participation_id'], 'G': pe['time_sign_up'], 'H': len(task_completed), 'J':current_age})
+                    # highlight the column if their age is larger or equal to 70
+                    if current_age >= 70:
+                        sh2[f'J{sh2.max_row}'].fill =  PatternFill("solid", fgColor="ffc3c6")
+                        sh2[f'J{sh2.max_row}'].font = Font(color="9C0006")
+                # recalculate rankings
+                ranking = calculate_ranking(sh2)
+                # assign the new rankings to the cells
+                count = 2
+                for row in range(len(ranking)):
+                    sh2[f'F{count}'].value = ranking[row]
+                    count += 1
+            #return jsonify('random test thing')
+            return Response(save_virtual_workbook(wb), headers={'Content-Disposition': f'attachment; filename={file.filename}','Content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
+        else:
+            flash('Invalid file, please upload an excel file (with file extension .xlsx)')
+            return redirect('/admin')
+    else:
+        flash('Invalid request')
+        return redirect('/admin')

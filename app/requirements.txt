@@ -13,3 +13,4 @@ six==1.13.0
 Werkzeug==0.16.0
 xlrd==1.2.0
 requests==2.22.0
+openpyxl==3.1.1

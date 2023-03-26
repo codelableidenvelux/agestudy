@@ -145,7 +145,6 @@ function select_user_ajax(){
       d3.select("#barChart").select('svg').remove();
       d3.select("#barChart").select('h1').remove();
       d3.select("#barChart").select('p').remove();
-      console.log(payment)
       if (user["user_type"] == 1 && document.getElementById("view_user_payment_bar").checked){
         d3.select("#barChart").append('h1').text('Payment Info')
         var price = payment[0]
@@ -302,6 +301,44 @@ function download_data_ajax(table){
 });
 }
 
+function download_active_inactive(table){
+  $.getJSON("/download_active_inactive", {'download_ai_pass': download_ai_pass.value, 'table_name': table}, function(results, state){
+    if (state === "success"){
+      // if the password is incorrect then flash a message, send user to top of page, fade out the message
+      if (results === "Incorrect Password"){
+        $('#flash').append('<header><div class="alert alert-primary border text-center" id="flash" role="alert">' + results + '</div></header>')
+        $(document).ready(function(){
+            $(this).scrollTop(0);
+            setTimeout(function() {
+            $('.alert').fadeOut('slow');}, 2000); // <-- time in milliseconds
+      });
+      }
+      else{
+        // convert json to csv and get the data in right format for the csv file
+        const column_names = 'Emails';
+        const result = results;
+        const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+        const header = Object.keys(result[0])
+        let csv = result.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+        //csv.unshift(column_names.join(','))
+        csv = csv.join('\r\n')
+
+        // write to a file and download
+        let csvContent = "data:text/csv;charset=utf-8," + csv;
+        var encodedUri = encodeURI(csvContent);
+        var link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        filename = table + ".csv"
+        link.setAttribute("download",filename);
+        document.body.appendChild(link); // Required for FF
+        link.click();
+        // reload so that they need to fill in password again to be able to download another file
+        location.reload()
+    }
+  }
+});
+}
+
 function inactive_users_ajax(sort_by){
   $.getJSON("/inactive_users", {'n_weeks': n_weeks.value}, function(result, state){
     if (state === "success"){
@@ -315,9 +352,6 @@ function inactive_users_ajax(sort_by){
       }
 
      $(".sort_by_inactive").text(sort_by);
-
-      console.log(sort_by)
-      console.log(result)
       var inactive_participants_list = "";
       var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
       for (i in result){

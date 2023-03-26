@@ -17,9 +17,6 @@ from email.message import EmailMessage
 from email.headerregistry import Address
 from email.utils import make_msgid
 from flask.json import JSONEncoder
-#from openpyxl import load_workbook
-#from openpyxl.writer.excel import save_virtual_workbook
-#from openpyxl.styles import PatternFill, Font
 
 app = Flask(__name__)
 key  = open("secret_key.txt", "r")
@@ -245,7 +242,6 @@ def rt():
     task_id = 8
     link = task_opening(task_id)
     task_link = link[0][0] + '&task=' + task + '&user_id=' + generate_id(id)
-    print(task_link)
     select = f'SELECT {youtube_link_select} FROM TASKS WHERE task_id=(%s)'
     youtube_link = db.execute(select,(task_id,), 1)
     """
@@ -464,10 +460,7 @@ def calculate_money(id):
     #select_all_tasks = f"SELECT * FROM TASK_COMPLETED WHERE USER_ID = (%s)"
     #all_tasks = db.execute(select_all_tasks, (id,), 1)
 
-    # Assume that payment for task can be collected (because they have not collected payment this month yet)
-    can_collect_task_this_month = True
     # go over all the tasks
-    print(can_collect_task_this_month)
     # seperate each task per month
     months_dict = {}
     for task in completed_tasks:
@@ -498,15 +491,14 @@ def calculate_money(id):
                 money_earned_tasks = money_earned_tasks + float(money[0]["price"])
                 # Check if its smaller than the max value per month add it to the total amount earned
                 # (80-8)/(12*3) = 2
-        if money_earned_tasks <= (80-8)/(12*3) and can_collect_task_this_month:
+        if money_earned_tasks <= (80-8)/(12*3):
             money_earned = money_earned + money_earned_tasks
             # money_earned_tasks < 72. 72 is the total ammount a user can ever make on the tasks through the study
             # if money_earned_tasks is larger than 2 only count the first 2 euros for that month
-        elif  money_earned_tasks > (80-8)/(12*3) and money_earned_tasks < 72 and can_collect_task_this_month:
+        elif  money_earned_tasks > (80-8)/(12*3) and money_earned_tasks < 72:
             money_earned = money_earned + 2
         # set the amount for the tasks to 0 every month as not to go over the total value
         money_earned_tasks = 0
-        print(money_earned)
         # round to 2 decimals
     return round(money_earned, 2)
 
@@ -883,7 +875,6 @@ def bb_board():
 
         # If the user request to remove a message then set the show_msg variable to 0
         if request.form['msg'] == 'remove_msg':
-            print("remove")
             update = "UPDATE BB_BOARD SET show_msg = 0 WHERE user_id = (%s)"
             db.execute(update, (user_id,), 0)
         # Else user requested to send a message to the user
@@ -1045,7 +1036,6 @@ def reset():
 
         if password_reset_rows:
             user_id=password_reset_rows[0][0]
-            print(user_id)
         else:
             flash(flash_msg_csv[session["language"]]["invalid_token"])
             return redirect("/forgot_password")
@@ -1456,8 +1446,6 @@ def duplicate_user():
     p_id_1 = request.args.get('p_id_1').strip()
     p_id_2 = request.args.get('p_id_2').strip()
     if p_id_1 and p_id_2:
-        #print(p_id_1)
-        #print(p_id_2)
         select = 'SELECT user_id FROM session_info WHERE participation_id=(%s)'
         user_id_1 = db.execute(select, (p_id_1,), 1)
         select = 'SELECT user_id FROM session_info WHERE participation_id=(%s)'
@@ -1569,10 +1557,21 @@ def query_data():
         return jsonify(rows)
     return jsonify(False)
 
+def get_num_active_participants():
+    """
+    Active participants have performed at least one tasks or survey in the last 6 months
+    """
+    date_6_months_ago = datetime.now() - timedelta(weeks=26)
+    date_str = date_6_months_ago.strftime("%Y-%m-%d")
+    select = f"SELECT user_id FROM task_completed WHERE time_exec >= '{date_str}'"
+    tasks_times = db.execute(select,("",), 1)
+    all_participants = np.unique(tasks_times)
+    return len(all_participants)
+
 @app.route("/get_data", methods=["GET"])
 @language_check
 def get_data():
-    select = "SELECT * FROM SESSION_INFO"
+    select = "SELECT * FROM SESSION_INFO WHERE consent IS NULL"
     all_participants = db.execute(select, (""), 1)
     df_all_p = pd.DataFrame(all_participants)
     df_all_p = df_all_p.rename(columns={0: "user_id", 1: "user_name", 2:"email", 3:"gender", 4:"collect_possible",
@@ -1651,9 +1650,9 @@ def get_data():
   }
 ]
 
-    merged["time_sign_up"] = pd.to_datetime(merged["time_sign_up"])
-    by_id_month = merged.groupby(by = ["user_id", "month"])
-    active = get_num_active_participants(by_id_month)
+    ##merged["time_sign_up"] = pd.to_datetime(merged["time_sign_up"])
+    ##by_id_month = merged.groupby(by = ["user_id", "month"])
+    active = get_num_active_participants()
     basic_stats["num_active_p"] = active
 
     merged["year_exec"] = merged["time_exec"].apply(lambda x: x.year)
@@ -1683,137 +1682,65 @@ def get_data():
     data_json = json.dumps(data)
     return data_json
 
-ALLOWED_EXTENSIONS = {'xlsx', 'xlx', 'csv'}
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@app.route("/excel_upload", methods=["POST"])
-def excel_upload():
-    if request.method == "POST":
-        download_password = request.form.get('download_password')
-        pass_txt_r  = open("download_pass.txt", "r")
-        pass_txt = pass_txt_r.read().strip("\n")
-        if pass_txt != download_password:
-            flash("Incorrect Password")
-            return redirect('/admin')
-        # check if file part in post request
-        if 'excel_file_input' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['excel_file_input']
-        # Check if filename is not empty
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        # check if file is not empty and that the uploaded file is among the allowed options
-        if file and allowed_file(file.filename):
-            wb = load_workbook(file, data_only = True)
-            #### New participants
-            sh = wb['SubjectOverview']
-            # Get all the user_ids
-            user_ids = list(map(lambda a: a.value ,list(sh['A'])))
-            # Only select actual ids
-            user_ids =  [x for x in user_ids if type(x) == int]
-            # query DB for all user_ids
-            select = "SELECT user_id FROM session_info"
-            all_user_ids = db.execute(select, ("",), 1)
-            # DB returns a list of lists, flatten to allow easy comparison
-            all_user_ids_flattened = [item for sublist in all_user_ids for item in sublist]
-            # Check the user_ids missing from the sheet
-            missing = tuple(set(all_user_ids_flattened) - set(user_ids))
-            # If only only participant is missing (one new user) then add only that user
-            if len(missing) == 1:
-                select = f"SELECT * FROM session_info WHERE user_id =(%s)"
-                new_ps = db.execute(select, (missing[0],), 1)
-            # Add all users
-            else:
-                select = f"SELECT * FROM session_info WHERE user_id IN {missing}"
-                new_ps = db.execute(select, ("",), 1)
-            # if there is new participant(s) loop over all of them and extract relevant fields
-            if new_ps:
-                for p in new_ps:
-                    user_id = p['user_id']
-                    # format date month year
-                    birthdate = p['birthyear'].strftime("%d/%m/%Y")
-                    participation_id = p['participation_id']
-                    psytoolkit_ID = generate_id(p['user_id'])
-                    language = p['language']
-                    payment_request = 1
-                    if p['user_type'] == 2:
-                        payment_request = 0
-                    payment_decision = ''
-                    requested_EEG = p['eeg_participation_request']
-                    EEG_email_sent = ''
-                    sign_up_date = p['time_sign_up'].strftime("%d/%m/%Y")
-                    # calculate age at sign up
-                    datetime_birthyear = datetime.combine(p['birthyear'], datetime.min.time())
-                    datetime_since_sign_up = p['time_sign_up'] - datetime_birthyear
-                    age_at_sign_up = divmod(datetime_since_sign_up.total_seconds(), 31536000)[0]
-                    sh.append([user_id,birthdate, participation_id,psytoolkit_ID,language,payment_request,payment_decision,requested_EEG,EEG_email_sent,sign_up_date,age_at_sign_up])
-            ### Reminder ###
-            select = f"SELECT user_id FROM reminder"
-            reminder_participants = db.execute(select, ("",), 1)
-            # DB returns a list of lists, flatten to allow easy comparison
-            reminder_ids_flattened = [item for sublist in reminder_participants for item in sublist]
-            count = 1
-            for row in list(sh["A"]):
-                if row.value in reminder_ids_flattened:
-                    sh[f"AJ{count}"] = 1
-                count += 1
-            #### EEG ####
-            # Select the EEG sheet
-            sh2 = wb['EEG-Labvisit']
-            # select all participants that requested EEG
-            select = f"SELECT participation_id FROM session_info WHERE eeg_participation_request IN (1)"
-            requested_EEG = db.execute(select, ("",), 1)
-            requested_EEG_flattened = [item for sublist in requested_EEG for item in sublist]
-            # select all participation ids from the excel sheet
-            participation_ids = list(map(lambda a: a.value ,list(sh2['A'])))
-            participation_ids = participation_ids[1:]
-            # see which participants are missing from the sheet
-            missing = tuple(set(requested_EEG_flattened) - set(participation_ids))
-            if len(missing) == 1:
-                select = f"SELECT * FROM session_info WHERE participation_id=(%s)"
-                new_eeg_ps = db.execute(select, (missing[0],), 1)
-            else:
-                select = f"SELECT * FROM session_info WHERE participation_id IN {missing}"
-                new_eeg_ps = db.execute(select, ("",), 1)
-            # loop over all participant(s) that made EEG requests
-            if new_eeg_ps:
-                for pe in new_eeg_ps:
-                    datetime_birthyear = datetime.combine(pe['birthyear'], datetime.min.time())
-                    # calculate current age
-                    datetime_current = datetime.now() - datetime_birthyear
-                    current_age = divmod(datetime_current.total_seconds(), 31536000)[0]
-                    # calculate how many tasks the participants completed
-                    select = "SELECT * FROM TASK_COMPLETED WHERE user_id=(%s)"
-                    task_completed = db.execute(select, (pe['user_id'], ), 1)
-                    sh2.append({'A': pe['participation_id'], 'G': pe['time_sign_up'], 'H': len(task_completed), 'J':current_age})
-                    # highlight the column if their age is larger or equal to 70
-                    if current_age >= 70:
-                        sh2[f'J{sh2.max_row}'].fill =  PatternFill("solid", fgColor="ffc3c6")
-                        sh2[f'J{sh2.max_row}'].font = Font(color="9C0006")
-                # recalculate rankings
-                ranking = calculate_ranking(sh2)
-                # assign the new rankings to the cells
-                count = 2
-                for row in range(len(ranking)):
-                    sh2[f'F{count}'].value = ranking[row]
-                    count += 1
-            #return jsonify('random test thing')
-            return Response(save_virtual_workbook(wb), headers={'Content-Disposition': f'attachment; filename={file.filename}','Content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
-        else:
-            flash('Invalid file, please upload an excel file (with file extension .xlsx)')
-            return redirect('/admin')
-    else:
-        flash('Invalid request')
-        return redirect('/admin')
-
 class JsonEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, decimal.Decimal):
             return float(obj)
         return JSONEncoder.default(self, obj)
+
+@app.route("/download_active_inactive", methods=["GET"])
+@language_check
+def download_active_inactive():
+    download_password = request.args.get('download_ai_pass')
+    table_name = request.args.get('table_name')
+    if download_password:
+        pass_txt_r  = open("download_pass.txt", "r")
+        pass_txt = pass_txt_r.read().strip("\n")
+        if pass_txt != download_password:
+            return jsonify("Incorrect Password")
+        # Get participants that participate for payment and are not withdrawn
+        select = 'SELECT user_id FROM session_info WHERE consent IS NULL AND user_type = 1'
+        participating_participants = db.execute(select, ('',),1);
+        participating_participants = set(np.array(participating_participants).flatten())
+
+        # get participants that have performed atleast one task
+        select2 = 'SELECT user_id FROM TASK_COMPLETED WHERE user_id IS NOT NULL'
+        participants_task_executed = db.execute(select2, ('',),1);
+        participants_task_executed = set(np.array(participants_task_executed).flatten())
+
+        # get date 6 months ago
+        date_6_months_ago = datetime.now() - timedelta(weeks=26)
+
+        intersect = participants_task_executed.intersection(participating_participants)
+        inter = tuple(map(int, intersect))
+
+        participants_task_executed_active = []
+        participants_task_executed_inactive = []
+        select_time = f"SELECT time_exec,user_id FROM task_completed WHERE user_id IN %s"
+        tasks_times = db.execute(select_time,(inter,), 1)
+        for p in inter:
+          tasks = [element[0] for element in tasks_times if element[1] == int(p)]
+          last_task = max(tasks)
+          can_collect = check_can_collect_payment(int(p))[0]
+          # you did a task in the last six months
+          if last_task > date_6_months_ago and can_collect and table_name == "active":
+            participants_task_executed_active.append(int(p))
+          elif can_collect and table_name == "inactive":
+            participants_task_executed_inactive.append(int(p))
+        if (len(participants_task_executed_active) and table_name == "active") or (len(participants_task_executed_inactive) and table_name == "inactive"):
+            # select emails and save in csv
+            # copy ID from participants_task_executed_active
+            select = 'SELECT email FROM session_info WHERE user_id IN %s'
+            if table_name == "active":
+                email_adresses = db.execute(select, (tuple(map(int, participants_task_executed_active)),),1)
+            else:
+                email_adresses = db.execute(select, (tuple(map(int, participants_task_executed_inactive)),),1)
+        else:
+            email_adresses = ["none"];
+        app.json_encoder = JsonEncoder
+        return jsonify(email_adresses)
+    else:
+        return jsonify("Incorrect Password")
 
 @app.route("/download_data", methods=["GET"])
 @language_check
@@ -1842,7 +1769,6 @@ def download_data():
             columns = [item for sublist in columns_unflattened for item in sublist]
             select = f"SELECT * FROM {table_name}"
             table = db.execute(select, ("",), 1)
-            print(table)
         app.json_encoder = JsonEncoder
         return jsonify(columns, table)
     else:
@@ -1958,7 +1884,6 @@ def inactive_users():
 def email_sent():
     user_ids = request.form
     for key in user_ids:
-        print ('form key '+user_ids[key])
         insert = "INSERT INTO EMAILS (user_id, email_sent) VALUES (%s, %s)"
         db.execute(insert, (user_ids[key], 1), 0)
 
@@ -1988,7 +1913,7 @@ def contact():
     language_set()
     return render_template("contact.html", contact_csv=contact_csv[session["language"]], layout=layout[session["language"]])
 
-port = int(os.getenv("PORT"))
+#port = int(os.getenv("PORT"))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port)

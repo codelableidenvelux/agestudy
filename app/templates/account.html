@@ -31,8 +31,8 @@ Account
   <br>
   <p>{{ layout["info4a"] }}</p>
   <br>
-  <img src="http://quantactions.com/qrgen.php?id={{session.participation_id}}" alt="barcode participation id">
-  <br>
+  <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https://www.quantactions.com/app/participate?partId={{session.participation_id}}" alt="barcode participation id"></img>
+  <br></br>
   <p><b>{{ layout["method_2"] }}</b></p>
   <br>
   {% if session.language == "dutch" %}
@@ -43,9 +43,10 @@ Account
   <br><br>
   <p>{{ layout["info1"] }}</p>
   <p class="p_id_p"> <input class="js-copytextarea p_id" readonly value={{ session.participation_id }} /></p>
-  <p>{{ layout["info2"] }}</p> <p>{{ layout["info3"] }}</p>,
-  <p>{{ layout["info4"] }}<object type="image/svg+xml" data="../static/images/plus.svg" width="30" height="30"></object></p>,
+  <p>{{ layout["info3"] }}</p>,<p>{{ layout["info4"] }}<object type="image/svg+xml" data="../static/images/plus.svg" width="30" height="30"></object></p>
+  <br>
   <p>{{ layout["info5"] }}<object type="image/svg+xml" data="../static/images/participate.svg" width="30" height="30"></object></p>
+  <br>
   <p>{{ layout["info6"] }} </p>
   <br>
   <button class="js-textareacopybtn btn btn-primary">{{ layout["copy"] }}</button>
