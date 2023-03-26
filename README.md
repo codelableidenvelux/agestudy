@@ -51,6 +51,20 @@ This README contains information on the structure of this repository.
 ## Sources
 
 ## Author(s)
-Ruchella Kock :cat:
+Ruchella Kock  [@rushkock](https://www.github.com/rushkock)  :cat:
 
 Codelableiden - Leiden University
+
+Special thanks to:
+
+- [@anxys](https://www.github.com/anxys) for invaluable help in this project
+
+
+We thank the COgnition in the Digitial Environment Laboratory (CODElab) members for helping construct the agestudy.nl tasks, instructions and translation:
+- Eva van Workum
+- Irene Taboada Warmerdam
+- Lysanne Groenewegen
+- Sven van Es
+- Charlotte van der Berg
+- Bo Bekkers
+- Michelle Snoeks 
