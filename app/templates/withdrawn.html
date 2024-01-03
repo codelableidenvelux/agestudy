@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Thanks
+{% endblock %}
+
+{% block main %}
+    <p>{{ withdrawn_csv["p1"] }},</p>
+    <br><br>
+    <p>{{ withdrawn_csv["p2"]|safe() }}</p>
+    <br><br>
+    <p>{{ withdrawn_csv["p3"] }},</p>
+    <br>
+    <p>{{ withdrawn_csv["p4"] }}</p>
+{% endblock %}

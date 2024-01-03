@@ -1,0 +1,120 @@
+{% extends "layout.html" %}
+
+{% block title %}
+About the app
+{% endblock %} {% block main %}
+
+<section id="download">
+<h1>{{about_app_apple_csv["h11"]}}</h1>
+<ul>
+  <li>{{about_app_apple_csv["pp0"]}}</li>
+  <li>{{about_app_apple_csv["pp1"]|safe}}</li>
+  <li>{{about_app_apple_csv["pp2"]|safe}}</li>
+</ul>
+<div class="container">
+  <div class="row">
+    <div class="col-sm">
+      <a target=_blank_  href="https://apps.apple.com/us/app/tapcounter-by-quantactions/id1643503718"><img class="rounded" src="../static/images/logo_app_apple.png" alt="Logo quantactions"></a>
+      <img class="rounded" style='max-width:30%' src="../static/images/apple_appstore_download.png"><br>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section id="signed_up">
+<h1>{{about_app_apple_csv["h12"]}}</h1>
+<p>{{about_app_apple_csv["p2"]}}</p>
+</section>
+
+
+<section id="participation_id">
+<h1>{{about_app_apple_csv["h14"]}}</h1>
+<p>{{about_app_apple_csv["li1"]|safe() }}</p>
+<br>
+<img src="../static/images/QA1_apple.png"  alt='instructions screenshot step 1'><br>
+<p>{{about_app_apple_csv["li2"]|safe() }}</p>
+<br>
+<img src="../static/images/QA2_apple.png"  alt='instructions screenshot step 2'><br>
+<br>
+<p>{{about_app_apple_csv["li3"]|safe() }}</p>
+<br>
+<ol type="a" start="2">
+  <li>{{about_app_apple_csv["li4"]}}</li>
+  <li>{{about_app_apple_csv["li5"]}}</li>
+  <li>{{about_app_apple_csv["li6"]}}</li>
+  <li>{{about_app_apple_csv["li7"]}}</li>
+</ol>
+<br>
+<img src="../static/images/QA3_apple.png"  alt='instructions screenshot step 3'><br>
+<p>{{about_app_apple_csv["li8"] }}</p>
+<br>
+<img src="../static/images/QA4_apple.png"  alt='instructions screenshot step 4'><br>
+<p>{{about_app_apple_csv["li9"] }}</p>
+<br>
+<p>{{about_app_apple_csv["li10"]|safe() }}</p>
+<br>
+<img src="../static/images/QA6_apple.png"  alt='instructions screenshot step 6'><br>
+<p>{{about_app_apple_csv["li11"]|safe() }}</p>
+<br><br>
+<p>{{about_app_apple_csv["li11a"] }}</p>
+<ul>
+  <li>{{about_app_apple_csv["li11b"]|safe() }}</li>
+  <li>{{about_app_apple_csv["li11c"]|safe() }}</li>
+</ul>
+<br>
+<p>{{about_app_apple_csv["li11d"]|safe() }}</p>
+<br>
+<p>{{about_app_apple_csv["li11e"] }}</p>
+<br>
+<img src="../static/images/QA7_apple.png"  alt='instructions screenshot step 7'><br>
+<p>{{about_app_apple_csv["li11f"]|safe() }}</p>
+<br>
+<img src="../static/images/QA8_apple.png"  alt='instructions screenshot note'><br>
+
+</section>
+
+<section id="working_app">
+<h1>{{about_app_apple_csv["h15"]}}</h1>
+<p>{{about_app_apple_csv["p5"]}}</p>
+<img src="../static/images/QA_apple_working_app.png" alt="working app instructions" class="working_app">
+</section>
+
+<section id="organization">
+<h1>{{about_app_apple_csv["h23"]}}</h1>
+<p>{{about_app_apple_csv["p16"]|safe()}}</p>
+</section>
+
+
+<section id="email1">
+<h1>{{about_app_apple_csv["h17"]}}</h1>
+<p>{{about_app_apple_csv["p7"]|safe()}}</p>
+<br>
+<img src="../static/images/QA_apple_manual_sync.png" alt="manual sync instructions" class="manual_sync" /><br>
+<br>
+</section>
+
+
+<section id="data_app">
+<h1>{{about_app_apple_csv["h21"]}}</h1>
+<ol type='a'>
+  <li>{{about_app_apple_csv["li_data_app_1"]}}</li>
+  <li>{{about_app_apple_csv["li_data_app_2"]}}</li>
+  <li>{{about_app_apple_csv["li_data_app_3"]}}</li>
+  <li>{{about_app_apple_csv["li_data_app_4"]}}</li>
+  <li>{{about_app_apple_csv["li_data_app_5"]}}</li>
+  <li>{{about_app_apple_csv["li_data_app_6"]}}</li>
+  <li>{{about_app_apple_csv["li_data_app_7"]}}</li>
+  <li>{{about_app_apple_csv["li_data_app_8"]}}</li>
+  <li>{{about_app_apple_csv["li_data_app_9"]}}</li>
+  <li>{{about_app_apple_csv["li_data_app_10"]}}</li>
+</ol>
+<p>{{about_app_apple_csv["p_data_app"]}}</p>
+</section>
+
+
+<section id="stop_app">
+<h1>{{about_app_apple_csv["h24"]}}</h1>
+<p>{{about_app_apple_csv["p17"]}}</p>
+</section>
+{% endblock %}

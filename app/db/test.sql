@@ -21,6 +21,7 @@ alter = "ALTER TABLE session_info ADD COLUMN promo_code VARCHAR(100);"
 alter = "ALTER TABLE session_info ADD UNIQUE promo_code;"
 alter = "ALTER TABLE session_info ADD COLUMN eeg_participation_request INT;"
 alter = "ALTER TABLE session_info ADD COLUMN language VARCHAR(100);"
+alter = "ALTER TABLE session_info ADD COLUMN phone_type INT;"
 
 update = "UPDATE SESSION_INFO SET user_name = (%s) WHERE user_id=997;"
 

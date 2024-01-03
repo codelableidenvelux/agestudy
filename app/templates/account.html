@@ -78,6 +78,15 @@ Account
     </div>
   </form>
   </section>
+
+  <section>
+  <h1>{{account_csv["withdraw2"]}}</h1>
+  <!-- Form, allow user to withdraw from the study -->
+  <form action="/withdrawn" method="post" class = "needs-validation" novalidate>
+    <button id = "withdraw" class="btn btn-primary" type="submit">{{account_csv["withdraw1"]}}</button>
+  </form>
+  </section>
+
   <!--This script was written with help from https://www.w3schools.com/howto/howto_js_password_validation.asp -->
   <script>
     var password = document.getElementById("password");

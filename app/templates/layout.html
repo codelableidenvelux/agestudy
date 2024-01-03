@@ -54,9 +54,12 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="/about_study">{{ layout["list7"] }}</a>
           <a class="dropdown-item" href="/for_participant">{{ layout["list8"] }}</a>
-          <a class="dropdown-item" href="/about_app">{{ layout["list9"] }}</a>
           <a class="dropdown-item" href="/contact">{{ layout["list10"] }}</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="/about_app">{{ layout["list9a"] }}<img width="30" height="30" src="../static/images/play_store_icon.png" alt="Logo play store"></a></a>
+          <a class="dropdown-item" href="/about_app_apple">{{ layout["list9b"] }}<img width="30" height="30" src="../static/images/apple_icon.png" alt="Logo apple store"></a></a>
         </div>
+      </li>
       </ul>
       <ul class="navbar-nav mr-auto mt-2">
         <li class="nav-item">
@@ -80,8 +83,16 @@
       <ul class="navbar-nav mr-auto mt-2">
         <li class="nav-item"><a class="nav-link" href="/about_study">{{ layout["list7"] }}  </a></li>
         <li class="nav-item"><a class="nav-link" href="/for_participant">{{ layout["list8"] }}   </a></li>
-        <li class="nav-item"><a class="nav-link" href="/about_app">{{ layout["list9"] }}</a>   </li>
         <li class="nav-item"><a class="nav-link" href="/consent">{{ layout["list4"] }}    </a></li>
+        <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{ layout["list9"] }}
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="/about_app">{{ layout["list9a"] }}<img width="30" height="30" src="../static/images/play_store_icon.png" alt="Logo play store"></a></a>
+          <a class="dropdown-item" href="/about_app_apple">{{ layout["list9b"] }}<img width="30" height="30" src="../static/images/apple_icon.png" alt="Logo apple store"></a></a>
+        </div>
+      </li>
       </ul>
       <ul class="navbar-nav mr-auto mt-2">
         <li class="nav-item">

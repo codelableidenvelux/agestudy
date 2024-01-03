@@ -97,12 +97,24 @@ def preprocess_gender(gender):
     elif gender == "other":
         return 3
 
+def preprocess_phone_type(phone_type):
+    """
+    Function preprocesses the input phone4 _type from the register page,
+    Returns 1 for android, 2 for ios and 3 for the I dont know option.
+    """
+    if phone_type == "android":
+        return 1
+    elif phone_type == "ios":
+        return 2
+    elif phone_type == "phone_other":
+        return 3
+
 def total_money(df):
     df["time_exec"] = pd.to_datetime(df["time_exec"])
     total_survey_money = 0
     total_rt_money = 0
     total_tasks_money = 0
-    df = df[df["user_type"] == 1]
+    #df = df[df["user_type"] == 1]
 
     by_id = df.groupby(by="user_id")
     for (key, values) in by_id:
@@ -112,8 +124,9 @@ def total_money(df):
             elif value == 5:
                 total_survey_money = total_survey_money + 2
 
-        per_month = values.groupby(by="month")
+        per_month = values.groupby(by=["month", "year"])
         for (key, value) in per_month:
+
             if 8 in value["task_id"].values:
                 total_rt_money = total_rt_money + 0.25
             if 1 in value["task_id"].values or 2 in value["task_id"].values or 3 in value["task_id"].values:
@@ -129,13 +142,13 @@ def projected_money(num_p):
     # total rt
     rt = num_p * 0.25 * 12
     # surveys
-    sf_36 = num_p * 2.00 * 3
+    sf_36 = num_p * 2.00
     phone_survey =  num_p * 2.00
     # total survey
     survey = sf_36 + phone_survey
-    total = survey + rt + tasks * 3
-    return {"total": total, "tasks": tasks, "survey": survey, "rt": rt}
-    
+    total = (survey + rt + tasks) * 3
+    return {"total": total, "tasks": tasks*3, "survey": survey*3, "rt": rt*3}
+
 """
 def get_num_active_participants(groupby_object):
     num_active_participants = 0

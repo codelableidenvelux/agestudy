@@ -142,7 +142,9 @@ function select_user_ajax(){
                     '<br> <b>Promo code:</b> ' + user['promo_code'] +
                     '<br> <b>Duplicate ID:</b> ' + user['duplicate_id'] +
                     '<br> <b>Can collect payment:</b> ' + user['can_collect_payment'] +
-                    '<br> <b>Date of last collection:</b> ' + user['date_collected'])
+                    '<br> <b>Date of last collection:</b> ' + user['date_collected'] +
+                    '<br> <b>Phone type:</b> ' + user['phone_type']
+                  )
 
       d3.select("#barChart").select('svg').remove();
       d3.select("#barChart").select('h1').remove();

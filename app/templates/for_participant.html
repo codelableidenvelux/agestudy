@@ -20,20 +20,18 @@ For participant
 </ul>
 
 <p>{{for_participant_csv.loc["p1"]}}</p>
-<br>
-<b><h3>{{for_participant_csv.loc["p2"]}}</h3></b>
 </section>
 
 <section id="start_info">
   <h1>{{for_participant_csv.loc["h13"]}}</h1>
   <p>{{for_participant_csv.loc["p3"]}}</p>
   <h1>{{for_participant_csv.loc["h14"]}}</h1>
-  <p>{{for_participant_csv.loc["p5"]}}</p>
+  <p>{{for_participant_csv.loc["p5"]|safe()}}</p>
 </section>
 
 <section id="purpose">
   <h1>{{for_participant_csv.loc["h15"]}}</h1>
-  <p>{{for_participant_csv.loc["p6"]}}</p>
+  <p>{{for_participant_csv.loc["p6"]|safe()}}</p>
 </section>
 
 <section id="time">
@@ -107,6 +105,8 @@ For participant
 
 <section id="smartphone">
   <h1>{{for_participant_csv.loc["h20"]}}</h1>
+  <p>{{for_participant_csv.loc["p_android"]}}</p>
+  <br>
   <p>{{for_participant_csv.loc["p11"]}}</p>
   <ol>
     <li>{{for_participant_csv.loc["li_smartphone_1"]}}</li>
@@ -115,12 +115,42 @@ For participant
     <li>{{for_participant_csv.loc["li_smartphone_4"]}}</li>
     <li>{{for_participant_csv.loc["li_smartphone_5"]}}</li>
     <li>{{for_participant_csv.loc["li_smartphone_6"]}}</li>
-    <li>{{for_participant_csv.loc["li_smartphone_7"]}}</li>
   </ol>
   <p>{{for_participant_csv.loc["p12"]}}</p>
-  <br><br>
+  <br>
   <p>{{for_participant_csv.loc["p13"]}}</p>
   <br><br>
+  <p>{{for_participant_csv.loc["p_apple"]}}</p>
+  <br>
+  <ol>
+    <li>{{for_participant_csv.loc["li_apple_1"]}}</li>
+    <li>{{for_participant_csv.loc["li_apple_2"]}}</li>
+    <li>{{for_participant_csv.loc["li_apple_3"]}}</li>
+    <li>{{for_participant_csv.loc["li_apple_4"]}}</li>
+    <li>{{for_participant_csv.loc["li_apple_5"]}}</li>
+    <li>{{for_participant_csv.loc["li_apple_6"]}}</li>
+    <li>{{for_participant_csv.loc["li_apple_7"]}}</li>
+    <li>{{for_participant_csv.loc["li_apple_8"]}}</li>
+      <ol>
+        <li>{{for_participant_csv.loc["li_apple_8_1"]}}</li>
+        <li>{{for_participant_csv.loc["li_apple_8_2"]}}</li>
+        <li>{{for_participant_csv.loc["li_apple_8_3"]}}</li>
+        <li>{{for_participant_csv.loc["li_apple_8_4"]}}</li>
+      </ol>
+    <li>{{for_participant_csv.loc["li_apple_9"]}}</li>
+    <ol>
+      <li>{{for_participant_csv.loc["li_apple_9_1"]}}</li>
+      <li>{{for_participant_csv.loc["li_apple_9_2"]}}</li>
+      <li>{{for_participant_csv.loc["li_apple_9_3"]}}</li>
+    </ol>
+    <li>{{for_participant_csv.loc["li_apple_10"]}}</li>
+    <ol>
+      <li>{{for_participant_csv.loc["li_apple_10"]}}</li>
+    </ol>
+  </ol>
+
+  <p>{{for_participant_csv.loc["p_both"]}}</p>
+  <br>
   <p>{{for_participant_csv.loc["p14"]}}</p>
 </section>
 
@@ -146,7 +176,9 @@ For participant
     <li>{{for_participant_csv.loc["li_data_2"]}}</li>
     <li>{{for_participant_csv.loc["li_data_3"]}}</li>
   </ol>
-  <p>{{for_participant_csv.loc["p20"]}}</p>
+  <p>{{for_participant_csv.loc["p19b"]}}</p>
+  <br><br>
+  <p>{{for_participant_csv.loc["p19c"]}}</p>
 </section>
 
 <section id="compensation">
@@ -167,7 +199,6 @@ For participant
   <h1>{{for_participant_csv.loc["h25"]}}</h1>
   <p>{{for_participant_csv.loc["p25"]}}</p>
   <ol type="1">
-    <li>{{for_participant_csv.loc["li_exlusion_1"]}}</li>
     <li>{{for_participant_csv.loc["li_exlusion_2"]}}</li>
     <li>{{for_participant_csv.loc["li_exlusion_3"]}}</li>
     <li>{{for_participant_csv.loc["li_exlusion_4"]}}</li>
@@ -183,7 +214,7 @@ For participant
   <h1>{{for_participant_csv.loc["h26"]}}</h1>
   <p>{{for_participant_csv.loc["p26"]}}</p>
   <ol type="a">
-    <li>{{for_participant_csv.loc["li_withdrawal_1"]}}</li>
+    <li>{{for_participant_csv.loc["li_withdrawal_1"]|safe()}}</li>
     <li>{{for_participant_csv.loc["li_withdrawal_2"]}}</li>
     <li>{{for_participant_csv.loc["li_withdrawal_3"]}}</li>
     <li>{{for_participant_csv.loc["li_withdrawal_4"]}}</li>
@@ -191,6 +222,8 @@ For participant
     <li>{{for_participant_csv.loc["li_withdrawal_6"]}}</li>
   </ol>
   <p>{{for_participant_csv.loc["p27"]}}</p>
+  <br><br>
+  <p>{{for_participant_csv.loc["p27b"]}}</p>
 </section>
 
 <section id="consent">
@@ -203,6 +236,10 @@ For participant
 <section id="contact">
   <h1>{{for_participant_csv.loc["h28"]}}</h1>
   <p>{{for_participant_csv.loc["p29"]}}</p>
+  <br><br>
+  <p>{{for_participant_csv.loc["p30"]}}</p>
+  <br><br>
+  <p>{{for_participant_csv.loc["p31"]}}</p>
 </section>
 
 

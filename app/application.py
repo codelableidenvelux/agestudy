@@ -45,11 +45,13 @@ consent_csv = pd.read_excel('static/csv/consent.xlsx', index_col="tag")
 email_unsent = read_csv("static/csv/email_unsent.csv")
 eeg_csv = pd.read_excel('static/csv/eeg.xlsx', index_col="tag")
 sent_email_csv = read_csv("static/csv/sent_email.csv")
+withdrawn_csv = read_csv("static/csv/withdrawn.csv")
 home_csv = read_csv("static/csv/home.csv")
 collected_csv = read_csv("static/csv/collected.csv")
 about_study_csv = read_csv("static/csv/about_study.csv")
 for_participant_csv = pd.read_excel('static/csv/for_participant.xlsx', index_col="tag")
 about_app_csv = pd.read_excel('static/csv/about_app.xlsx', index_col="tag")
+about_app_apple_csv = pd.read_excel('static/csv/about_app_apple.xlsx', index_col="tag")
 contact_csv = read_csv("static/csv/contact.csv")
 forgot_password_csv = read_csv("static/csv/forgot_password.csv")
 verify_csv = read_csv("static/csv/verify.csv")
@@ -584,6 +586,7 @@ def register():
         month = request.form.get("month")
         birthdate_r = str(year) + str(month) + "01"
         gender_r = request.form.get("gender")
+        phone_type_r = request.form.get("phone_type")
         password = request.form.get("password")
         new_password = request.form.get("confirmation")
         f_promo_code_r = request.form.get("f_promo_code")
@@ -603,6 +606,7 @@ def register():
             user_type = 1
         birthdate = preprocess_birthdate(birthdate_r)
         gender = preprocess_gender(gender_r)
+        phone_type = preprocess_phone_type(phone_type_r)
         if f_promo_code_r:
             f_promo_code = f_promo_code_r.upper().replace(" ", "")
 
@@ -639,8 +643,8 @@ def register():
                 send_email(message, username, "agestudy@fsw.leidenuniv.nl")
             promo_code = add_promo_code_2_db()
             # add user to the database
-            param = (username, email, gender, collect_possible, for_money, user_type, birthdate, hash, participation_id, promo_code, session["language"])
-            insert = "INSERT INTO session_info (user_name, email, gender, collect_possible, for_money, user_type, birthyear, pas_hash, participation_id, promo_code, language) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            param = (username, email, gender, collect_possible, for_money, user_type, birthdate, hash, participation_id, promo_code, session["language"],phone_type)
+            insert = "INSERT INTO session_info (user_name, email, gender, collect_possible, for_money, user_type, birthyear, pas_hash, participation_id, promo_code, language,phone_type) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             result = db.execute(insert, param, 0)
 
 
@@ -657,7 +661,7 @@ def register():
 
 
             # send welcome email to paricipant and to agestudy with participants info
-            message = 'Subject: New Participant \n\n username: ' + username + "\npsytoolkit_id: " + generate_id(session['user_id']) + "\n email: " + email + "\n user_id: " + str(rows[0][0]) + "\n user_type: " + str(user_type) + "\n gender: " + str(gender_r) + "\n language: " + session["language"] + "\n participation_id: " + participation_id + "\n Birthdate: " + birthdate
+            message = 'Subject: New Participant \n\n username: ' + username + "\npsytoolkit_id: " + generate_id(session['user_id']) + "\n email: " + email + "\n user_id: " + str(rows[0][0]) + "\n user_type: " + str(user_type) + "\n gender: " + str(gender_r) + "\n language: " + session["language"] + "\n participation_id: " + participation_id + "\n Birthdate: " + birthdate + "\n Phone type: " + str(phone_type)
             send_email(message, username, "agestudy@fsw.leidenuniv.nl")
             subject_en='Welcome from Leiden University to Agestudy.nl (Important info, save the email)'
             subject_nl='Welkom van de Universiteit Leiden bij Agestudy.nl (Belangrijke info, bewaar deze e-mail)'
@@ -1472,7 +1476,7 @@ def select_user():
         select = """SELECT "user_id", "email", "gender",
                            "birthyear", "user_type",
                            "participation_id", "time_sign_up",
-                           "admin", "consent", "credits_participant", "promo_code", "duplicate_id"
+                           "admin", "consent", "credits_participant", "promo_code", "duplicate_id", "phone_type"
                    FROM SESSION_INFO WHERE user_name  = (%s)"""
         rows = db.execute(select, (username,), 1)
         participant_info = username
@@ -1481,7 +1485,7 @@ def select_user():
         select = """SELECT "user_id", "email", "gender",
                            "birthyear", "user_type",
                            "participation_id", "time_sign_up",
-                           "admin", "consent", "credits_participant", "promo_code", "duplicate_id"
+                           "admin", "consent", "credits_participant", "promo_code", "duplicate_id", "phone_type"
                    FROM SESSION_INFO WHERE user_id  = (%s)"""
         rows = db.execute(select, (user_id,), 1)
         participant_info = user_id
@@ -1490,7 +1494,7 @@ def select_user():
         select = """SELECT "user_id", "email", "gender",
                            "birthyear", "user_type",
                            "participation_id", "time_sign_up",
-                           "admin", "consent", "credits_participant", "promo_code", "duplicate_id"
+                           "admin", "consent", "credits_participant", "promo_code", "duplicate_id", "phone_type"
                    FROM SESSION_INFO WHERE participation_id  = (%s)"""
         rows = db.execute(select, (participation_id,), 1)
         participant_info = participation_id
@@ -1508,7 +1512,8 @@ def select_user():
                 'promo_code': rows[0]['promo_code'],
                 'duplicate_id': rows[0]['duplicate_id'],
                 'can_collect_payment': can_collect_payment,
-                'date_collected': date_collected}
+                'date_collected': date_collected,
+                'phone_type': rows[0]["phone_type"]}
         select = """ SELECT time_exec, task_id,collect,date_collected FROM TASK_COMPLETED WHERE user_id = (%s)"""
         tasks = db.execute(select, (rows[0]["user_id"],),1)
         payment = admin_view_user_payment(view_user_payment_bar, participant_info_str, participant_info,rows[0]["user_type"])
@@ -1623,18 +1628,24 @@ def get_data():
                     "user_type": user_type, "user_type_mode": int(user_type_mode),
                     "gender":gender, "gender_mode": int(gender_mode), 'n_p_ids' : n_p_ids}
     # basic stats contains basic information
-    select = "SELECT * FROM TRACKED_TASK"
+    select = "SELECT * FROM tracked_task"
     tracked_task = db.execute(select, ("", ), 1)
     tracked_task_df = pd.DataFrame(tracked_task)
-    tracked_task_df = tracked_task_df.rename(columns={0:"time_exec", 1:"user_id", 2:"task_id",3:"status"})
+    tracked_task_df = tracked_task_df.rename(columns={0:"time_exec", 1:"user_id", 2:"task_id", 3:"status"})
     merged = df_all_p.merge(tracked_task_df, on='user_id')
-    merged["month"] = merged["time_exec"].apply(lambda x: x.month)
 
+
+    select = "SELECT tc.user_id,tc.time_exec,tc.task_id FROM task_completed tc, session_info s WHERE s.consent IS NULL AND s.user_type = 1 AND tc.collect NOT IN (0) AND s.user_id = tc.user_id"
+    tasks_times = db.execute(select,('',), 1)
+    tasks_df = pd.DataFrame(tasks_times)
+    tasks_df = tasks_df.rename(columns={0:"user_id", 1:"time_exec", 2:"task_id"})
+    tasks_df["month"] = tasks_df["time_exec"].apply(lambda x: x.month)
+    tasks_df["year"] = tasks_df["time_exec"].apply(lambda x: x.year)
 
     tasks_all = task_frequency(merged)
     tasks = tasks_all[0]
     tasks_p = tasks_all[1]
-    total_money_dict = total_money(merged)
+    total_money_dict = total_money(tasks_df)
     projected_money_dict = projected_money(num_paying_users)
 
     bullet_data = [
@@ -1659,6 +1670,7 @@ def get_data():
     active = get_num_active_participants()
     basic_stats["num_active_p"] = active
 
+    merged["month"] = merged["time_exec"].apply(lambda x: x.month)
     merged["year_exec"] = merged["time_exec"].apply(lambda x: x.year)
     merged["day_exec"] = merged["time_exec"].apply(lambda x: x.day)
     merged["time_exec_ymd"] = merged.apply(lambda row: str(row.year_exec) + "-" + str(row.month) + "-" + str(row.day_exec), axis=1)
@@ -1758,10 +1770,10 @@ def download_data():
             return jsonify("Incorrect Password")
         if table_name == "session_info":
             columns = ['user_id','gender','collect_possible','for_money','user_type','birthyear','participation_id',
-            'consent','time_sign_up','admin','credits_participant','promo_code', 'duplicate_id']
+            'consent','time_sign_up','admin','credits_participant','promo_code', 'duplicate_id', 'phone_type']
             select = """SELECT user_id, gender, collect_possible,
             for_money, user_type, birthyear, participation_id,
-            consent, time_sign_up, admin, credits_participant, promo_code, duplicate_id FROM session_info"""
+            consent, time_sign_up, admin, credits_participant, promo_code, duplicate_id, phone_type FROM session_info"""
             table = db.execute(select, ("",), 1)
         elif table_name == "reminder":
             columns = ['time_exec', 'user_id']
@@ -1893,11 +1905,26 @@ def email_sent():
 
     flash("Successfully updated email information")
     return redirect("/admin")
+
 @app.route("/about_study", methods=["GET"])
 @language_check
 def about_study():
     language_set()
     return render_template("about_study.html", about_study_csv=about_study_csv[session["language"]], layout=layout[session["language"]])
+
+@app.route("/withdrawn", methods=["POST","GET"])
+@language_check
+def withdrawn():
+    if request.method == "POST":
+        update = "UPDATE SESSION_INFO SET consent = 0 WHERE user_id = (%s)"
+        db.execute(update, (session["user_id"],), 0)
+        select = "SELECT participation_id FROM SESSION_INFO WHERE user_id=(%s)"
+        participation_id = db.execute(select, (session["user_id"],), 1)
+        message = f"Subject: Request for withdrawal \n\n {participation_id[0][0]} has requested to withdraw from the study."
+        send_email(message, "agestudy@fsw.leidenuniv.nl", "agestudy@fsw.leidenuniv.nl")
+        return render_template("withdrawn.html", withdrawn_csv=withdrawn_csv[session["language"]], layout=layout[session["language"]])
+    else:
+        return render_template("withdrawn.html", withdrawn_csv=withdrawn_csv[session["language"]], layout=layout[session["language"]])
 
 @app.route("/for_participant", methods=["GET"])
 @language_check
@@ -1910,6 +1937,12 @@ def for_participant():
 def about_app():
     language_set()
     return render_template("about_app.html", about_app_csv=about_app_csv[session["language"]], layout=layout[session["language"]])
+
+@app.route("/about_app_apple", methods=["GET"])
+@language_check
+def about_app_apple():
+    language_set()
+    return render_template("about_app_apple.html", about_app_apple_csv=about_app_apple_csv[session["language"]], layout=layout[session["language"]])
 
 @app.route("/contact", methods=["GET"])
 @language_check

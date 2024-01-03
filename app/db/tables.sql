@@ -17,7 +17,8 @@ CREATE TABLE SESSION_INFO (
   duplicate_id INT,
   language VARCHAR(100),
   eeg_participation_request INT,
-  eeg_participation_request_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  eeg_participation_request_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  phone_type INT
 );
 
 
