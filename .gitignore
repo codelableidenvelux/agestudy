@@ -10,4 +10,8 @@ app/as.key
 app/download_pass.txt
 *.pyc
 ~.csv
-
+data
+*.pfx
+*.crt 
+*.pem
+*.key

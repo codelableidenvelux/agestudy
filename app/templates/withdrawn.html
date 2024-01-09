@@ -5,11 +5,23 @@
 {% endblock %}
 
 {% block main %}
-    <p>{{ withdrawn_csv["p1"] }},</p>
-    <br><br>
-    <p>{{ withdrawn_csv["p2"]|safe() }}</p>
-    <br><br>
-    <p>{{ withdrawn_csv["p3"] }},</p>
-    <br>
+    <h1>{{ withdrawn_csv["h1"]}}</h1>
+    <p>{{ withdrawn_csv["p2"]}}</p>
+    <br></br>
+    <p>{{ withdrawn_csv["p3"]|safe() }}</p>
+    <br></br>
     <p>{{ withdrawn_csv["p4"] }}</p>
+    <br></br>
+    <p>{{ withdrawn_csv["p5"] }}</p>
+    <br></br>
+    <p>{{ withdrawn_csv["p6"]|safe() }}</p>
+    <br></br>
+    <p>{{ withdrawn_csv["p7"] }}</p>
+    <br></br>
+    <h2>{{ withdrawn_csv["h8"] }}</h2>
+    <p>{{ withdrawn_csv["p9"] }}</p>
+    <br></br>
+    <p>{{ withdrawn_csv["p10"] }}</p>
+    <br></br>
+    <p>{{ withdrawn_csv["p11"] }}</p>
 {% endblock %}

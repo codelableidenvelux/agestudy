@@ -4,12 +4,15 @@
 About the app
 {% endblock %} {% block main %}
 
+<section id="signed_up">
+  <h1>{{about_app_csv["h12"]}}</h1>
+  <p>{{about_app_csv["p2"]}}</p>
+  </section>
+
 <section id="download">
 <h1>{{about_app_csv["h11"]}}</h1>
 <ul>
-  <li>{{about_app_csv["pp0"]}}</li>
   <li>{{about_app_csv["pp1"]|safe}}</li>
-  <li>{{about_app_csv["pp2"]|safe}}</li>
   <li>{{about_app_csv["pp3"]|safe}}</li>
 </ul>
 <div class="container">
@@ -34,11 +37,6 @@ About the app
   </div>
 </div>
 
-</section>
-
-<section id="signed_up">
-<h1>{{about_app_csv["h12"]}}</h1>
-<p>{{about_app_csv["p2"]}}</p>
 </section>
 
 <section id="calibration">

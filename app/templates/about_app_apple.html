@@ -4,12 +4,16 @@
 About the app
 {% endblock %} {% block main %}
 
+<section id="signed_up">
+  <h1>{{about_app_apple_csv["h12"]}}</h1>
+  <p>{{about_app_apple_csv["p2"]}}</p>
+  </section>
+
 <section id="download">
 <h1>{{about_app_apple_csv["h11"]}}</h1>
 <ul>
-  <li>{{about_app_apple_csv["pp0"]}}</li>
   <li>{{about_app_apple_csv["pp1"]|safe}}</li>
-  <li>{{about_app_apple_csv["pp2"]|safe}}</li>
+  <li>{{about_app_apple_csv["pp2b"]|safe}}</li>
 </ul>
 <div class="container">
   <div class="row">
@@ -19,12 +23,20 @@ About the app
     </div>
   </div>
 </div>
-
-</section>
-
-<section id="signed_up">
-<h1>{{about_app_apple_csv["h12"]}}</h1>
-<p>{{about_app_apple_csv["p2"]}}</p>
+  <div class="row">
+    <div class="col-lg">
+      {% if session.language == "dutch" %}
+        <div class="embed-responsive embed-responsive-16by9">
+          <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/dSqf3cZroFo?si=hzWafzr9F_wl2zIA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe>
+        </div>
+      {% else %}
+      <div class="embed-responsive embed-responsive-16by9">
+        <iframe class="embed-responsive-item"  src="https://www.youtube.com/embed/1pwHZVaiNYY?si=o2dyeWupr4_rv13t" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
 </section>
 
 
@@ -109,7 +121,7 @@ About the app
   <li>{{about_app_apple_csv["li_data_app_9"]}}</li>
   <li>{{about_app_apple_csv["li_data_app_10"]}}</li>
 </ol>
-<p>{{about_app_apple_csv["p_data_app"]}}</p>
+<p>{{about_app_apple_csv["p_data_app"]|safe()}}</p>
 </section>
 
 

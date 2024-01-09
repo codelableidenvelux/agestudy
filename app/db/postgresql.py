@@ -13,13 +13,11 @@ def connect_postgres(logger):
         port= key["port"],
         user=key["user"],
         password=key["password"],
-        sslmode="verify-full",
-        sslrootcert="db/decoded_crt.txt",
-        database="ibmclouddb")
+        sslmode="require",
+        database="postgres")
       return conn
     except Exception as inst:
         logger.warning(f'Unable to connect to database \n {type(inst)}, {inst.args}, {inst}')
-
 
 class Db():
     """
