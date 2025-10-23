@@ -42,3 +42,7 @@ INNER JOIN
 ON tt.USER_ID = groupedtt.USER_ID
 AND tt.TIME_EXEC = groupedtt.MaxDateTime
 """
+ select = 'SELECT email FROM SESSION_INFO WHERE consent is NULL AND phone_type = 2'
+ with open('android_users.csv', 'w', newline='') as myfile:
+...     wr = csv.writer(myfile)
+...     wr.writerows(emails)

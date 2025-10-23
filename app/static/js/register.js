@@ -54,19 +54,20 @@ password.onkeyup = function() {
 ///////////////////////////////////////////////////////////////////////////
 //////////////////////// Show other checkbox //////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-var collect_possible_id = document.getElementById("collect_possible_id");
-var money = document.querySelector("input[name=money]");
-var collect_possible = document.querySelector("input[name=collect_possible]");
+//var collect_possible_id = document.getElementById("collect_possible_id");
+//var money = document.querySelector("input[name=money]");
+//var collect_possible = document.querySelector("input[name=collect_possible]");
 
 // if the first checkbox (want to participate for money) was selected
 // display the other checkbox (collect possible)
-money.addEventListener( 'change', function() {
-if(this.checked) {
-    collect_possible_id.style.display = "block";
-  } else {
-    collect_possible_id.style.display = "none";
-  }
-});
+//money.addEventListener( 'change', function() {
+//if(this.checked) {
+//    collect_possible_id.style.display = "block";
+// } else {
+//    collect_possible_id.style.display = "none";
+//  }
+//});
+
 ///////////////////////////////////////////////////////////////////////////
 //////////////////////// SET THE DATE /////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////

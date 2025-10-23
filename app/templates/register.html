@@ -254,13 +254,12 @@ async defer>
       <div id="message_length" class="invalid-feedback">
         {{ register_csv.loc['message_length'] }}
       </div>
-      <!-- Live in the Netherlands checkbox -->
+      <!--
       <div class="form-check">
         <input type="checkbox" class="form-check-input" id="money" name="money">
         <label class="form-check-label" for="money">{{ register_csv.loc['checkbox_money'] }}</label>
         <input type="button" class="btn btn-primary"  value="?" data-toggle="popover" data-placement="right" data-content="{{register_csv.loc['tooltip']}}">
       </div>
-      <!-- City -->
       <div class="form-group" id="collect_possible_id">
         <input  class="form-check-input" type="checkbox" id="collect_possible" name="collect_possible">
         <label class="form-check-label" for="collect_possible">{{ register_csv.loc['checkbox_collection'] }}</label>
@@ -269,6 +268,7 @@ async defer>
           <a href="/for_participant#compensation" target="_blank" class="btn btn-secondary btn-sm">{{ register_csv.loc['button2'] }}</a>
         </div>
       </div>
+      -->
       <div class="form-group">
         <label class="control-label" for="f_promo_code">{{ register_csv.loc['label_promo_code'] }}</label>
         <input class="form-control" name="f_promo_code" id="f_promo_code" placeholder="{{ register_csv.loc['placeholder_promo_code'] }}" type="text"/>

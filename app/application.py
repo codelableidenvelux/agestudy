@@ -1915,6 +1915,7 @@ def about_study():
 @app.route("/withdrawn", methods=["POST","GET"])
 @language_check
 def withdrawn():
+    language_set()
     if request.method == "POST":
         update = "UPDATE SESSION_INFO SET consent = 0 WHERE user_id = (%s)"
         db.execute(update, (session["user_id"],), 0)
